@@ -12,15 +12,17 @@ import appleAuth, {
 } from '@invertase/react-native-apple-authentication'
 import dynamicStyles from './styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import reuseTheme from '../../../theme/theme';
+
 import { ActivityIndicator } from '../../../components/ActivityIndicator';
 import IMGoogleSignInButton from '../../../components/IMGoogleSignInButton/IMGoogleSignInButton';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
+import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles';
 
 
 const Login = () => {
   const navigation = useNavigation<any>()
   const {reuseTheme} =  useUserPreferredTheme();
+  const generalStyles = dynamicGeneralStyles(reuseTheme);
 
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -33,7 +35,6 @@ const Login = () => {
   }
 
   const onFBButtonPress = () => {
-   
       
   }
 
@@ -54,16 +55,45 @@ const Login = () => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={generalStyles.container}>
       <KeyboardAwareScrollView
         style={{ flex: 1, width: '100%' }}
         keyboardShouldPersistTaps="always">
-        <TouchableOpacity
-          style={{ alignSelf: 'flex-start' }}
-          onPress={() => navigation.goBack()}>
-          <Image style={styles.backArrowStyle} source={reuseTheme.icons.backArrow} />
-        </TouchableOpacity>
-        <Text style={styles.title}>{'Sign In'}</Text>
+          {/* login and register */}
+          {/* <Text style={styles.title}>{'Login'}</Text> */}
+          
+          {/* login and register */}
+          <View
+              style={[
+                generalStyles.flexStyles,
+                {
+                  alignItems: 'center',
+                },
+              ]}
+            >
+              <View
+                
+              >
+                <TouchableOpacity>
+                  <Text style={generalStyles.authTitle}>Login</Text>
+                </TouchableOpacity>
+                  <View style={generalStyles.bottomHairline} />
+                  
+              </View>
+
+              <View>
+                <TouchableOpacity
+                  onPress={() => {
+                   
+                    navigation.navigate('Register');
+                  }}
+                >
+                  <Text style={generalStyles.authTitle}>Register</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          {/* login and register */}
+
         <TextInput
           style={styles.InputContainer}
           placeholder={'E-mail'}

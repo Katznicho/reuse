@@ -8,27 +8,14 @@ import { ReuseTheme } from '../../../types/types';
 const dynamicStyles = (theme:ReuseTheme) => {
     
   return StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      backgroundColor: theme.colors.preference.primaryBackground,
-    },
+    
     orTextStyle: {
       color: theme.colors.preference.primaryText,
       marginTop: 40,
       marginBottom: 10,
       alignSelf: 'center',
     },
-    title: {
-      fontSize: 30,
-      fontWeight: 'bold',
-      color: theme.colors.preference.primaryForeground,
-      marginTop: 25,
-      marginBottom: 20,
-      alignSelf: 'stretch',
-      textAlign: 'left',
-      marginLeft: 30,
-    },
+    
     loginContainer: {
       width: '70%',
       backgroundColor: theme.colors.preference.primaryForeground,
@@ -111,6 +98,8 @@ const dynamicStyles = (theme:ReuseTheme) => {
       marginLeft: 10,
       transform: [{ scaleX: I18nManager.isRTL ? -1 : 1 }],
     },
+    
+  
   })
 }
 

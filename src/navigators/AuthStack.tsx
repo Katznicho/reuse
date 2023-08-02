@@ -3,36 +3,36 @@ import React from 'react'
 import { StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../screens/auth/login/Login';
+import SignupScreen from '../screens/auth/SignupScreen/SignupScreen';
+import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen/ResetPasswordScreen';
 
 const AuthStack = createNativeStackNavigator();
 
 const AuthStackNavigator = () => {
   return (
-    <AuthStack.Navigator
-      
+    <AuthStack.Navigator 
       screenOptions={{
         headerBackTitleVisible: false,
-        headerShown: false,
-        
+        headerShown: false,  
       }}
       initialRouteName="Login">
       
       <AuthStack.Screen
         name="Login"
         component={Login}
+        options={{ headerShown: false }}
       />
       <AuthStack.Screen
-        // options={{ headerStyle: styles.headerStyle }}
-        name="Signup"
+        name="Register"
+        options={{ headerShown: false }}
         component={SignupScreen}
       />
-      <AuthStack.Screen
-        // options={{ headerStyle: styles.headerStyle }}
+      {/* <AuthStack.Screen
         name="Sms"
         component={SmsAuthenticationScreen}
-      />
+      /> */}
       <AuthStack.Screen
-        // options={{ headerStyle: styles.headerStyle }}
+                options={{ headerShown: false }}
         name="ResetPassword"
         component={ResetPasswordScreen}
       />
@@ -40,13 +40,6 @@ const AuthStackNavigator = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  headerStyle: {
-    borderBottomWidth: 0,
-    shadowColor: 'transparent',
-    shadowOpacity: 0,
-    elevation: 0, // remove shadow on Android
-  },
-})
+
 
 export default AuthStackNavigator

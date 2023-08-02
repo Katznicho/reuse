@@ -1,45 +1,32 @@
 import { Dimensions, I18nManager, StyleSheet, Platform } from 'react-native'
+import { ReuseTheme } from '../../../types/types'
 
 const { height } = Dimensions.get('window')
 const imageSize = height * 0.232
 const photoIconSize = imageSize * 0.27
 
-const dynamicStyles = (theme, colorScheme) => {
-  const colorSet = theme.colors[colorScheme]
+const dynamicStyles = (theme:ReuseTheme) => {
+  
   return StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colorSet.primaryBackground,
-    },
-    title: {
-      fontSize: 30,
-      fontWeight: 'bold',
-      color: colorSet.primaryForeground,
-      marginTop: 25,
-      marginBottom: 30,
-      alignSelf: 'stretch',
-      textAlign: 'left',
-      marginLeft: 35,
-    },
+    
+
 
     content: {
       paddingLeft: 50,
       paddingRight: 50,
       textAlign: 'center',
       fontSize: 20,
-      color: colorSet.primaryForeground,
+      color: theme.colors.preference.primaryForeground,
     },
     loginContainer: {
       width: '65%',
-      backgroundColor: colorSet.primaryForeground,
+      backgroundColor: theme.colors.preference.primaryForeground,
       borderRadius: 25,
       padding: 10,
       marginTop: 30,
     },
     loginText: {
-      color: colorSet.primaryBackground,
+      color: theme.colors.preference.primaryBackground,
     },
     placeholder: {
       color: 'red',
@@ -47,10 +34,10 @@ const dynamicStyles = (theme, colorScheme) => {
     InputContainer: {
       height: 42,
       borderWidth: 1,
-      borderColor: colorSet.grey3,
-      backgroundColor: colorSet.primaryBackground,
+      borderColor: theme.colors.preference.grey3,
+      backgroundColor: theme.colors.preference.primaryBackground,
       paddingLeft: 20,
-      color: colorSet.primaryText,
+      color: theme.colors.preference.primaryText,
       width: '80%',
       alignSelf: 'center',
       marginTop: 20,
@@ -63,13 +50,13 @@ const dynamicStyles = (theme, colorScheme) => {
       alignSelf: 'center',
       alignItems: 'center',
       width: '65%',
-      backgroundColor: colorSet.primaryForeground,
+      backgroundColor: theme.colors.preference.primaryForeground,
       borderRadius: 25,
       padding: 10,
       marginTop: 50,
     },
     signupText: {
-      color: colorSet.primaryBackground,
+      color: theme.colors.preference.primaryBackground,
     },
     image: {
       width: '100%',
@@ -118,7 +105,7 @@ const dynamicStyles = (theme, colorScheme) => {
       marginTop: 20,
       marginBottom: 10,
       alignSelf: 'center',
-      color: colorSet.primaryText,
+      color: theme.colors.preference.primaryText,
     },
     PhoneNumberContainer: {
       marginTop: 10,
@@ -136,7 +123,7 @@ const dynamicStyles = (theme, colorScheme) => {
     },
     backArrowStyle: {
       resizeMode: 'contain',
-      tintColor: colorSet.primaryForeground,
+      tintColor: theme.colors.preference.primaryForeground,
       width: 25,
       height: 25,
       marginTop: Platform.OS === 'ios' ? 50 : 20,
