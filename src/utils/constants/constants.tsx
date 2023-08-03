@@ -11,3 +11,5 @@ export const APP_USERS = {
      ALL:"Both"
 
 }
+
+export const APP_NAME = "Reuse";

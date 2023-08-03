@@ -2,22 +2,29 @@ import { StyleSheet, Text, View, SafeAreaView, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { Button } from 'react-native-paper';
 import { Slider } from '@miblanchard/react-native-slider';
-import { theme } from '../../../theme/theme';
-import { generalstyles } from '../../../generalstyles/generalstyles';
-import TextArea from '../../../components/TextArea';
+import TextArea from '../../../components/TexTArea';
+import { ReuseTheme } from '../../../types/types';
+import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
+import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles';
+
 
 const WriteReview = () => {
   const [rater, setRater] = useState<any>(1.0);
 
+  const {reuseTheme} =  useUserPreferredTheme();
+  const generalstyles = dynamicGeneralStyles(reuseTheme);
+  const styles = writeReviewStyles(reuseTheme);
+
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor:reuseTheme.colors.preference.primaryBackground }}>
       <ScrollView>
         {/* bar */}
         <View style={[generalstyles.centerContent, { marginHorizontal: 10 }]}>
           <View style={{ marginLeft: 150 }}>
             <Text
               style={{
-                color: theme.colors.white,
+                color:reuseTheme.colors.preference.primaryText,
                 fontSize: 15,
                 fontWeight: 'bold',
               }}
@@ -33,7 +40,7 @@ const WriteReview = () => {
               minimumValue={0}
               maximumValue={5}
               step={0.2}
-              thumbTintColor={theme.colors.buttonColor}
+              thumbTintColor={reuseTheme.colors.preference.primaryForeground}
               containerStyle={{
                 marginHorizontal: 10,
                 borderRadius: 10,
@@ -41,10 +48,10 @@ const WriteReview = () => {
               trackStyle={{
                 height: 25,
                 borderRadius: 20,
-                backgroundColor: theme.colors.transparent,
+                backgroundColor:reuseTheme.colors.preference.transparent,
               }}
-              minimumTrackTintColor={theme.colors.buttonColor}
-              maximumTrackTintColor={theme.colors.buttonColor}
+              minimumTrackTintColor={reuseTheme.colors.preference.primaryForeground}
+              maximumTrackTintColor={reuseTheme.colors.preference.primaryForeground}
               thumbStyle={{
                 width: 30,
                 height: 25,
@@ -53,7 +60,7 @@ const WriteReview = () => {
                 <View style={{ width: 30, height: 25, borderRadius: 20 }}>
                   <Text
                     style={{
-                      color: theme.colors.white,
+                      color:reuseTheme.colors.preference.primaryText,
                       fontSize: 15,
                       fontWeight: 'bold',
                       textAlign: 'center',
@@ -83,8 +90,8 @@ const WriteReview = () => {
               marginVertical: 20,
             }}
             //  loading={true}
-            buttonColor={theme.colors.buttonColor}
-            textColor={theme.colors.primary}
+            buttonColor={reuseTheme.colors.preference.primaryForeground}
+            textColor={reuseTheme.colors.preference.primaryBackground}
             onPress={() => console.log('Pressed')}
           >
             Send
@@ -98,11 +105,11 @@ const WriteReview = () => {
 
 export default WriteReview;
 
-const styles = StyleSheet.create({
+const writeReviewStyles = (theme:ReuseTheme)=> StyleSheet.create({
   sliderStyles: {
     alignItems: 'stretch',
     justifyContent: 'center',
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.preference.primaryBackground,
     width: '100%',
     height: 50,
     borderRadius: 10,

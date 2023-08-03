@@ -1,24 +1,31 @@
 
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreeen from '../../screens/HomeScreens/HomeScreeen';
-import { APP_NAME } from '../../constants/constants';
-import { theme } from '../../theme/theme';
-import AppBar from '../../components/AppBars/AppBar';
-import AllDonaters from '../../screens/HomeScreens/AllDonaters';
-import SearchAppBar from '../../components/AppBars/SearchBar';
-import DonaterDetails from '../../screens/HomeScreens/DonaterDetails';
-import ReviewStack from '../../screens/HomeScreens/ReviewStack/ReviewStack';
+
+
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import WriteReview from '../../screens/HomeScreens/ReviewStack/WriteReview';
-import ProductDetails from '../../screens/HomeScreens/ProductDetails';
+import HomeScreeen from '../../../screens/HomeScreens/HomeScreeen';
+import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
+import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles';
+import AppBar from '../../../components/AppBars/AppBar';
+import { APP_NAME } from '../../../utils/constants/constants';
+import AllDonaters from '../../../screens/HomeScreens/AllDonaters';
+import SearchAppBar from '../../../components/AppBars/SearchBar';
+import DonaterDetails from '../../../screens/HomeScreens/DonaterDetails';
+import ReviewStack from '../../../screens/HomeScreens/ReviewStack/ReviewStack';
+import WriteReview from '../../../screens/HomeScreens/ReviewStack/WriteReview';
+import ProductDetails from '../../../screens/HomeScreens/ProductDetails';
+
 
 
 
 const Stack = createNativeStackNavigator();
 
 function HomeStack() {
+
+  const {reuseTheme} =  useUserPreferredTheme();
+  const generalstyles = dynamicGeneralStyles(reuseTheme);
 
   const navigation = useNavigation<any>();
 
@@ -41,7 +48,7 @@ function HomeStack() {
               }}
               titleStyle={{
                 alignSelf: 'center',
-                color: `${theme.colors.textColor}`,
+                color: `${reuseTheme.colors.preference.primaryText}`,
               }}
             />
           ),
@@ -64,10 +71,10 @@ function HomeStack() {
                 marginBottom: 10,
                 marginLeft: -8,
                 marginRight: 25,
-                backgroundColor: theme.colors.darkBlack,
+                backgroundColor: reuseTheme.colors.preference.primaryForeground,
                 height: 50,
-                color: `${theme.colors.white}`,
-                width: theme.dimensions.width - 80,
+                color: `${reuseTheme.colors.preference.primaryText}`,
+                width: "90%",
               }}
             />
           ),
@@ -88,20 +95,20 @@ function HomeStack() {
         options={{
           title: 'Reviews',
           headerStyle: {
-            backgroundColor: theme.colors.primary,
+            backgroundColor: reuseTheme.colors.preference.primaryBackground,
           },
           headerTitleStyle: {
             fontSize: 30,
           },
-          headerTintColor: theme.colors.white,
+          headerTintColor: reuseTheme.colors.preference.primaryText,
           headerTitleAlign: 'center',
           headerLeft: () => (
             <IconButton
               icon="chevron-left"
-              iconColor={theme.colors.white}
+              iconColor={reuseTheme.colors.preference.primaryText}
               size={28}
               onPress={() => navigation.goBack()}
-              containerColor={theme.colors.arraowBackGroundColor}
+              containerColor={reuseTheme.colors.preference.primaryForeground}
             />
           ),
         }}
@@ -114,20 +121,20 @@ function HomeStack() {
         options={{
           title: 'Write a Review',
           headerStyle: {
-            backgroundColor: theme.colors.primary,
+            backgroundColor: reuseTheme.colors.preference.primaryBackground,
           },
           headerTitleStyle: {
             fontSize: 25,
           },
-          headerTintColor: theme.colors.white,
+          headerTintColor: reuseTheme.colors.preference.primaryText,
           headerTitleAlign: 'center',
           headerLeft: () => (
             <IconButton
               icon="chevron-left"
-              iconColor={theme.colors.white}
+              iconColor={reuseTheme.colors.preference.primaryText}
               size={28}
               onPress={() => navigation.goBack()}
-              containerColor={theme.colors.arraowBackGroundColor}
+              containerColor={reuseTheme.colors.preference.primaryForeground}
             />
           ),
         }}
