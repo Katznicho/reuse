@@ -4,7 +4,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from './src/redux/store/dev';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppContent from './src/AppContext';
-import SwiperScreen from './src/screens/onboarding/SwiperScreen';
+
 
 const App = () => {
 
@@ -12,8 +12,7 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-           {/* <AppContent/> */}
-           <SwiperScreen/>
+           <AppContent/>
         </PersistGate>
       </Provider>
     </GestureHandlerRootView>

@@ -72,3 +72,15 @@ export interface ReuseTheme {
       borderRadius: number;
     };
   }
+
+  export interface commentInterface {
+    imageURL: string;
+    time: string;
+    comment: string;
+    rating: number;
+  }
+
+  export interface TabInterface {
+    name: string;
+    screen: string;
+  }

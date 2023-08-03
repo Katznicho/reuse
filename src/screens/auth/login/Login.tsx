@@ -7,9 +7,7 @@ import {
   View,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/core'
-import appleAuth, {
-  AppleButton,
-} from '@invertase/react-native-apple-authentication'
+
 import dynamicStyles from './styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
@@ -20,7 +18,9 @@ import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGenera
 
 
 const Login = () => {
+
   const navigation = useNavigation<any>()
+
   const {reuseTheme} =  useUserPreferredTheme();
   const generalStyles = dynamicGeneralStyles(reuseTheme);
 
