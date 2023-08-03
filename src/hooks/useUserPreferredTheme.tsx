@@ -31,7 +31,7 @@ const icons = {
 const lightColors = {
   primaryBackground: '#ffffff',
   secondaryBackground: '#ffffff',
-  primaryForeground: '#6546d7',
+  primaryForeground: '#24BF65',
   secondaryForeground: '#8442bd',
   foregroundContrast: 'white',
   primaryText: '#151723',
@@ -42,12 +42,13 @@ const lightColors = {
   grey6: '#d6d6d6',
   grey9: '#939393',
   red: '#ea0606',
+  transparent: '#FFFFFF78',
 }
 
 const darkColors = {
   primaryBackground: '#121212',
   secondaryBackground: '#000000',
-  primaryForeground: '#6546d7',
+  primaryForeground: '#24BF65',
   secondaryForeground: '#8442bd',
   foregroundContrast: 'white',
   primaryText: '#ffffff',
@@ -58,6 +59,7 @@ const darkColors = {
   grey6: '#f5f5f5',
   grey9: '#eaeaea',
   red: '#ea0606',
+  transparent: '#FFFFFF78',
 }
 
 

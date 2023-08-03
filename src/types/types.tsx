@@ -13,6 +13,7 @@ export  interface Colors {
     grey6: string;
     grey9: string;
     red: string;
+    transparent: string;
   }
   
   // Define types for spaces
