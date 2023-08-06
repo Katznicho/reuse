@@ -16,11 +16,14 @@ import { ProfilePictureSelector } from '../../../components/ProfilePictureSelect
 import { ActivityIndicator } from '../../../components/ActivityIndicator'
 import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles'
 import { SignupField } from '../../../types/types'
+import { useFirebase } from '../../../hooks/useFirebase'
+import { showMessage } from 'react-native-flash-message'
 
 
 const SignupScreen = ({ navigation }: any) => {
 
   const { reuseTheme } = useUserPreferredTheme();
+  const {register} = useFirebase();
 
   const styles = dynamicStyles(reuseTheme)
   const generalStyles = dynamicGeneralStyles(reuseTheme);
@@ -119,7 +122,33 @@ const SignupScreen = ({ navigation }: any) => {
     if (emptyFieldError) {
       return;
     }
-
+    setLoading(true)
+    Keyboard.dismiss()
+     
+     try {
+       await register(trimmedFields.email, trimmedFields.password, trimmedFields.username, trimmedFields.firstName, trimmedFields.lastName);
+        setLoading(false);
+        showMessage({
+          message: "Success",
+          description: "Your almost there! Please Finish your profile",
+          type: "success",
+          autoHide:true,
+          duration:3000,
+          icon: "success"
+        }) 
+     }
+      catch (error) {
+        // console.log(error);
+        setLoading(false);
+        showMessage({
+          message: "Error",
+          description:"An error occured while creating your account",
+          type: "danger",
+          autoHide:true,
+          duration:3000,
+          icon: "danger"
+        })
+      }
 
       
 
@@ -148,9 +177,9 @@ const SignupScreen = ({ navigation }: any) => {
         autoCapitalize={field.autoCapitalize}
       />
         {/* Display error messages */}
-        {field.key === 'email' && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-        {field.key === 'password' && errors.passwordMatch && <Text style={styles.errorText}>{errors.passwordMatch}</Text>}
-        {field.key === 'username' && errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+        {field.key === 'email' && errors.email && <Text style={generalStyles.errorText}>{errors.email}</Text>}
+        {field.key === 'password' && errors.passwordMatch && <Text style={generalStyles.errorText}>{errors.passwordMatch}</Text>}
+        {field.key === 'username' && errors.username && <Text style={generalStyles.errorText}>{errors.username}</Text>}
         {errors[field.key] && <Text style={styles.errorText}>{errors[field.key]}</Text>}
       </>
 

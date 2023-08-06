@@ -28,7 +28,10 @@ import Octicons from 'react-native-vector-icons/Octicons';
   
     //set profile details to the default value
     useEffect(() => {
-      
+      setUserProfile((prev:any) => {
+        return {...prev, reuserType:APP_USERS.DONOR}
+      }
+      )
   
     }, [])
     
@@ -67,6 +70,10 @@ import Octicons from 'react-native-vector-icons/Octicons';
               onPress={() => {
 
                   setAppUserType(APP_USERS.DONOR);
+                  setUserProfile((prev:any) => {
+                    return {...prev, reuserType:APP_USERS.DONOR}
+                  }
+                  )
                 
   
               }
@@ -110,6 +117,10 @@ import Octicons from 'react-native-vector-icons/Octicons';
               ]}
               onPress={() => {
                     setAppUserType(APP_USERS.RESELLER);
+                    setUserProfile((prev:any) => {
+                      return {...prev, reuserType:APP_USERS.RESELLER}
+                    }
+                    )
               }}
             >
               <MaterialIcons
@@ -152,6 +163,10 @@ import Octicons from 'react-native-vector-icons/Octicons';
               ]}
               onPress={() => {
                     setAppUserType(APP_USERS.ALL);
+                    setUserProfile((prev:any) => {
+                      return {...prev, reuserType:APP_USERS.ALL}
+                    }
+                    )
               }}
             >
               <Octicons

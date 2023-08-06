@@ -1,9 +1,10 @@
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
-import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
+import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme'
 import SwiperText from '../../components/SwiperText/SwiperText';
 import { ScrollView } from 'react-native-gesture-handler';
+import { ReuseTheme } from '../../types/types';
+import { SwiperScreenProps } from './SwiperScreen';
 
 const interests = [
     {
@@ -67,15 +68,40 @@ const interests = [
     }
 ]
 
-const Interests = () => {
+const Interests = ({setUserProfile}:SwiperScreenProps) => {
     const { reuseTheme } = useUserPreferredTheme();
-    const generalStyles = dynamicGeneralStyles(reuseTheme);
+    const styles = interestStyles(reuseTheme);
     const [selectedInterests, setSelectedInterests] = React.useState<any[]>([])
 
     const renderItem = ({ item }:any) => {
+        //check if the item is selected to change the background color
+         let backgroundColor = reuseTheme.colors.preference.transparent;
+         //let color = reuseTheme.colors.preference.primaryForeground;
+        if (selectedInterests.includes(item.name)) {
+            backgroundColor = reuseTheme.colors.preference.primaryForeground;
+            //color = reuseTheme.colors.preference.primaryBackground;
+        }
+
         return (
-          <TouchableOpacity style={styles.itemContainer}>
-            <View style={styles.item}>
+          <TouchableOpacity style={[styles.itemContainer]}
+            onPress={() => {
+                if (selectedInterests.includes(item.name)) {
+                    setSelectedInterests((prev) => {
+                        return prev.filter((interest) => interest !== item.name)
+                    })
+                } else {
+                    setSelectedInterests((prev) => {
+                        return [...prev, item.name]
+                    })
+                }
+                setUserProfile((prev:any) => {
+                    return {...prev, interests:selectedInterests}
+                    }
+                    )
+            }}
+
+          >
+            <View style={[styles.item ,{backgroundColor:backgroundColor}]}>
               <Text style={styles.itemText}>{item.name}</Text>
             </View>
           </TouchableOpacity>
@@ -103,7 +129,7 @@ const Interests = () => {
                     data={interests}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    numColumns={3}
+                    numColumns={4}
                     contentContainerStyle={{ paddingHorizontal: 5, marginHorizontal: 20 }}
                 />
                 {/* 3 items per row */}
@@ -114,29 +140,26 @@ const Interests = () => {
 
 export default Interests
 
-const styles = StyleSheet.create({
+const  interestStyles  =  (theme:ReuseTheme) => StyleSheet.create({
     itemContainer: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 10,
+    //   padding: 10,
+    margin:3
     },
     item: {
-      backgroundColor: 'white',
       borderRadius: 8,
-      padding: 16,
+      paddingVertical: 16,
       elevation: 4, // This adds the raised effect for Android
-      shadowColor: 'rgba(0,0,0,0.2)', // This adds the raised effect for iOS
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 1,
-      shadowRadius: 4,
+      
+      height:70,
+      width:70,
+      marginHorizontal:10,
     },
     itemText: {
       textAlign: 'center',
-      fontSize: 16,
-      fontWeight: 'bold',
+      fontSize: 12,
+      color:theme.colors.preference.primaryText
     },
   });

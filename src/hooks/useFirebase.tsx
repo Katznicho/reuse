@@ -1,6 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
+import { loginUser, updateUserProfile } from '../redux/store/slices/UserSlice';
 
 const USER_COLLECTION = "users";
 
@@ -31,26 +32,41 @@ export const useFirebase = () => {
                 lastName: lastName,
             });
 
-             dispatch()
+              dispatch(loginUser({
+                  UID: userUid,
+                  fname:firstName,
+                  lname: lastName,
+                  email: email,
+                  username: username,
+              }))
 
-            // You can dispatch an action here to handle the user state in Redux if needed
-            // For example:
-            // dispatch({ type: 'USER_REGISTER_SUCCESS', user: { email, username, firstName, lastName } });
+              return userCredentials.user;
 
         } catch (error) {
-            console.log(error);
+            return null;
         }
     }
 
     const login = async (email: string, password: string) => {
         try {
-            await auth().signInWithEmailAndPassword(email, password);
-            // Handle successful login (e.g., dispatch an action to update Redux state)
-            // For example:
-            // dispatch({ type: 'USER_LOGIN_SUCCESS', user: { email } });
+            let userCredentails =  await auth().signInWithEmailAndPassword(email, password);
+            const userUid = userCredentails.user.uid;
+            const userDoc = await firestore().collection(USER_COLLECTION).doc(userUid).get();
+            if (userDoc.exists) {
+                const user = userDoc.data();
+                dispatch(loginUser({
+                    UID: userUid,
+                    fname:user?.firstName,
+                    lname: user?.lastName,
+                    email: user?.email,
+                    username: user?.username,
+                }))
+            }
+            return userCredentails.user;
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
+            return null;
         }
     }
 
@@ -82,20 +98,25 @@ export const useFirebase = () => {
         }
     }
 
-    const updateUserCredentials = async (userId: string, reuser: string, gender:string, preferences: string[]) => {
+    const updateUserProfilePreferences = async (userId: string, reuser: string, gender:string, preferences: string[]):Promise<boolean | null> => {
         try {
             await firestore().collection(USER_COLLECTION).doc(userId).update({
                 gender: gender,
                 reuser: reuser,
                 preferences: preferences,
             });
+             dispatch(updateUserProfile({
+                gender, 
+                preferences,
+                reuser
+             }))
 
-            // You can dispatch an action here to update Redux state or handle the updated user data
-            // For example:
-            // dispatch({ type: 'UPDATE_USER_SUCCESS', user: { gender, age, preferences } });
+             return true;
+
 
         } catch (error) {
-            console.log("Error updating user credentials:", error);
+            // console.log("Error updating user credentials:", error);
+            return null;
         }
     };
 
@@ -107,7 +128,7 @@ export const useFirebase = () => {
         forgotPassword,
         getUserDetails,
         getCurrentUser,
-        updateUserCredentials
+        updateUserProfilePreferences
         // Export other auth functions here if needed
     };
 }

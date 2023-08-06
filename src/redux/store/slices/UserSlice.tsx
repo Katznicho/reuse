@@ -5,7 +5,7 @@ export interface UserState {
   isLoggedIn: boolean;
   appIntro: boolean;
   guestUser: boolean;
-  user: User | null;
+  user: User
   userProfile:UserProfile|null
   
 }
@@ -29,7 +29,13 @@ interface UserProfile{
 const initialState: UserState = {
   isLoggedIn: false,
   appIntro: false,
-  user: null,
+  user: {
+    UID: '',
+    fname: '',
+    lname: '',
+    email: '',
+    username: '',
+  },
   guestUser: true,
   userProfile: null
 };

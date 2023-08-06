@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppContent from './src/AppContext';
 import { PaperProvider } from 'react-native-paper';
 import { useUserPreferredTheme } from './src/hooks/useUserPreferredTheme';
+import FlashMessage from 'react-native-flash-message';
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
         <PersistGate loading={null} persistor={persistor}>
           <PaperProvider >
            <AppContent/>
+           <FlashMessage position="top" animated />
           </PaperProvider>
         </PersistGate>
       </Provider>

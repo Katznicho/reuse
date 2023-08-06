@@ -10,29 +10,32 @@ import { dynamicBaseStyles } from './baseStyles';
 import GenderScreen from './GenderScreen';
 import AppUserType from './AppUserType';
 import Interests from './Interests';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setAppIntro } from '../../redux/store/slices/UserSlice';
+import { useFirebase } from '../../hooks/useFirebase';
+import { RootState } from '../../redux/store/dev';
+import { showMessage } from 'react-native-flash-message';
 
 
 
 
 export interface UserProfile {
-  gender?: string | null
-  reuserType?: string | number | null
+  gender: string 
+  reuserType: string 
+  interests: string[] 
 
 }
 export interface SwiperScreenProps {
   setUserProfile: Dispatch<SetStateAction<UserProfile>>;
 }
-export interface ActivityLevelScreenProps {
-  setUserProfile: Dispatch<SetStateAction<UserProfile>>;
-}
+
 
 
 
 const SwiperScreen = () => {
 
-
+  const {updateUserProfilePreferences} = useFirebase();
+  const {user} =  useSelector((state:RootState) => state.user);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [finish, setFinish] = useState<string>('Finish');
   const dispatch = useDispatch();
@@ -43,8 +46,9 @@ const SwiperScreen = () => {
 
 
   const [profileDetails, setProfileDetails] = useState<UserProfile>({
-     gender: null,
-    reuserType: null,
+     gender:"",
+    reuserType: "",
+    interests: [],
 
   })
 
@@ -61,7 +65,7 @@ const SwiperScreen = () => {
     },
     {
       key: 3,
-      page: <Interests/>,
+      page: <Interests  setUserProfile={setProfileDetails}/>,
     },
     
 
@@ -70,6 +74,10 @@ const SwiperScreen = () => {
 
 
   const renderSlide = ({ item, index }: any) => {
+
+
+
+
     // if (index === slides.length - 1) {
     //   return (
     //     <ScrollView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }} keyboardShouldPersistTaps="always">
@@ -108,11 +116,19 @@ const SwiperScreen = () => {
     try {
       setFinish("loading...")
       setDisabled(true)
- 
+      //userId: string, reuser: string, gender:string, preferences: string[]
+      // updateUserProfilePreferences()
+      const success = await updateUserProfilePreferences(user?.UID, profileDetails.gender, profileDetails.reuserType, profileDetails.interests);
+
       dispatch(setAppIntro());
-      
-
-
+      showMessage({
+        message: "Success",
+        description: "Your profile has been updated",
+        type: "success",
+        autoHide:true,
+        duration:3000,
+        icon: "success"
+      })
     }
     catch (error: any) {
  
