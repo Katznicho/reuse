@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
-import { loginUser, updateUserProfile } from '../redux/store/slices/UserSlice';
+import { loginUser, logoutUser, registerUser, setAppIntro, updateUserProfile } from '../redux/store/slices/UserSlice';
 
 const USER_COLLECTION = "users";
 
@@ -11,9 +11,30 @@ export const useFirebase = () => {
      // Function to get the current logged-in user
      const getCurrentUser = () => {
         return new Promise((resolve, reject) => {
-            const unsubscribe = auth().onAuthStateChanged((user) => {
-                unsubscribe();
-                resolve(user);
+            const unsubscribe = auth().onAuthStateChanged(async (user) => {
+                if (!user) {
+                    unsubscribe();
+                    resolve(null);
+                }
+                else{
+                    let userUid= user.uid;
+                    const userDoc = await firestore().collection(USER_COLLECTION).doc(userUid).get();
+                    if (userDoc.exists) {
+                        const user = userDoc.data();
+                        dispatch(setAppIntro());
+                        dispatch(loginUser({
+                            UID: userUid,
+                            fname:user?.firstName,
+                            lname: user?.lastName,
+                            email: user?.email,
+                            username: user?.username,
+                        }))
+
+                    }
+                    unsubscribe();
+                    resolve(user);
+                }
+
             });
         });
     };
@@ -31,14 +52,16 @@ export const useFirebase = () => {
                 firstName: firstName,
                 lastName: lastName,
             });
+             
 
-              dispatch(loginUser({
+              dispatch(registerUser({
                   UID: userUid,
                   fname:firstName,
                   lname: lastName,
                   email: email,
                   username: username,
               }))
+
 
               return userCredentials.user;
 
@@ -54,6 +77,7 @@ export const useFirebase = () => {
             const userDoc = await firestore().collection(USER_COLLECTION).doc(userUid).get();
             if (userDoc.exists) {
                 const user = userDoc.data();
+                dispatch(setAppIntro());
                 dispatch(loginUser({
                     UID: userUid,
                     fname:user?.firstName,
@@ -61,6 +85,7 @@ export const useFirebase = () => {
                     email: user?.email,
                     username: user?.username,
                 }))
+
             }
             return userCredentails.user;
 
@@ -69,6 +94,15 @@ export const useFirebase = () => {
             return null;
         }
     }
+
+     const logout = async()=>{
+         try {
+             await auth().signOut();
+             dispatch(logoutUser());
+         } catch (error) {
+
+         }
+     }
 
     const forgotPassword = async (email: string) => {
         try {
@@ -128,7 +162,9 @@ export const useFirebase = () => {
         forgotPassword,
         getUserDetails,
         getCurrentUser,
-        updateUserProfilePreferences
+        updateUserProfilePreferences,
+        logout
+
         // Export other auth functions here if needed
     };
 }

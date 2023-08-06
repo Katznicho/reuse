@@ -37,46 +37,6 @@ export default function BaseNavigation() {
   const { isLoggedIn, guestUser, appIntro } = useSelector((state: RootState) => state.user);
   React.useEffect(() => { }, [guestUser, isLoggedIn])
 
-  const dispatch = useDispatch<any>();
-
-
-  const handleSignOut = async () => {
-    try {
-
-      // Handle any additional actions after the user is signed out
-
-    } catch (error) {
-      // Handle any errors that may occur during the signout process
-    }
-  };
-
-
-
-
-
-
-
-
-
-  const onSignOut = () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-
-        {
-          text: 'OK',
-          onPress: () => handleSignOut(),
-        },
-      ],
-      { cancelable: false },
-    );
-  };
 
 
   return appIntro ? (<Drawer.Navigator

@@ -17,12 +17,15 @@ import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../../../redux/store/slices/UserSlice';
+import { useFirebase } from '../../../hooks/useFirebase';
+import { showMessage } from 'react-native-flash-message';
 
 
 const Login = () => {
 
   const navigation = useNavigation<any>()
-  const dispatch = useDispatch()
+  
+  const {login} = useFirebase()
 
   const {reuseTheme} =  useUserPreferredTheme();
   const generalStyles = dynamicGeneralStyles(reuseTheme);
@@ -30,20 +33,85 @@ const Login = () => {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+   const [errors , setErrors] = useState({email:"", password:""});
   const styles = dynamicStyles(reuseTheme)
 
-  const onPressLogin = () => {
-    //setLoading(true)
-    dispatch(loginUser());
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const onPressLogin = async() => {
+    if(email ==""){
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        email:"Email is required"
+      }));
+      return;
+    }
+    else{
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        email:""
+      }));
+    }
+    if (!validateEmail(email)) {
+
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        email: 'Invalid email format',
+      }));
+      return;
+      
+    } else {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        email: '',
+      }));
+    }
+
+    if(password ==""){
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        password:"Passsword is required"
+      }));
+      return;
+    }
+    else{
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        password:""
+      }));
+    }
+    
+    try {
+        setLoading(true)
+        await login(email, password);
+        showMessage({
+          message:"Success",
+          type:"success",
+          autoHide:true,
+          duration:3000,
+          description:"Logged in successfully"
+        })
+
+      
+    } catch (error) {
+       console.log("Error")
+       console.log(error)
+    }
+
+
+    
     
   }
 
   const onFBButtonPress = () => {
-       dispatch(loginUser());
+       //dispatch(loginUser());
   }
 
   const onGoogleButtonPress = () => {
-    dispatch(loginUser());
+    //dispatch(loginUser());
   }
 
   const onAppleButtonPress = async () => {
@@ -108,6 +176,10 @@ const Login = () => {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
+         <View style={generalStyles.centerContent}>
+          {errors.email && <Text style={generalStyles.errorText}>{errors.email}</Text>}
+          </View>
+
         <TextInput
           style={styles.InputContainer}
           placeholderTextColor="#aaaaaa"
@@ -118,6 +190,9 @@ const Login = () => {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
+          <View style={generalStyles.centerContent}>
+          {errors.password && <Text style={generalStyles.errorText}>{errors.password}</Text>}
+          </View>
         
           <View style={styles.forgotPasswordContainer}>
             <TouchableOpacity onPress={() => onForgotPassword()}>

@@ -118,7 +118,7 @@ const SwiperScreen = () => {
       setDisabled(true)
       //userId: string, reuser: string, gender:string, preferences: string[]
       // updateUserProfilePreferences()
-      const success = await updateUserProfilePreferences(user?.UID, profileDetails.gender, profileDetails.reuserType, profileDetails.interests);
+      const success = await updateUserProfilePreferences(user?.UID, profileDetails.reuserType, profileDetails.gender, profileDetails.interests);
 
       dispatch(setAppIntro());
       showMessage({

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, SafeAreaView, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { Button } from 'react-native-paper';
 import { Slider } from '@miblanchard/react-native-slider';
-import TextArea from '../../../components/TexTArea';
+import TextArea from '../../../components/TextArea';
 import { ReuseTheme } from '../../../types/types';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles';

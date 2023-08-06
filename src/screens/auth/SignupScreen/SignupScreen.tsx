@@ -54,9 +54,7 @@ const SignupScreen = ({ navigation }: any) => {
   const onRegister = async () => {
 
      const trimmedFields = trimFields(inputFields)
-     console.log("============================");
-     console.log(trimmedFields);
-     console.log("============================");
+    
      // Validate email format
     if (!validateEmail(trimmedFields.email)) {
 
@@ -165,7 +163,7 @@ const SignupScreen = ({ navigation }: any) => {
     return (
       <>
               <TextInput
-        key={index?.toString()}
+        key={index}
         style={styles.InputContainer}
         placeholder={field.placeholder}
         placeholderTextColor="#aaaaaa"
@@ -177,10 +175,19 @@ const SignupScreen = ({ navigation }: any) => {
         autoCapitalize={field.autoCapitalize}
       />
         {/* Display error messages */}
-        {field.key === 'email' && errors.email && <Text style={generalStyles.errorText}>{errors.email}</Text>}
-        {field.key === 'password' && errors.passwordMatch && <Text style={generalStyles.errorText}>{errors.passwordMatch}</Text>}
-        {field.key === 'username' && errors.username && <Text style={generalStyles.errorText}>{errors.username}</Text>}
-        {errors[field.key] && <Text style={styles.errorText}>{errors[field.key]}</Text>}
+        {field.key === 'email' && errors.email && <View style={generalStyles.centerContent}>
+        <Text style={generalStyles.errorText}>{errors.email}</Text>
+        </View>  
+        }
+        {field.key === 'password' && errors.passwordMatch &&  <View  style={generalStyles.centerContent}>
+        <Text style={generalStyles.errorText}>{errors.passwordMatch}</Text>
+        </View>  }
+        {field.key === 'username' && errors.username && <View style={generalStyles.centerContent}>
+        <Text style={generalStyles.errorText}>{errors.username}</Text>
+        </View>  }
+        {errors[field.key] && <View style={generalStyles.centerContent}>
+          <Text style={generalStyles.errorText}>{errors[field.key]}</Text>
+           </View>}
       </>
 
     )
@@ -190,7 +197,11 @@ const SignupScreen = ({ navigation }: any) => {
     return (
       <>
         {config.signupFields.map(renderInputField)}
-        <TouchableOpacity style={styles.signupContainer} onPress={onRegister}>
+        <TouchableOpacity 
+         key={Math.random()*1000}
+        style={styles.signupContainer} 
+        onPress={onRegister}
+        >
           <Text style={styles.signupText}>{'Sign Up'}</Text>
         </TouchableOpacity>
       </>

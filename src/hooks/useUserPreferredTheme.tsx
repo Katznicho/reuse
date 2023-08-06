@@ -103,6 +103,7 @@ const reuseTheme:ReuseTheme = {
   button: {
     borderRadius: 8,
   },
+  roundness: 27,
 }
 
 

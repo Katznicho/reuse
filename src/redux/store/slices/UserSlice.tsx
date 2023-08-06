@@ -55,17 +55,30 @@ export const userSlice = createSlice({
 
     logoutUser: state => {
       state.isLoggedIn = false;
-      state.user = null;
+      state.user =  {
+        UID: '',
+        fname: '',
+        lname: '',
+        email: '',
+        username: '',
+      }
     },
     setAppIntro: state => {
       state.appIntro = true;
     },
     loginUser: (state , action:PayloadAction<User>) => {
       state.isLoggedIn = true;
+      state.appIntro = true;
+      state.user = action.payload;
+      state.guestUser = false;
+    },
+    registerUser: (state , action:PayloadAction<User>) => {
+      state.isLoggedIn = true;
       state.appIntro = false;
       state.user = action.payload;
       state.guestUser = false;
     },
+    
    
     guestLogin: state => {
       state.guestUser = true;
@@ -90,7 +103,8 @@ export const {
   loginUser,
   guestLogin,
   updateUserProfile,
-  updateProfilePicture
+  updateProfilePicture,
+  registerUser
 } = userSlice.actions;
 
 export default userSlice.reducer;

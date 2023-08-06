@@ -71,6 +71,7 @@ export interface ReuseTheme {
     button: {
       borderRadius: number;
     };
+    roundness: number;
   }
 
   export interface commentInterface {

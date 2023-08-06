@@ -15,10 +15,12 @@ import { drawerContentStyles } from './drawercontentstyles';
 import { RootState } from '../../redux/store/dev';
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import Verification from '../Verification';
+import { useFirebase } from '../../hooks/useFirebase';
 
 const DrawerContentComponent = ({ props }: any) => {
 
   const dispatch = useDispatch<any>();
+   const {logout} = useFirebase();
 
   const { isLoggedIn, guestUser, user } = useSelector((state: RootState) => state.user);
 
@@ -30,10 +32,9 @@ const DrawerContentComponent = ({ props }: any) => {
     try {
 
       // Handle any additional actions after the user is signed out
+       await logout();
 
     } catch (error) {
-      console.log(JSON.stringify(error))
-      // Handle any errors that may occur during the signout process
     }
   };
 
@@ -96,7 +97,7 @@ const DrawerContentComponent = ({ props }: any) => {
               size={18}
             />
 
-            <Caption style={styles.caption}>{`Katende Nicholas James `}</Caption>
+            <Caption style={styles.caption}>{user.username}</Caption>
           </View>
         </View>
         {/*some info */}
