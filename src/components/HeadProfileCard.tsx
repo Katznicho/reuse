@@ -18,6 +18,7 @@ const HeadProfileCard = () => {
     const generalstyles = dynamicGeneralStyles(reuseTheme);
     const styles = cardStyles(reuseTheme);
 
+
   const { user, isLoggedIn } = useSelector((state: RootState) => state.user);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [imagePath, setImagePath] = useState<any | null>(null);

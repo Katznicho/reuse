@@ -14,7 +14,7 @@ const Profile = () => {
   const {reuseTheme} =  useUserPreferredTheme();
   
 
-  const { isLoggedIn,  guestUser } = useSelector((state: RootState) => state.user);
+  const { isLoggedIn,  guestUser, user } = useSelector((state: RootState) => state.user);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -31,10 +31,7 @@ const Profile = () => {
       name: 'Settings',
       screen: 'Settings',
     },
-    {
-      name: 'Buy a Package',
-      screen: 'Packages',
-    },
+  
     {
       name: 'About Us',
       screen: 'AboutUs',
