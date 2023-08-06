@@ -10,6 +10,8 @@ import { dynamicBaseStyles } from './baseStyles';
 import GenderScreen from './GenderScreen';
 import AppUserType from './AppUserType';
 import Interests from './Interests';
+import { useDispatch } from 'react-redux';
+import { setAppIntro } from '../../redux/store/slices/UserSlice';
 
 
 
@@ -33,6 +35,7 @@ const SwiperScreen = () => {
 
   const [disabled, setDisabled] = useState<boolean>(false);
   const [finish, setFinish] = useState<string>('Finish');
+  const dispatch = useDispatch();
 
   const  {reuseTheme} =  useUserPreferredTheme();
   const generalStyles = dynamicGeneralStyles(reuseTheme);
@@ -106,7 +109,7 @@ const SwiperScreen = () => {
       setFinish("loading...")
       setDisabled(true)
  
-
+      dispatch(setAppIntro());
       
 
 

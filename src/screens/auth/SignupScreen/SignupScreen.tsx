@@ -15,6 +15,7 @@ import { config } from '../../../config/config'
 import { ProfilePictureSelector } from '../../../components/ProfilePictureSelector/ProfilePictureSelector'
 import { ActivityIndicator } from '../../../components/ActivityIndicator'
 import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles'
+import { SignupField } from '../../../types/types'
 
 
 const SignupScreen = ({ navigation }: any) => {
@@ -23,34 +24,104 @@ const SignupScreen = ({ navigation }: any) => {
 
   const styles = dynamicStyles(reuseTheme)
   const generalStyles = dynamicGeneralStyles(reuseTheme);
+  const [errors, setErrors] = useState({ email: '', passwordMatch: '', username: '', password: '', firstName: '', lastName: ''})
 
   const [inputFields, setInputFields] = useState({})
 
-  const [profilePictureFile, setProfilePictureFile] = useState(null)
+
   const [loading, setLoading] = useState(false)
 
-  const validateEmail = (text: any) => {
-    let reg =
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    return reg.test(String(text).toLowerCase()) ? true : false
-  }
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
-  const validatePassword = (text: any) => {
-    let reg = /^(?=.*[A-Z])(?=.*[a-z])/
-    return reg.test(String(text)) ? true : false
-  }
+  
 
-  const trimFields = (fields: any) => {
+  const trimFields = (fields: { [x: string]: string }) => {
     var trimmedFields = {}
     Object.keys(fields).forEach(key => {
       if (fields[key]) {
-        //trimmedFields[key] = fields[key].trim()
+        trimmedFields[key] = fields[key].trim()
       }
     })
     return trimmedFields
   }
 
   const onRegister = async () => {
+
+     const trimmedFields = trimFields(inputFields)
+     console.log("============================");
+     console.log(trimmedFields);
+     console.log("============================");
+     // Validate email format
+    if (!validateEmail(trimmedFields.email)) {
+
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        email: 'Invalid email format',
+      }));
+      return;
+      
+    } else {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        email: '',
+      }));
+    }
+
+     // Validate password matching
+     if (trimmedFields.password !== trimmedFields.confirmPassword) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        passwordMatch: 'Passwords do not match',
+      }));
+      return;
+    } else {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        passwordMatch: '',
+      }));
+    }
+
+    const usernameRegex = /^@[\w]+$/;
+    if (!usernameRegex.test(trimmedFields.username)) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        username: 'Username should start with "@" followed by alphanumeric characters',
+      }));
+      return;
+    } else {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        username: '',
+      }));
+    }
+
+    // Check for empty fields
+    let emptyFieldError = false;
+    for (const key in trimmedFields) {
+      if (trimmedFields.hasOwnProperty(key)) {
+        if (trimmedFields[key] === '') {
+          setErrors(prevErrors => ({
+            ...prevErrors,
+            [key]: 'This field is required',
+          }));
+          emptyFieldError = true;
+        } else {
+          setErrors(prevErrors => ({
+            ...prevErrors,
+            [key]: '',
+          }));
+        }
+      }
+    }
+    if (emptyFieldError) {
+      return;
+    }
+
+
+      
 
   }
 
@@ -63,18 +134,26 @@ const SignupScreen = ({ navigation }: any) => {
 
   const renderInputField = (field: any, index: any) => {
     return (
-      <TextInput
+      <>
+              <TextInput
         key={index?.toString()}
         style={styles.InputContainer}
         placeholder={field.placeholder}
         placeholderTextColor="#aaaaaa"
         secureTextEntry={field.secureTextEntry}
         onChangeText={text => onChangeInputFields(text, field.key)}
-        //value={inputFields[field.key]}
+        value={inputFields[field.key]}
         keyboardType={field.type}
         underlineColorAndroid="transparent"
         autoCapitalize={field.autoCapitalize}
       />
+        {/* Display error messages */}
+        {field.key === 'email' && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        {field.key === 'password' && errors.passwordMatch && <Text style={styles.errorText}>{errors.passwordMatch}</Text>}
+        {field.key === 'username' && errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+        {errors[field.key] && <Text style={styles.errorText}>{errors[field.key]}</Text>}
+      </>
+
     )
   }
 
@@ -92,7 +171,7 @@ const SignupScreen = ({ navigation }: any) => {
   return (
     <View style={generalStyles.container}>
       <KeyboardAwareScrollView
-        style={{ flex: 1, width: '100%' }}
+        style={{ flex: 1, width: '100%' , paddingBottom: 50}}
         keyboardShouldPersistTaps="always">
         {/* login and register */}
         <View
@@ -133,7 +212,7 @@ const SignupScreen = ({ navigation }: any) => {
         {/* login and register */}
 
         <Text style={generalStyles.authTitle}>{'Create new account'}</Text>
-        <ProfilePictureSelector setProfilePictureFile={setProfilePictureFile} />
+        {/* <ProfilePictureSelector setProfilePictureFile={setProfilePictureFile} /> */}
         {renderSignupWithEmail()}
         {config.isSMSAuthEnabled && (
           <>

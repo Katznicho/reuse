@@ -41,7 +41,7 @@ const ScrollCardDetails = ({
                     resizeMode: "cover",
                     borderRadius: 20
                 }}
-                source={{ uri: item?.coverImage }}
+                source={{ uri: item?.imageUri }}
             />
             {/* image */}
             {/* names */}

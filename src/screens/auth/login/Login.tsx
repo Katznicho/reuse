@@ -15,11 +15,14 @@ import { ActivityIndicator } from '../../../components/ActivityIndicator';
 import IMGoogleSignInButton from '../../../components/IMGoogleSignInButton/IMGoogleSignInButton';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../../redux/store/slices/UserSlice';
 
 
 const Login = () => {
 
   const navigation = useNavigation<any>()
+  const dispatch = useDispatch()
 
   const {reuseTheme} =  useUserPreferredTheme();
   const generalStyles = dynamicGeneralStyles(reuseTheme);
@@ -30,16 +33,17 @@ const Login = () => {
   const styles = dynamicStyles(reuseTheme)
 
   const onPressLogin = () => {
-    setLoading(true)
+    //setLoading(true)
+    dispatch(loginUser());
     
   }
 
   const onFBButtonPress = () => {
-      
+       dispatch(loginUser());
   }
 
   const onGoogleButtonPress = () => {
-   
+    dispatch(loginUser());
   }
 
   const onAppleButtonPress = async () => {

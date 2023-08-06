@@ -43,7 +43,12 @@ export const dynamicGeneralStyles = (theme:ReuseTheme) => {
             alignSelf: 'stretch',
             textAlign: 'left',
             marginLeft: 30,
-          }
+          },
+          errorText: {
+            color: theme.colors.preference.red,
+            fontSize: 14,
+            marginBottom: 5,
+          },
 
     })
 

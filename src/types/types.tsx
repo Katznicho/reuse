@@ -84,3 +84,14 @@ export interface ReuseTheme {
     name: string;
     screen: string;
   }
+
+  export interface SignupField {
+    displayName: string;
+    type: 'ascii-capable' | 'default' | 'email-address'; // Define other types as needed
+    editable: boolean;
+    regex?: RegExp; // You can define a regex pattern here if required
+    key: string;
+    placeholder: string;
+    secureTextEntry?: boolean;
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'; // Define other options as needed
+  }

@@ -31,7 +31,29 @@ function HomeStack() {
 
   return (
 
-    <Stack.Navigator>
+    <Stack.Navigator
+      initialRouteName="HomeSCreen"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: reuseTheme.colors.preference.primaryBackground,
+        },
+        headerTitleStyle: {
+          fontSize: 30,
+        },
+        headerTintColor: reuseTheme.colors.preference.primaryText,
+        headerTitleAlign: 'center',
+        headerLeft: () => (
+          <IconButton
+            icon="menu"
+            iconColor={reuseTheme.colors.preference.primaryText}
+            size={28}
+            onPress={() => navigation.openDrawer()}
+            containerColor={reuseTheme.colors.preference.primaryForeground}
+          />
+        ),
+      }}
+      
+    >
 
       <Stack.Screen
         name="HomeSCreen"

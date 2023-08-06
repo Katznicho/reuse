@@ -7,6 +7,7 @@ import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import TextTypes from '../../components/TextType/TextTypes';
 import ScrollCard from '../../components/ScrollCard';
 import Donaters from '../../components/Donators';
+import Categories from '../../components/Categoris';
 
 
 
@@ -15,23 +16,9 @@ const HomeScreeen = () => {
   const {reuseTheme} =  useUserPreferredTheme();
   const generalstyles = dynamicGeneralStyles(reuseTheme);
 
-   const [products, setProducts] = useState<any[]>([]);
+   const [products, setProducts] = useState<any[]>(FAKE_PRODUCTS);
 
-  async function getProducts() {
-    try {
 
-      setProducts(FAKE_PRODUCTS);
-      return products;
-    } catch (err:any) {
-      console.error('Error fetching products', JSON.stringify(err.message));
-      return [];
-    }
-  }
-  
-
-  useEffect(()=>{
-    getProducts();
-  },[products])
 
   const [searchQuery, setSearchQuery] = useState('');
   return (
@@ -62,7 +49,7 @@ const HomeScreeen = () => {
       {/* search component */}
         {/* categories */}
         <TextTypes text="Your Favourites" />
-        {/* <Categories /> */}
+        <Categories />
         {/* categories */}
 
         {/* most receommended */}

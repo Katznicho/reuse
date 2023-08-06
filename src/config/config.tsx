@@ -86,5 +86,15 @@ export const config = {
         placeholder: 'Password',
         autoCapitalize: 'none',
       },
+      {
+        displayName: 'Confirm Password',
+        type: 'default',
+        secureTextEntry: true,
+        editable: true,
+        regex: regexForNames,
+        key: 'confirmPassword',
+        placeholder: 'Confirm Password',
+        autoCapitalize: 'none',
+      },
     ],
   }

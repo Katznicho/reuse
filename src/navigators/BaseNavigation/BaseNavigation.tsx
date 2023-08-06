@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, Button, Text, View } from 'react-native';
-import { createDrawerNavigator, DrawerItem } from '@react-navigation/drawer';
+import { createDrawerNavigator} from '@react-navigation/drawer';
 import BottomTabs from './BottomNavigator/BottomTabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -86,16 +86,23 @@ export default function BaseNavigation() {
       drawerStyle: {
         backgroundColor: reuseTheme.colors.preference.primaryBackground,
         width: 300,
+        
       },
       drawerLabelStyle: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: reuseTheme.colors.preference.primaryText,
+        
       },
       drawerItemStyle: {
         marginVertical: 0,
       },
+      drawerActiveBackgroundColor: reuseTheme.colors.preference.primaryForeground,
+      drawerActiveTintColor: reuseTheme.colors.preference.primaryText,
+      
 
     }}
+    
     drawerContent={props => <DrawerContentComponent {...props} />}>
 
     <Drawer.Screen

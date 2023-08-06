@@ -7,7 +7,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:'https://images.unsplash.com/file-1636585210491-f28ca34ea8ecimage?dpr=2&auto=format&fit=crop&w=416&q=60',
+      imageUri:'https://images.unsplash.com/file-1636585210491-f28ca34ea8ecimage?dpr=2&auto=format&fit=crop&w=416&q=60',
       rating:5
     },
     {
@@ -18,7 +18,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:'https://media.istockphoto.com/id/1425880214/photo/leather-mens-shoe-on-white-background.jpg?b=1&s=170667a&w=0&k=20&c=HsgDQAUh9FyNzEkJo4ZsfreVCVYpOdN5ax2oSZPqFV4=',
+      imageUri:'https://media.istockphoto.com/id/1425880214/photo/leather-mens-shoe-on-white-background.jpg?b=1&s=170667a&w=0&k=20&c=HsgDQAUh9FyNzEkJo4ZsfreVCVYpOdN5ax2oSZPqFV4=',
       rating:4
     
     },
@@ -30,7 +30,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:
+      imageUri:
         'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60',
       screen: 'FitnessTrainers',
       rating:2
@@ -43,7 +43,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:
+      imageUri:
         'https://images.unsplash.com/photo-1632935187086-49a9d8027292?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8ZnVybml0dXJlc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
       screen: 'FitnessTrainers',
       rating:3
@@ -60,7 +60,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:
+      imageUri:
         'https://media.istockphoto.com/id/1289416200/photo/athletic-woman-doing-the-full-body-cardio-workout.jpg?b=1&s=170667a&w=0&k=20&c=PgzzhwgGkvrqOTtTi79q3voWp83FOhhWE4XQCyJd7hQ=',
       screen: '',
     },
@@ -72,7 +72,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:
+      imageUri:
         'https://media.istockphoto.com/id/1289416200/photo/athletic-woman-doing-the-full-body-cardio-workout.jpg?b=1&s=170667a&w=0&k=20&c=PgzzhwgGkvrqOTtTi79q3voWp83FOhhWE4XQCyJd7hQ=',
       screen: '',
     },
@@ -84,7 +84,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:
+      imageUri:
         'https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fGZpdG5lc3N8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60',
       screen: '',
     },
@@ -96,7 +96,7 @@ export const FAKE_PRODUCTS= [
       duration: 30,
       sessions: 10,
       packageType: 'PRO',
-      packageImageUri:
+      imageUri:
         'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8Zml0bmVzc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
       screen: '',
     },

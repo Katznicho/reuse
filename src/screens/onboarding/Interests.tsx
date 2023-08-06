@@ -98,11 +98,7 @@ const Interests = () => {
                     smallerText={`in the settings`}
                 />
                 {/* 3 items per row */}
-                <SwiperText
-                    headerText={`Select your interests`}
-                    smallText={`Don't worry you can change this later`}
-                    smallerText={`in the settings`}
-                />
+            
                 <FlatList
                     data={interests}
                     renderItem={renderItem}

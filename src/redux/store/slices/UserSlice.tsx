@@ -3,36 +3,35 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserState {
   isLoggedIn: boolean;
-  authToken: string | null;
   appIntro: boolean;
   guestUser: boolean;
-  user: {
-    id: string;
-    fname: string;
-    lname: string;
-    email: string;
-    phone: string;
-    profile_image?: string;
-    uid?:string
-    displayPicture?:string|null
-  } | null;
-  userProfile?:{
-      gender?: string
-      age?: string |number
-      weight?: string|number
-      height?: string
-      goal?: string
-      physical_activity_level?: string
-    }|null
+  user: User | null;
+  userProfile:UserProfile|null
   
+}
+
+interface User{
+  UID: string;
+  fname: string;
+  lname: string;
+  email: string;
+  phone?: string;
+  username: string; 
+  displayPicture?:string|null
+}
+
+interface UserProfile{
+   gender?: string
+    preferences?: string[]
+    reuser?: string
 }
 
 const initialState: UserState = {
   isLoggedIn: false,
-  authToken: null,
   appIntro: false,
   user: null,
   guestUser: true,
+  userProfile: null
 };
 
 export const userSlice = createSlice({
@@ -43,7 +42,6 @@ export const userSlice = createSlice({
     updateUserState: (state, action: PayloadAction<UserState>) => {
       
       state.isLoggedIn = action.payload?.isLoggedIn;
-      state.authToken = action.payload?.authToken;
       state.appIntro = action.payload?.appIntro;
       state.user = action.payload?.user;
       state.guestUser = action.payload.guestUser;
@@ -51,20 +49,18 @@ export const userSlice = createSlice({
 
     logoutUser: state => {
       state.isLoggedIn = false;
-      state.authToken = null;
       state.user = null;
     },
     setAppIntro: state => {
-      state.appIntro = false;
+      state.appIntro = true;
     },
-    loginUser: state => {
+    loginUser: (state , action:PayloadAction<User>) => {
       state.isLoggedIn = true;
-      state.guestUser = false;
-      
-    },
-    createAccount: state => {
+      state.appIntro = false;
+      state.user = action.payload;
       state.guestUser = false;
     },
+   
     guestLogin: state => {
       state.guestUser = true;
     },
@@ -86,7 +82,6 @@ export const {
   logoutUser,
   setAppIntro,
   loginUser,
-  createAccount,
   guestLogin,
   updateUserProfile,
   updateProfilePicture
