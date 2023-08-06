@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Avatar } from 'react-native-paper';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { View } from 'react-native';
+import ProfileStack from '../../../screens/ProfileScreens/ProfileStack';
 
 
 
@@ -142,7 +143,7 @@ export default function BottomTabs() {
       {/* saved books */}
 
       <Tab.Screen name="Profile"
-      component={Empty}
+      component={ProfileStack}
       options={{
         tabBarLabel: 'Profile',
 
