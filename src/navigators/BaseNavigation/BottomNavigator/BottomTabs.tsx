@@ -9,6 +9,7 @@ import { Avatar } from 'react-native-paper';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { View } from 'react-native';
 import ProfileStack from '../../../screens/ProfileScreens/ProfileStack';
+import CreateStack from '../StackNavigator/CreateStack';
 
 
 
@@ -72,7 +73,7 @@ export default function BottomTabs() {
       }}
       />
       <Tab.Screen name="Create" 
-      component={Empty} 
+      component={CreateStack} 
       options={{
         tabBarLabel: 'Create',
         tabBarIcon: ({ color }) => (
