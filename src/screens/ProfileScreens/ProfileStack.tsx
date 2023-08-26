@@ -21,26 +21,7 @@ const ProfileStack = () => {
         name="ProfileScreen"
         component={Profile}
         options={{
-          headerStyle: {
-            backgroundColor: reuseTheme.colors.preference.primaryBackground,
-          },
-          headerTitleStyle: {
-            fontSize: 25,
-          },
-          headerTintColor:  reuseTheme.colors.preference.primaryBackground,
-          headerTitleAlign: 'center',
-          headerLeft: () => (
-            <IconButton
-              icon="chevron-left"
-              iconColor={ reuseTheme.colors.preference.primaryText}
-              size={25}
-              onPress={() => navigation.goBack()}
-              containerColor={ reuseTheme.colors.preference.primaryForeground}
-              style={{
-                marginLeft: 20,
-              }}
-            />
-          ),
+          headerShown: false,
         }}
       />
       <Stack.Screen

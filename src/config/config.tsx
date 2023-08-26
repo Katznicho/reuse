@@ -64,7 +64,7 @@ export const config = {
         editable: true,
         regex: regexForNames,
         key: 'username',
-        placeholder: 'Username',
+        placeholder: 'for example: @johnny',
         autoCapitalize: 'none',
       },
       {
@@ -112,7 +112,7 @@ export const config = {
         editable: true,
         regex: regexForNames,
         key: 'username',
-        placeholder: 'Username',
+        placeholder: 'for example: @communityname',
         autoCapitalize: 'none',
       },
       {

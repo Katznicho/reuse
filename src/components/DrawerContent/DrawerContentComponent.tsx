@@ -1,14 +1,14 @@
-import { Alert, StyleSheet, Text, View } from 'react-native'
+import { Alert,  View } from 'react-native'
 import React, { useState } from 'react'
 
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Avatar, Caption, Drawer, Title } from 'react-native-paper';
+import { Avatar, Caption, Drawer } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import { drawerContentStyles } from './drawercontentstyles';
@@ -19,10 +19,12 @@ import { useFirebase } from '../../hooks/useFirebase';
 
 const DrawerContentComponent = ({ props }: any) => {
 
-  const dispatch = useDispatch<any>();
+
    const {logout} = useFirebase();
 
-  const { isLoggedIn, guestUser, user } = useSelector((state: RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.user);
+
+
 
   const { reuseTheme } = useUserPreferredTheme();
   const styles = drawerContentStyles(reuseTheme);

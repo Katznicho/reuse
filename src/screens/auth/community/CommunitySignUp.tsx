@@ -12,12 +12,13 @@ import dynamicStyles from './styles'
 import TermsOfUseView from '../../../components/TermsOfUse'
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme'
 import { config } from '../../../config/config'
-import { ProfilePictureSelector } from '../../../components/ProfilePictureSelector/ProfilePictureSelector'
 import { ActivityIndicator } from '../../../components/ActivityIndicator'
 import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGeneralStyles'
-import { SignupField } from '../../../types/types'
-import { useFirebase } from '../../../hooks/useFirebase'
+// import { SignupField } from '../../../types/types'
+import { useFirebase } from '../../../hooks/useFirebase'  
 import { showMessage } from 'react-native-flash-message'
+import { APP_USERS } from '../../../utils/constants/constants'
+
 
 
 const CommunitySignUp = ({ navigation }: any) => {
@@ -122,13 +123,17 @@ const CommunitySignUp = ({ navigation }: any) => {
     }
     setLoading(true)
     Keyboard.dismiss()
-     
      try {
-       await register(trimmedFields.email, trimmedFields.password, trimmedFields.username, trimmedFields.communityName);
+
+      const {email, password, confirmPassword, username, communityName} = trimmedFields;
+
+      
+      await register(email, password, username, "", "",  APP_USERS.RECEIVER,communityName);
+
         setLoading(false);
         showMessage({
           message: "Success",
-          description: "Your almost there! Please Finish your profile",
+          description: "Your almost there!",
           type: "success",
           autoHide:true,
           duration:3000,
@@ -136,7 +141,7 @@ const CommunitySignUp = ({ navigation }: any) => {
         }) 
      }
       catch (error) {
-        // console.log(error);
+        console.log(JSON.stringify(error));
         setLoading(false);
         showMessage({
           message: "Error",
@@ -161,7 +166,7 @@ const CommunitySignUp = ({ navigation }: any) => {
 
   const renderInputField = (field: any, index: any) => {
     return (
-      <>
+      <View key={index}>
               <TextInput
         key={index}
         style={styles.InputContainer}
@@ -188,7 +193,7 @@ const CommunitySignUp = ({ navigation }: any) => {
         {errors[field.key] && <View style={generalStyles.centerContent}>
           <Text style={generalStyles.errorText}>{errors[field.key]}</Text>
            </View>}
-      </>
+      </View>
 
     )
   }
@@ -198,7 +203,6 @@ const CommunitySignUp = ({ navigation }: any) => {
       <>
         {config.communitySignupFields.map(renderInputField)}
         <TouchableOpacity 
-         key={Math.random()*1000}
         style={styles.signupContainer} 
         onPress={onRegister}
         >

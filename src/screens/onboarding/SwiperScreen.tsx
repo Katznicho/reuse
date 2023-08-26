@@ -23,7 +23,7 @@ import { APP_USERS } from '../../utils/constants/constants';
 
 export interface UserProfile {
   gender: string 
-  reuserType?: string 
+  reuserType: string 
   interests: string[] ,
   location?: string
 
@@ -95,10 +95,7 @@ const SwiperScreen = () => {
 
 
   const [slides, setSlides] = useState<any>([
-    {
-      key: 1,
-      page: <GenderScreen setUserProfile={setProfileDetails} />,
-    },
+    
   
     {
       key: 2,
@@ -155,12 +152,12 @@ const SwiperScreen = () => {
       setDisabled(true)
       //userId: string, reuser: string, gender:string, preferences: string[]
       // updateUserProfilePreferences()
-      const success = await updateUserProfilePreferences(user?.UID, profileDetails.reuserType, profileDetails.gender, profileDetails.interests);
+      const success = await updateUserProfilePreferences(user?.UID, profileDetails?.reuserType, profileDetails.gender, profileDetails.interests);
 
       dispatch(setAppIntro());
       showMessage({
         message: "Success",
-        description: "Your profile has been updated",
+        description: "Everything is set up",
         type: "success",
         autoHide:true,
         duration:3000,

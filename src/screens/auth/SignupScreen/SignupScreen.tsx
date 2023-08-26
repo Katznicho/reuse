@@ -24,11 +24,11 @@ import { APP_USERS } from '../../../utils/constants/constants'
 const SignupScreen = ({ navigation }: any) => {
 
   const { reuseTheme } = useUserPreferredTheme();
-  const {register} = useFirebase();
+  const { register } = useFirebase();
 
   const styles = dynamicStyles(reuseTheme)
   const generalStyles = dynamicGeneralStyles(reuseTheme);
-  const [errors, setErrors] = useState({ email: '', passwordMatch: '', username: '', password: '', firstName: '', lastName: ''})
+  const [errors, setErrors] = useState({ email: '', passwordMatch: '', username: '', password: '', firstName: '', lastName: '' })
 
   const [inputFields, setInputFields] = useState({})
 
@@ -40,7 +40,7 @@ const SignupScreen = ({ navigation }: any) => {
     return emailRegex.test(email);
   };
 
-  
+
 
   const trimFields = (fields: { [x: string]: string }) => {
     var trimmedFields = {}
@@ -54,9 +54,9 @@ const SignupScreen = ({ navigation }: any) => {
 
   const onRegister = async () => {
 
-     const trimmedFields = trimFields(inputFields)
-    
-     // Validate email format
+    const trimmedFields = trimFields(inputFields)
+
+    // Validate email format
     if (!validateEmail(trimmedFields.email)) {
 
       setErrors(prevErrors => ({
@@ -64,7 +64,7 @@ const SignupScreen = ({ navigation }: any) => {
         email: 'Invalid email format',
       }));
       return;
-      
+
     } else {
       setErrors(prevErrors => ({
         ...prevErrors,
@@ -72,8 +72,8 @@ const SignupScreen = ({ navigation }: any) => {
       }));
     }
 
-     // Validate password matching
-     if (trimmedFields.password !== trimmedFields.confirmPassword) {
+    // Validate password matching
+    if (trimmedFields.password !== trimmedFields.confirmPassword) {
       setErrors(prevErrors => ({
         ...prevErrors,
         passwordMatch: 'Passwords do not match',
@@ -123,33 +123,33 @@ const SignupScreen = ({ navigation }: any) => {
     }
     setLoading(true)
     Keyboard.dismiss()
-     
-     try {
-       await register(trimmedFields.email, trimmedFields.password, trimmedFields.username, trimmedFields.firstName, trimmedFields.lastName, APP_USERS.DONOR);
-        setLoading(false);
-        showMessage({
-          message: "Success",
-          description: "Your almost there! Please Finish your profile",
-          type: "success",
-          autoHide:true,
-          duration:3000,
-          icon: "success"
-        }) 
-     }
-      catch (error) {
-        // console.log(error);
-        setLoading(false);
-        showMessage({
-          message: "Error",
-          description:"An error occured while creating your account",
-          type: "danger",
-          autoHide:true,
-          duration:3000,
-          icon: "danger"
-        })
-      }
 
-      
+    try {
+      await register(trimmedFields.email, trimmedFields.password, trimmedFields.username, trimmedFields.firstName, trimmedFields.lastName, APP_USERS.DONOR, "");
+      setLoading(false);
+      showMessage({
+        message: "Success",
+        description: "Your almost there!",
+        type: "success",
+        autoHide: true,
+        duration: 3000,
+        icon: "success"
+      })
+    }
+    catch (error) {
+      // console.log(error);
+      setLoading(false);
+      showMessage({
+        message: "Error",
+        description: "An error occured while creating your account",
+        type: "danger",
+        autoHide: true,
+        duration: 3000,
+        icon: "danger"
+      })
+    }
+
+
 
   }
 
@@ -162,34 +162,34 @@ const SignupScreen = ({ navigation }: any) => {
 
   const renderInputField = (field: any, index: any) => {
     return (
-      <>
-              <TextInput
-        key={index}
-        style={styles.InputContainer}
-        placeholder={field.placeholder}
-        placeholderTextColor="#aaaaaa"
-        secureTextEntry={field.secureTextEntry}
-        onChangeText={text => onChangeInputFields(text, field.key)}
-        value={inputFields[field.key]}
-        keyboardType={field.type}
-        underlineColorAndroid="transparent"
-        autoCapitalize={field.autoCapitalize}
-      />
+      <View key={index}>
+        <TextInput
+          key={index}
+          style={styles.InputContainer}
+          placeholder={field.placeholder}
+          placeholderTextColor="#aaaaaa"
+          secureTextEntry={field.secureTextEntry}
+          onChangeText={text => onChangeInputFields(text, field.key)}
+          value={inputFields[field.key]}
+          keyboardType={field.type}
+          underlineColorAndroid="transparent"
+          autoCapitalize={field.autoCapitalize}
+        />
         {/* Display error messages */}
         {field.key === 'email' && errors.email && <View style={generalStyles.centerContent}>
-        <Text style={generalStyles.errorText}>{errors.email}</Text>
-        </View>  
+          <Text style={generalStyles.errorText}>{errors.email}</Text>
+        </View>
         }
-        {field.key === 'password' && errors.passwordMatch &&  <View  style={generalStyles.centerContent}>
-        <Text style={generalStyles.errorText}>{errors.passwordMatch}</Text>
-        </View>  }
+        {field.key === 'password' && errors.passwordMatch && <View style={generalStyles.centerContent}>
+          <Text style={generalStyles.errorText}>{errors.passwordMatch}</Text>
+        </View>}
         {field.key === 'username' && errors.username && <View style={generalStyles.centerContent}>
-        <Text style={generalStyles.errorText}>{errors.username}</Text>
-        </View>  }
+          <Text style={generalStyles.errorText}>{errors.username}</Text>
+        </View>}
         {errors[field.key] && <View style={generalStyles.centerContent}>
           <Text style={generalStyles.errorText}>{errors[field.key]}</Text>
-           </View>}
-      </>
+        </View>}
+      </View>
 
     )
   }
@@ -197,11 +197,13 @@ const SignupScreen = ({ navigation }: any) => {
   const renderSignupWithEmail = () => {
     return (
       <>
+
         {config.signupFields.map(renderInputField)}
-        <TouchableOpacity 
-         key={Math.random()*1000}
-        style={styles.signupContainer} 
-        onPress={onRegister}
+
+        <TouchableOpacity
+          key={Math.random() * 1000}
+          style={styles.signupContainer}
+          onPress={onRegister}
         >
           <Text style={styles.signupText}>{'Sign Up'}</Text>
         </TouchableOpacity>
@@ -212,7 +214,7 @@ const SignupScreen = ({ navigation }: any) => {
   return (
     <View style={generalStyles.container}>
       <KeyboardAwareScrollView
-        style={{ flex: 1, width: '100%' , paddingBottom: 50}}
+        style={{ flex: 1, width: '100%', paddingBottom: 50 }}
         keyboardShouldPersistTaps="always">
         {/* login and register */}
         <View
@@ -226,7 +228,7 @@ const SignupScreen = ({ navigation }: any) => {
           <View
 
           >
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => {
 
                 navigation.navigate('Login');

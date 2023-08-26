@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
-import { loginUser, logoutUser, registerUser, setAppIntro, updateUserProfile } from '../redux/store/slices/UserSlice';
+import { loginUser, logoutUser, registerUser, setAppIntro, updateAppIntro, updateIsLoggedIn, updateUserProfile } from '../redux/store/slices/UserSlice';
 import { APP_USERS } from '../utils/constants/constants';
 
 const USER_COLLECTION = "users";
@@ -76,12 +76,15 @@ export const useFirebase = () => {
                     community: "",
                 });
             }
+
+            dispatch(updateIsLoggedIn(true));
+            dispatch(updateAppIntro(false)); 
             
 
               return userCredentials.user;
 
         } catch (error) {
-            return null;
+            return error;
         }
     }
 
@@ -101,13 +104,14 @@ export const useFirebase = () => {
                     username: user?.username,
                     community: user?.community,
                 }))
+                dispatch(updateIsLoggedIn(true));
 
             }
-            return userCredentails.user;
+            return {user: userCredentails.user};
 
         } catch (error) {
-            // console.log(error);
-            return null;
+            console.log(error);
+            return error;
         }
     }
 
@@ -143,8 +147,20 @@ export const useFirebase = () => {
             }
 
         } catch (error) {
-            console.log(error);
-            return null;
+            // console.log(error);
+            return error;
+        }
+    }
+
+     const updateUserLocation = async (userId: string, latitude: string, longitude:string) => {
+        try {
+            await firestore().collection(USER_COLLECTION).doc(userId).update({
+                latitude: latitude,
+                longitude: longitude,
+            });
+        } catch (error) {
+            // console.log("Error updating user location:", error);
+            return error;
         }
     }
 
@@ -179,7 +195,8 @@ export const useFirebase = () => {
         getUserDetails,
         getCurrentUser,
         updateUserProfilePreferences,
-        logout
+        logout,
+        updateUserLocation,
 
         // Export other auth functions here if needed
     };

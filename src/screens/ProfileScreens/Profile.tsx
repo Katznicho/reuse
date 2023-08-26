@@ -24,6 +24,10 @@ const Profile = () => {
       screen: 'Edit',
     },
     {
+      name: 'Verification',
+      screen: 'Verification',
+    },
+    {
       name: 'Private Policy',
       screen: 'PrivatePolicy',
     },

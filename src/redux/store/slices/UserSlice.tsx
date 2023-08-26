@@ -70,6 +70,7 @@ export const userSlice = createSlice({
         lname: '',
         email: '',
         username: '',
+        community: '',
       }
     },
     setAppIntro: state => {
@@ -86,6 +87,12 @@ export const userSlice = createSlice({
       state.appIntro = false;
       state.user = action.payload;
       state.guestUser = false;
+    },
+    updateIsLoggedIn: (state, action: PayloadAction<boolean>) => {
+      state.isLoggedIn = action.payload;
+    },
+    updateAppIntro: (state, action: PayloadAction<boolean>) => {
+      state.appIntro = action.payload;
     },
     
    
@@ -113,7 +120,9 @@ export const {
   guestLogin,
   updateUserProfile,
   updateProfilePicture,
-  registerUser
+  registerUser,
+  updateIsLoggedIn,
+  updateAppIntro
 } = userSlice.actions;
 
 export default userSlice.reducer;

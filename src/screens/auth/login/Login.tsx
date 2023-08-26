@@ -88,19 +88,41 @@ const Login = () => {
     
     try {
         setLoading(true)
-        await login(email, password);
-        showMessage({
-          message:"Success",
-          type:"success",
-          autoHide:true,
-          duration:3000,
-          description:"Logged in successfully"
-        })
+       let res =  await login(email, password);
+        setLoading(false)
+        if(res?.user){
+          showMessage({
+            message:"Success",
+            type:"success",
+            autoHide:true,
+            duration:3000,
+            description:"Logged in successfully"
+          })
+        }
+        else{
+          showMessage({
+            message: "Error",
+            description: "Invalid email or password",
+            type: "danger",
+            autoHide: true,
+            duration: 3000,
+            icon: "danger"
+          })
+          return;
+        }
+        
 
       
     } catch (error) {
-       console.log("Error")
-       console.log(error)
+      setLoading(false)
+      showMessage({
+        message: "Error",
+        description: "Invalid email or password",
+        type: "danger",
+        autoHide: true,
+        duration: 3000,
+        icon: "danger"
+      })
     }
 
 

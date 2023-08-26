@@ -17,7 +17,8 @@ const AppContent = () => {
     useEffect(() => {
         const fetchCurrentUser = async () => {
             try {
-                const user = await getCurrentUser();
+                await getCurrentUser();
+                
             } catch (error) {
                 // Handle any errors that might occur during the process
             }
@@ -25,6 +26,10 @@ const AppContent = () => {
 
         fetchCurrentUser();
     }, []);
+
+    useEffect(() => {
+        console.log('isLoggedIn', isLoggedIn)
+    }, [isLoggedIn])
 
 
     return (

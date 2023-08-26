@@ -1,5 +1,5 @@
 import {  View, SafeAreaView, ScrollView } from 'react-native'
-import React, { useState , useEffect} from 'react'
+import React, { useState , useEffect, Alert} from 'react'
 import { FAKE_PRODUCTS } from '../../fakedata/data'
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import SearchComponent from '../../components/SearcComponent';
@@ -8,7 +8,10 @@ import TextTypes from '../../components/TextType/TextTypes';
 import ScrollCard from '../../components/ScrollCard';
 import Donaters from '../../components/Donators';
 import Categories from '../../components/Categoris';
-import useAskForLocationPermission from '../../hooks/useAskForLocationPermission';
+import Geolocation from '@react-native-community/geolocation';
+import { useFirebase } from '../../hooks/useFirebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/dev';
 
 
 
@@ -16,8 +19,33 @@ const HomeScreeen = () => {
 
   const {reuseTheme} =  useUserPreferredTheme();
   const generalstyles = dynamicGeneralStyles(reuseTheme);
+  const {user} =  useSelector((state:RootState) => state.user);
+
+  const {updateUserLocation} = useFirebase();
 
    const [products, setProducts] = useState<any[]>(FAKE_PRODUCTS);
+
+   const getCurrentPosition = () => {
+    Geolocation.getCurrentPosition(
+        (pos) => {
+
+            const {latitude , longitude } = pos.coords;
+            setPosition({ latitude, longitude });
+        },
+        (error) => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
+        { enableHighAccuracy: true, }
+    );
+};
+
+useEffect(() => {
+  getCurrentPosition();
+  if(position){
+    updateUserLocation(user?.UID, position.latitude, position.longitude);
+  }
+
+}, []);
+
+const [position, setPosition] = useState<any>(null);
 
 
 
