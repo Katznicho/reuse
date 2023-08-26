@@ -8,6 +8,7 @@ import TextTypes from '../../components/TextType/TextTypes';
 import ScrollCard from '../../components/ScrollCard';
 import Donaters from '../../components/Donators';
 import Categories from '../../components/Categoris';
+import useAskForLocationPermission from '../../hooks/useAskForLocationPermission';
 
 
 
@@ -17,6 +18,9 @@ const HomeScreeen = () => {
   const generalstyles = dynamicGeneralStyles(reuseTheme);
 
    const [products, setProducts] = useState<any[]>(FAKE_PRODUCTS);
+
+
+
 
 
 

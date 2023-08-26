@@ -16,14 +16,13 @@ import { useFirebase } from '../../hooks/useFirebase';
 import { RootState } from '../../redux/store/dev';
 import { showMessage } from 'react-native-flash-message';
 import UserLocation from './UserLocation';
-import { APP_USERS } from '../../utils/constants/constants';
 
 
 
 
 export interface UserProfile {
   gender: string 
-  reuserType?: string 
+  reuserType: string 
   interests: string[] ,
   location?: string
 
@@ -55,51 +54,17 @@ const SwiperScreen = () => {
 
   })
 
-  useEffect(() => {
-    // console.log(profileDetails)
-    if(user.reuseType  !== null && user.reuseType !== undefined){
-      setProfileDetails({...profileDetails, reuserType:user.reuseType})
-    }
-    //if reuseType is a receiver dont show gender
-    if(user.reuseType === APP_USERS.RECEIVER){
-      setSlides([
-        {
-          key: 1,
-          page: <Interests  setUserProfile={setProfileDetails}/>,
-        },
-        
-      ])
-    }
-    else{
-      setSlides([
-        {
-          key: 1,
-          page: <GenderScreen setUserProfile={setProfileDetails} />,
-        },
-      
-        {
-          key: 2,
-          page: <Interests  setUserProfile={setProfileDetails}/>,
-        },
-        
-      ])
-    }
 
 
-
-
-  }
-  , [profileDetails, user])
-  
-
-
-
-  const [slides, setSlides] = useState<any>([
+  const [slides, _] = useState<any>([
     {
       key: 1,
       page: <GenderScreen setUserProfile={setProfileDetails} />,
     },
-  
+    // {
+    //   key: 2,
+    //   page: <UserLocation setUserProfile={setProfileDetails} />,
+    // },
     {
       key: 2,
       page: <Interests  setUserProfile={setProfileDetails}/>,

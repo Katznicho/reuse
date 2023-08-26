@@ -20,13 +20,15 @@ function CreateStack() {
 
     return (
 
-        <Stack.Navigator>
+        <Stack.Navigator
+          initialRouteName='CreateNew'
+        >
 
             <Stack.Screen
                 name="CreateNewDonation"
                 component={CreateDonationProduct}
                 options={{
-                    title: 'New Donation',
+                    title: 'Create New',
                     headerStyle: {
                         backgroundColor: reuseTheme.colors.preference.primaryBackground,
                     },

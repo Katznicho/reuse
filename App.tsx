@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -7,16 +8,18 @@ import AppContent from './src/AppContext';
 import { PaperProvider } from 'react-native-paper';
 import { useUserPreferredTheme } from './src/hooks/useUserPreferredTheme';
 import FlashMessage from 'react-native-flash-message';
+import SwiperScreen from './src/screens/onboarding/SwiperScreen';
 
 
 const App = () => {
-   const {reuseTheme} =  useUserPreferredTheme();
+   const {} =  useUserPreferredTheme();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <PaperProvider >
            <AppContent/>
+           {/* <SwiperScreen/> */}
            <FlashMessage position="top" animated />
           </PaperProvider>
         </PersistGate>

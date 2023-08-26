@@ -6,9 +6,11 @@ export const APP_GENDER = {
 export const APP_USERS = {
 
      REUSER:"REUSER",
-     DONOR:"Donate",
-     RESELLER:"Resell",
-     ALL:"Both"
+     DONOR:"DONOR",
+     RESELLER:"RESSELLER",
+     RECEIVER:"RECIEVER",
+     BUYER:"BUYER",
+     ALL:"All"
 
 }
 

@@ -18,17 +18,16 @@ import { dynamicGeneralStyles } from '../../../utils/generalstyles/dynamicGenera
 import { SignupField } from '../../../types/types'
 import { useFirebase } from '../../../hooks/useFirebase'
 import { showMessage } from 'react-native-flash-message'
-import { APP_USERS } from '../../../utils/constants/constants'
 
 
-const SignupScreen = ({ navigation }: any) => {
+const CommunitySignUp = ({ navigation }: any) => {
 
   const { reuseTheme } = useUserPreferredTheme();
   const {register} = useFirebase();
 
   const styles = dynamicStyles(reuseTheme)
   const generalStyles = dynamicGeneralStyles(reuseTheme);
-  const [errors, setErrors] = useState({ email: '', passwordMatch: '', username: '', password: '', firstName: '', lastName: ''})
+  const [errors, setErrors] = useState({ email: '', passwordMatch: '', username: '', password: '', communityName: ''})
 
   const [inputFields, setInputFields] = useState({})
 
@@ -125,7 +124,7 @@ const SignupScreen = ({ navigation }: any) => {
     Keyboard.dismiss()
      
      try {
-       await register(trimmedFields.email, trimmedFields.password, trimmedFields.username, trimmedFields.firstName, trimmedFields.lastName, APP_USERS.DONOR);
+       await register(trimmedFields.email, trimmedFields.password, trimmedFields.username, trimmedFields.communityName);
         setLoading(false);
         showMessage({
           message: "Success",
@@ -197,7 +196,7 @@ const SignupScreen = ({ navigation }: any) => {
   const renderSignupWithEmail = () => {
     return (
       <>
-        {config.signupFields.map(renderInputField)}
+        {config.communitySignupFields.map(renderInputField)}
         <TouchableOpacity 
          key={Math.random()*1000}
         style={styles.signupContainer} 
@@ -252,7 +251,7 @@ const SignupScreen = ({ navigation }: any) => {
         </View>
         {/* login and register */}
 
-        <Text style={generalStyles.authTitle}>{'Create Donnor Account'}</Text>
+        <Text style={generalStyles.authTitle}>{'Create A Community Account'}</Text>
         {/* <ProfilePictureSelector setProfilePictureFile={setProfilePictureFile} /> */}
         {renderSignupWithEmail()}
         {config.isSMSAuthEnabled && (
@@ -260,8 +259,8 @@ const SignupScreen = ({ navigation }: any) => {
             <Text style={styles.orTextStyle}>{'OR'}</Text>
             <TouchableOpacity
               style={styles.PhoneNumberContainer}
-              onPress={() => navigation.navigate('CommunityRegister')}>
-              <Text>{'Register As A Community'}</Text>
+              onPress={() => navigation.navigate('Register')}>
+              <Text>{'Register As A Donor'}</Text>
             </TouchableOpacity>
           </>
         )}
@@ -276,4 +275,4 @@ const SignupScreen = ({ navigation }: any) => {
   )
 }
 
-export default SignupScreen
+export default CommunitySignUp

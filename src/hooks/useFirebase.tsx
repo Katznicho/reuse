@@ -2,6 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
 import { loginUser, logoutUser, registerUser, setAppIntro, updateUserProfile } from '../redux/store/slices/UserSlice';
+import { APP_USERS } from '../utils/constants/constants';
 
 const USER_COLLECTION = "users";
 
@@ -24,10 +25,11 @@ export const useFirebase = () => {
                         dispatch(setAppIntro());
                         dispatch(loginUser({
                             UID: userUid,
-                            fname:user?.firstName,
+                            fname: user?.firstName,
                             lname: user?.lastName,
                             email: user?.email,
                             username: user?.username,
+                            community: user?.community,
                         }))
 
                     }
@@ -40,28 +42,41 @@ export const useFirebase = () => {
     };
 
 
-    const register = async (email: string, password: string, username: string, firstName: string, lastName: string) => {
+    const register = async (email: string, password: string, username: string, firstName: string, lastName: string, userType:String, communityName:string) => {
         try {
             const userCredentials = await auth().createUserWithEmailAndPassword(email, password);
             const userUid = userCredentials.user.uid;
 
             // Store additional user details in the "users" collection
-            await firestore().collection(USER_COLLECTION).doc(userUid).set({
-                email: email,
-                username: username,
-                firstName: firstName,
-                lastName: lastName,
-            });
-             
-
-              dispatch(registerUser({
-                  UID: userUid,
-                  fname:firstName,
-                  lname: lastName,
-                  email: email,
-                  username: username,
-              }))
-
+            if(userType == APP_USERS.RECEIVER){
+                await firestore().collection(USER_COLLECTION).doc(userUid).set({
+                    email: email,
+                    username: username,
+                    userType: userType,
+                    communityName: communityName,
+                    firstName: "",
+                    lastName: "",
+                });
+                dispatch(registerUser({
+                    UID: userUid,
+                    fname:"",
+                    lname:"",
+                    email: email,
+                    username: username,
+                    community: communityName,
+                }))
+            }
+            else{
+                await firestore().collection(USER_COLLECTION).doc(userUid).set({
+                    email: email,
+                    username: username,
+                    userType: userType,
+                    firstName: firstName,
+                    lastName: lastName,
+                    community: "",
+                });
+            }
+            
 
               return userCredentials.user;
 
@@ -84,6 +99,7 @@ export const useFirebase = () => {
                     lname: user?.lastName,
                     email: user?.email,
                     username: user?.username,
+                    community: user?.community,
                 }))
 
             }

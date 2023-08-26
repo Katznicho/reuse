@@ -49,6 +49,20 @@ export const dynamicGeneralStyles = (theme:ReuseTheme) => {
             fontSize: 14,
             marginBottom: 5,
           },
+          InputContainer: {
+            height: 42,
+            borderWidth: 1,
+            borderColor: theme.colors.preference.grey3,
+            backgroundColor: theme.colors.preference.primaryBackground,
+            paddingLeft: 20,
+            color: theme.colors.preference.primaryText,
+            width: '80%',
+            alignSelf: 'center',
+            marginTop: 20,
+            alignItems: 'center',
+            borderRadius: 25,
+            textAlign: "center"
+          },
 
     })
 

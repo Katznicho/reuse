@@ -34,6 +34,8 @@ const textStyles =(theme:ReuseTheme)=> StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.colors.preference.grey3,
   },
   textInput: {
     height: 150,

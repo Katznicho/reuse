@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+
 export interface UserState {
   isLoggedIn: boolean;
   appIntro: boolean;
@@ -15,9 +16,12 @@ interface User{
   fname: string;
   lname: string;
   email: string;
+  isVerified?: boolean;
   phone?: string;
   username: string; 
-  displayPicture?:string|null
+  displayPicture?:string|null,
+  community:string|null,
+  reuseType?:string|null,
 }
 
 interface UserProfile{
@@ -35,6 +39,11 @@ const initialState: UserState = {
     lname: '',
     email: '',
     username: '',
+    community: '',
+    displayPicture: '',
+    reuseType:"",
+    isVerified: false,
+
   },
   guestUser: true,
   userProfile: null

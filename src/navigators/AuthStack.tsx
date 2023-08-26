@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../screens/auth/login/Login';
 import SignupScreen from '../screens/auth/SignupScreen/SignupScreen';
 import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen/ResetPasswordScreen';
+import CommunitySignUp from '../screens/auth/community/CommunitySignUp';
 
 const AuthStack = createNativeStackNavigator();
 
@@ -27,10 +28,10 @@ const AuthStackNavigator = () => {
         options={{ headerShown: false }}
         component={SignupScreen}
       />
-      {/* <AuthStack.Screen
-        name="Sms"
-        component={SmsAuthenticationScreen}
-      /> */}
+      <AuthStack.Screen
+        name="CommunityRegister"
+        component={CommunitySignUp}
+      />
       <AuthStack.Screen
                 options={{ headerShown: false }}
         name="ResetPassword"
