@@ -3,13 +3,12 @@ import HomeStack from '../StackNavigator/HomeStack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Avatar } from 'react-native-paper';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { View } from 'react-native';
 import ProfileStack from '../../../screens/ProfileScreens/ProfileStack';
-import CreateStack from '../StackNavigator/CreateStack';
+import ProductTabs from '../../../screens/CreateScreens/ProductTabs';
 
 
 
@@ -73,7 +72,7 @@ export default function BottomTabs() {
       }}
       />
       <Tab.Screen name="Create" 
-      component={CreateStack} 
+      component={ProductTabs} 
       options={{
         tabBarLabel: 'Create',
         tabBarIcon: ({ color }) => (

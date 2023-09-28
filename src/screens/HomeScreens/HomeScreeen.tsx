@@ -1,5 +1,5 @@
-import {  View, SafeAreaView, ScrollView } from 'react-native'
-import React, { useState , useEffect, Alert} from 'react'
+import {  View, SafeAreaView, ScrollView, Alert } from 'react-native'
+import React, { useState , useEffect} from 'react'
 import { FAKE_PRODUCTS } from '../../fakedata/data'
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import SearchComponent from '../../components/SearcComponent';

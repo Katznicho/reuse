@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Alert, Button, Text, View } from 'react-native';
+import { Button, Text, View } from 'react-native';
 import { createDrawerNavigator} from '@react-navigation/drawer';
 import BottomTabs from './BottomNavigator/BottomTabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useDispatch, useSelector } from 'react-redux'
+import {  useSelector } from 'react-redux'
 import { RootState } from '../../redux/store/dev';
 import DrawerContentComponent from '../../components/DrawerContent/DrawerContentComponent';
 import { Avatar } from 'react-native-paper';

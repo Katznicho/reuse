@@ -16,12 +16,12 @@ interface User{
   fname: string;
   lname: string;
   email: string;
-  isVerified?: boolean;
-  phone?: string;
+  isVerified: boolean;
+  phone: string;
   username: string; 
-  displayPicture?:string|null,
-  community:string|null,
-  reuseType?:string|null,
+  displayPicture:string,
+  community:string,
+  reuseType:string,
 }
 
 interface UserProfile{
@@ -43,6 +43,7 @@ const initialState: UserState = {
     displayPicture: '',
     reuseType:"",
     isVerified: false,
+    phone:""
 
   },
   guestUser: true,
@@ -71,6 +72,10 @@ export const userSlice = createSlice({
         email: '',
         username: '',
         community: '',
+        displayPicture: '',
+        reuseType:"",
+        isVerified: false,
+        phone:""
       }
     },
     setAppIntro: state => {

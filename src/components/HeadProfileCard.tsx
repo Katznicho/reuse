@@ -11,24 +11,25 @@ import { dynamicGeneralStyles } from '../utils/generalstyles/dynamicGeneralStyle
 import { ReuseTheme } from '../types/types';
 import UploadComponent from './UploadComponent';
 import { Avatar, IconButton } from 'react-native-paper';
+import { updateProfilePicture } from '../redux/store/slices/UserSlice';
 
 const HeadProfileCard = () => {
 
     const {reuseTheme} =  useUserPreferredTheme();
     const generalstyles = dynamicGeneralStyles(reuseTheme);
-    const styles = cardStyles(reuseTheme);
+    
 
 
   const { user, isLoggedIn } = useSelector((state: RootState) => state.user);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [imagePath, setImagePath] = useState<any | null>(null);
+  const [imagePath, setImagePath] = useState<any>(null);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const handleUpload = async () => {
     try {
       const { error, image } = await UploadImage(
-        user?.uid,
+        user?.UID,
         imagePath.imagePath,
         PROFILE_STORAGE,
       );
@@ -36,9 +37,7 @@ const HeadProfileCard = () => {
         Alert.alert('Something went wrong please try aagin');
       }
       if (image) {
-        const data_avatar = new FormData();
-        data_avatar.append('avatar', image);
-
+        dispatch(updateProfilePicture(image));
         setImagePath(null);
       }
     } catch (error: any) {
@@ -53,7 +52,11 @@ const HeadProfileCard = () => {
     }
   };
 
-  useEffect(() => {}, [imagePath]);
+  useEffect(() => {
+    console.log("=========================")
+     console.log(user.displayPicture);
+    console.log("=========================")
+  }, [imagePath]);
 
   return (
     <View style={[generalstyles.flexStyles]}>
@@ -100,12 +103,7 @@ const HeadProfileCard = () => {
         )}
       </TouchableOpacity>
 
-      <View style={styles.viewStyles}>
-        <Text style={styles.nameStyle}>{
-          //check if user is not null otherwise show hello Guest
-          `${user?.fname ?? 'Hello'} ${user?.lname ?? 'Guest'}`
-        }</Text>
-      </View>
+
 
       {/* modal section */}
       {showModal && (
@@ -125,8 +123,4 @@ const HeadProfileCard = () => {
 
 export default HeadProfileCard;
 
-const cardStyles = (theme:ReuseTheme)=> StyleSheet.create({
-  nameStyle: { fontSize: 25, fontWeight: 'bold', color: theme.colors.preference.primaryText},
 
-  viewStyles: { marginTop: 20, marginLeft: -10 },
-});

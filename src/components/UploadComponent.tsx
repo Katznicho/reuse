@@ -16,8 +16,7 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import documentPicker from 'react-native-document-picker';
 import { useUserPreferredTheme } from '../hooks/useUserPreferredTheme';
-import { dynamicGeneralStyles } from '../utils/generalstyles/dynamicGeneralStyles';
-import { ReuseTheme } from '../types/types';
+
 
 const UploadComponent = ({
   showModal,

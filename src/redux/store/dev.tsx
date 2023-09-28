@@ -8,7 +8,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['user', 'booking'],
+  whitelist: ['user'],
+  //blacklist: ['user'],
+  
+
 };
 
 const rootReducer = combineReducers({

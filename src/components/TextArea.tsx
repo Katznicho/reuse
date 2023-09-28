@@ -5,17 +5,16 @@ import { useUserPreferredTheme } from '../hooks/useUserPreferredTheme';
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TextArea = () => {
+const TextArea = ({placeholder, text , setText}:any) => {
     const {reuseTheme} =  useUserPreferredTheme();
     const styles = textStyles(reuseTheme);
-    const [text, setText] = useState<any>('');
   return (
     <View style={[styles.textareaContainer]}>
        <TextInput
         style={styles.textInput}
         multiline={true}
         numberOfLines={4}
-        placeholder="Type your message here..."
+        placeholder={placeholder}
         value={text}
         onChangeText={setText}
       />

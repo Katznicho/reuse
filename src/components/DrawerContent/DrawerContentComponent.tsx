@@ -16,6 +16,7 @@ import { RootState } from '../../redux/store/dev';
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import Verification from '../Verification';
 import { useFirebase } from '../../hooks/useFirebase';
+import HeadProfileCard from '../HeadProfileCard';
 
 const DrawerContentComponent = ({ props }: any) => {
 
@@ -23,6 +24,7 @@ const DrawerContentComponent = ({ props }: any) => {
    const {logout} = useFirebase();
 
   const { user } = useSelector((state: RootState) => state.user);
+  
 
 
 
@@ -39,11 +41,6 @@ const DrawerContentComponent = ({ props }: any) => {
     } catch (error) {
     }
   };
-
-
-
-
-
 
 
 
@@ -84,10 +81,7 @@ const DrawerContentComponent = ({ props }: any) => {
     >
       <View style={[styles.userInfoSection, generalstyles.centerContent]}>
         <View style={[generalstyles.centerContent]}>
-          <Avatar.Image
-            size={80}
-            source={{ uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg" }}
-          />
+        <HeadProfileCard />
           <View style={[generalstyles.flexStyles ]}>
 
 

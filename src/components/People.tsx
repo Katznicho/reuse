@@ -49,7 +49,7 @@ const People = () => {
     <View style={[generalstyles.flexStyles, styles.containerStyles]}>
       <View style={[generalstyles.flexStyles, { alignItems: 'center' }]}>
         {people.slice(0, 4).map((person, index, array) => (
-          <View>
+          <View key={index}>
             {index == array.length - 1 ? (
               <Avatar.Text
                 size={45}
@@ -79,7 +79,7 @@ const People = () => {
           marginLeft: 50,
         }}
       >
-        <Text style={{ color:reuseTheme.colors.preference.grey0 }}>
+        <Text style={{ color:reuseTheme.colors.preference.primaryForeground }}>
           Read all reviews
         </Text>
       </TouchableOpacity>

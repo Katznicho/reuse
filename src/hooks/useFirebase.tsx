@@ -1,8 +1,8 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
 import { loginUser, logoutUser, registerUser, setAppIntro, updateAppIntro, updateIsLoggedIn, updateUserProfile } from '../redux/store/slices/UserSlice';
-import { APP_USERS } from '../utils/constants/constants';
+import { APP_USERS, PRODUCT_COLLECTION } from '../utils/constants/constants';
 
 const USER_COLLECTION = "users";
 
@@ -30,6 +30,10 @@ export const useFirebase = () => {
                             email: user?.email,
                             username: user?.username,
                             community: user?.community,
+                            isVerified: false,
+                            phone: '',
+                            displayPicture: '',
+                            reuseType: ''
                         }))
 
                     }
@@ -59,11 +63,15 @@ export const useFirebase = () => {
                 });
                 dispatch(registerUser({
                     UID: userUid,
-                    fname:"",
-                    lname:"",
+                    fname: "",
+                    lname: "",
                     email: email,
                     username: username,
                     community: communityName,
+                    isVerified: false,
+                    phone: '',
+                    displayPicture: '',
+                    reuseType: ''
                 }))
             }
             else{
@@ -98,11 +106,15 @@ export const useFirebase = () => {
                 dispatch(setAppIntro());
                 dispatch(loginUser({
                     UID: userUid,
-                    fname:user?.firstName,
+                    fname: user?.firstName,
                     lname: user?.lastName,
                     email: user?.email,
                     username: user?.username,
                     community: user?.community,
+                    isVerified: false,
+                    phone: '',
+                    displayPicture: '',
+                    reuseType: ''
                 }))
                 dispatch(updateIsLoggedIn(true));
 
@@ -147,7 +159,7 @@ export const useFirebase = () => {
             }
 
         } catch (error) {
-            // console.log(error);
+        
             return error;
         }
     }
@@ -159,7 +171,7 @@ export const useFirebase = () => {
                 longitude: longitude,
             });
         } catch (error) {
-            // console.log("Error updating user location:", error);
+            
             return error;
         }
     }
@@ -181,12 +193,132 @@ export const useFirebase = () => {
 
 
         } catch (error) {
-            // console.log("Error updating user credentials:", error);
+
             return null;
         }
     };
 
-    // Add more auth functions if needed (e.g., logout, update profile, etc.)
+    const createDonationProduct = async (userId: string, product: any) => {
+        try {
+            await firestore().collection(PRODUCT_COLLECTION).add({
+                    ...product,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    rating:4,
+                    userId:userId
+            });
+        } catch (error) {
+             console.log("Error updating user credentials:", error);
+            return error;
+        }
+    };
+
+    const getAllProducts = async () => {
+        try {
+          const querySnapshot = await firestore().collection(PRODUCT_COLLECTION).get();
+          const products:any = [];
+      
+          querySnapshot.forEach((documentSnapshot) => {
+            // Get the data of each product document
+            const productData = documentSnapshot.data();
+            // Include the document ID as part of the product data
+            products.push({ id: documentSnapshot.id, ...productData });
+          });
+      
+          return products;
+        } catch (error) {
+          throw error;
+        }
+      };
+
+
+      const getAllUsers = async () => {
+        try {
+          const querySnapshot = await firestore().collection(USER_COLLECTION).get();
+          const users:any = [];
+      
+          querySnapshot.forEach((documentSnapshot) => {
+            // Get the data of each product document
+            const userData = documentSnapshot.data();
+            // Include the document ID as part of the product data
+            users.push({ id: documentSnapshot.id, ...userData });
+          });
+      
+          return users;
+        } catch (error) {
+          throw error;
+        }
+      };
+
+      const getAllDonors = async () => {
+        try {
+          const querySnapshot = await firestore()
+            .collection(USER_COLLECTION)
+            .where('userType', '==', APP_USERS.DONOR) // Replace 'userType' with the actual field name for user type
+            .get();
+      
+          const donors:any = [];
+      
+          querySnapshot.forEach((documentSnapshot) => {
+            // Get the data of each user document
+            const userData = documentSnapshot.data();
+            // Include the document ID as part of the user data
+            donors.push({ id: documentSnapshot.id, ...userData });
+          });
+      
+          return donors;
+        } catch (error) {
+          console.error('Error getting donors:', error);
+          throw error;
+        }
+      };
+
+      const getUserByUid = async (uid:any) => {
+        try {
+          const userDoc = await firestore()
+            .collection(USER_COLLECTION)
+            .doc(uid)
+            .get();
+      
+          if (userDoc.exists) {
+            // User document found, return its data
+            return { id: userDoc.id, ...userDoc.data() };
+          } else {
+            // User document not found
+            return null;
+          }
+        } catch (error) {
+          console.error('Error getting user by UID:', error);
+          throw error;
+        }
+      };
+
+      
+
+      const getProductsByUserId = async (userId:string) => {
+        try {
+          const querySnapshot = await firestore()
+            .collection(PRODUCT_COLLECTION)
+            .where('userId', '==', userId) // Replace 'userId' with the actual field name
+            .get();
+      
+          const products:any = [];
+      
+          querySnapshot.forEach((documentSnapshot) => {
+            // Get the data of each product document
+            const productData = documentSnapshot.data();
+            // Include the document ID as part of the product data
+            products.push({ id: documentSnapshot.id, ...productData });
+          });
+      
+          return products;
+        } catch (error) {
+          console.error('Error getting products by user ID:', error);
+          throw error;
+        }
+      };
+
+
 
     return {
         register,
@@ -197,6 +329,12 @@ export const useFirebase = () => {
         updateUserProfilePreferences,
         logout,
         updateUserLocation,
+        createDonationProduct,
+        getAllProducts,
+        getProductsByUserId,
+        getAllUsers,
+        getUserByUid,
+        getAllDonors
 
         // Export other auth functions here if needed
     };

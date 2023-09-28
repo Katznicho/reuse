@@ -34,12 +34,14 @@ export default ProfileCard;
 const profileCardStyles = (theme:ReuseTheme)=> StyleSheet.create({
   container: {
     marginHorizontal: 10,
-    marginVertical: 30,
-    backgroundColor: theme.colors.preference.primaryBackground,
-    height: 100,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    marginVertical: 20,
+     backgroundColor: theme.colors.preference.primaryBackground,
+     height: 100,
+     alignItems: 'center',
+      // justifyContent: "center",
     borderRadius: 10,
+    elevation:5,
+    width:"50%"
   },
   experience: {
     marginHorizontal: 10,

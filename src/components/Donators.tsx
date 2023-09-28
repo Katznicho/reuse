@@ -13,6 +13,8 @@ import Box from './Box';
 import { dynamicGeneralStyles } from '../utils/generalstyles/dynamicGeneralStyles';
 import { useUserPreferredTheme } from '../hooks/useUserPreferredTheme';
 import { ReuseTheme } from '../types/types';
+import { useFirebase } from '../hooks/useFirebase';
+import NotAvailable from './NotAvailable';
 
 
 // Define the Donator interface
@@ -32,42 +34,30 @@ const Donaters = () => {
     const styles = donatorStyles(reuseTheme);
 
 
-    const [donaters, setDonaters] = useState<Donator[]>([]);
+    const [donaters, setDonaters] = useState<any[]>([]);
 
-    // Generate dummy data for the donators array
+    const {getAllDonors} = useFirebase();
     useEffect(() => {
-        const dummyDonaters: Donator[] = [
-            {
-                id: '1',
-                avatar: 'https://dummyurl.com/avatar1.jpg',
-                firstName: 'John',
-                lastName: 'Doe',
-                totalfollowers: 1000,
-            },
-            {
-                id: '2',
-                avatar: 'https://dummyurl.com/avatar2.jpg',
-                firstName: 'Jane',
-                lastName: 'Smith',
-                totalfollowers: 500,
-            },
-            // Add more dummy donators as needed...
-        ];
 
-        setDonaters(dummyDonaters);
-    }, []);
+        getAllDonors()
+          .then((usersData) => {
+            // Update the state with the retrieved users data
+            setDonaters(usersData);
+          })
+          .catch((error) => {
+            console.error('Error retrieving users:', error);
+          });
+      }, []);
 
 
     const navigation = useNavigation<any>();
-
-
 
 
     return (
         <View >
 
             <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
-                {donaters.map(donator => (
+                {donaters.length? donaters.map(donator => (
                     <TouchableOpacity
                         style={[generalstyles.centerContent, styles.containerStyle]}
                         key={donator.id}
@@ -79,7 +69,7 @@ const Donaters = () => {
                             <Avatar.Image
                                 size={120}
                                 source={{
-                                    uri: donator?.avatar,
+                                    uri: donator?.photoURL,
                                 }}
                             />
                             {/* details */}
@@ -106,7 +96,9 @@ const Donaters = () => {
                             </View>
                         </View>
                     </TouchableOpacity>
-                ))}
+                )):
+                 <NotAvailable text={"No Donaters Currently Available"}/>
+                }
             </ScrollView>
         </View>
     );

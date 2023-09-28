@@ -16,7 +16,7 @@ const Box = ({ rating }: boxInterface) => {
     <View
       style={[
         {
-          backgroundColor: reuseTheme.colors.preference.primaryBackground,
+          backgroundColor: reuseTheme.colors.preference.primaryForeground,
           marginHorizontal: 10,
           width: 40,
           height: 20,

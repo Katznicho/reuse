@@ -31,7 +31,7 @@ const DonaterDetails = () => {
             >
                 {/* header section */}
                 <ImageBackground
-                    source={{ uri: params.item.image }}
+                    source={{ uri: params.item.photoURL }}
                     style={{ width: '100%', height: 300 }}
                     resizeMode="cover"
                 >
@@ -46,7 +46,7 @@ const DonaterDetails = () => {
                     </View>
                 </ImageBackground>
 
-                <View style={[generalstyles.flexStyles , {justifyContent:"space-between", alignItems:"center"}]}>
+                <View style={[generalstyles.flexStyles , { alignItems:"center"}]}>
                     <View>
                         <View>
                             <Text
@@ -57,7 +57,8 @@ const DonaterDetails = () => {
                                     color: reuseTheme.colors.preference.primaryText,
                                 }}
                             >
-                                {params.item.name}
+                                { `${params.item.firstName} ${params.item.lastName}` }
+
                             </Text>
                         </View>
                         <View>
@@ -78,13 +79,11 @@ const DonaterDetails = () => {
                     <View>
                         <Button
                             mode="contained"
-                            contentStyle={{
-                                flexDirection: 'row-reverse',
-                            }}
-                            //  loading={true}
+                            
+                             //loading={true}
                             buttonColor={reuseTheme.colors.preference.primaryForeground}
                             textColor={reuseTheme.colors.preference.primaryText}
-                            onPress={() => navigation.navigate('Packages')}
+                            // onPress={() => navigation.navigate('Packages')}
                         >
                             Follow
                         </Button>
@@ -94,7 +93,10 @@ const DonaterDetails = () => {
                 {/* header section */}
 
                 {/* card section */}
+
                 <ProfileCard />
+                
+
                 {/* card section */}
 
                 {/* Reviews */}
