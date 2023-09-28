@@ -1,11 +1,4 @@
 import {
-    StyleSheet,
-    Text,
-    View,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
     Alert,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
@@ -14,9 +7,9 @@ import SwiperText from '../../components/SwiperText/SwiperText';
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import { APP_USERS } from '../../utils/constants/constants';
-
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
+import { API_KEY} from "@env";
 
 
 
@@ -133,7 +126,7 @@ const UserLocation = ({ setUserProfile }: SwiperScreenProps) => {
                     console.log("==================================");
                 }}
                 query={{
-                    key: 'AIzaSyATT-OoxvppDdCRfNypfjLY5VWbZEqs_GA',
+                    key: API_KEY,
                     language: 'en',
                     components: 'country:ug'
                 }}
@@ -151,15 +144,4 @@ const UserLocation = ({ setUserProfile }: SwiperScreenProps) => {
 
 export default UserLocation;
 
-const styles = StyleSheet.create({
-    genderStyles: {
-        width: 110,
-        height: 110,
-        padding: 10,
-        borderRadius: 100,
-        marginVertical: 15,
-    },
-    genderNameStyles: {
-        marginTop: 0,
-    }
-});
+
