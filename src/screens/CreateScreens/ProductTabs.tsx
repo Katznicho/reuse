@@ -3,17 +3,16 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CreateDonationProduct from './CreateDonationProduct';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
-import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import MyProducts from './MyProducts';
 
 const Tab = createMaterialTopTabNavigator();
 const ProductTabs = () => {
 
     const { reuseTheme } = useUserPreferredTheme();
-    const generalstyles = dynamicGeneralStyles(reuseTheme);
+
   return (
     <Tab.Navigator
-      initialRouteName="GeneratSession"
+      initialRouteName="CreateProducts"
       backBehavior="order"
       sceneContainerStyle={{
         backgroundColor: reuseTheme.colors.preference.primaryBackground,
@@ -45,7 +44,7 @@ const ProductTabs = () => {
       }}
     >
       <Tab.Screen
-        name="Create"
+        name="CreateProducts"
         component={CreateDonationProduct}
         options={{
           tabBarLabel: 'Create',

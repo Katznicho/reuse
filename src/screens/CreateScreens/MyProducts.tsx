@@ -7,14 +7,46 @@ import {
     Pressable,
     Image,
   } from 'react-native';
-  import React, { useState } from 'react';
+  import React, { useEffect, useState } from 'react';
   import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import { ReuseTheme } from '../../types/types';
+import { RootState } from '../../redux/store/dev';
+import { useSelector } from 'react-redux';
+import { useFirebase } from '../../hooks/useFirebase';
+import { ActivityIndicator } from '../../components/ActivityIndicator';
+import NotAvailable from '../../components/NotAvailable';
+import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
+import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
+
   
   const MyProducts = () => {
+    const { user } = useSelector((state: RootState) => state.user);
+    const {getProductsByUserId} = useFirebase();
+    const [products , setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const navigation = useNavigation<any>();
+
+
+
+
+    useEffect(()=>{
+       setLoading(true);
+         getProductsByUserId(user.UID).then((userproducts)=>{
+           setProducts(userproducts)
+           console.log('done');
+         }).catch((error)=>{
+           console.log("An error occured")
+         })
+         setLoading(false);
+    },[user?.UID]);
+
     const { reuseTheme } = useUserPreferredTheme();
     const styles = productStyles(reuseTheme);
+    const generalstyles = dynamicGeneralStyles(reuseTheme);
+
     const [recent] = useState<any>([
       {
         id: 1,
@@ -35,6 +67,8 @@ import { ReuseTheme } from '../../types/types';
         image: 'https://picsum.photos/700',
       },
     ]);
+
+    if(loading) return <ActivityIndicator/>
   
     return (
       <SafeAreaView
@@ -43,9 +77,12 @@ import { ReuseTheme } from '../../types/types';
           backgroundColor: reuseTheme.colors.preference.primaryBackground,
         }}
       >
-        {/* container */}
-        <FlatList
-          data={recent}
+
+
+         {
+          products.length?
+          <FlatList
+          data={products}
           showsVerticalScrollIndicator={false}
           keyExtractor={item => String(item.id)}
           renderItem={({ item, index }) => (
@@ -73,9 +110,9 @@ import { ReuseTheme } from '../../types/types';
                 }}
               >
                 {/* team name */}
-                <Text style={styles.date}>{item.name}</Text>
-                <Text style={styles.status}>{item.date}</Text>
-                <Text style={styles.date}>{item.time}</Text>
+                <Text style={styles.date}>{item?.name}</Text>
+                <Text style={styles.status}>{item?.date}</Text>
+                <Text style={styles.date}>{item?.time}</Text>
   
                 {/* team name */}
               </View>
@@ -86,7 +123,7 @@ import { ReuseTheme } from '../../types/types';
               >
                 {/* amount details */}
                 <View>
-                  <Text style={styles.status}>{item.status}</Text>
+                  <Text style={styles.status}>{item?.status}</Text>
                 </View>
                 {/* amoun details */}
               </View>
@@ -102,7 +139,30 @@ import { ReuseTheme } from '../../types/types';
             </Pressable>
           )}
         />
-        {/* container */}
+         
+          :
+           <View >
+               <NotAvailable
+           text={"You dont have any products currenlty"}
+          />
+                               <View>
+                        <Button
+                            mode="contained"
+                            
+                             //loading={true}
+                            buttonColor={reuseTheme.colors.preference.primaryForeground}
+                            textColor={reuseTheme.colors.preference.primaryText}
+                             onPress={() => navigation.navigate('CreateProducts')}
+                        >
+                            Create Products
+                        </Button>
+                    </View>
+
+           </View>
+          
+         }
+        
+
       </SafeAreaView>
     );
   };
