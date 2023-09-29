@@ -5,6 +5,7 @@ import { loginUser, logoutUser, registerUser, setAppIntro, updateAppIntro, updat
 import { APP_USERS, PRODUCT_COLLECTION } from '../utils/constants/constants';
 
 const USER_COLLECTION = "users";
+const CATEGORY_COLLECTION="categories";
 
 export const useFirebase = () => {
     const dispatch = useDispatch<any>();
@@ -224,12 +225,34 @@ export const useFirebase = () => {
             // Include the document ID as part of the product data
             products.push({ id: documentSnapshot.id, ...productData });
           });
+          
       
           return products;
         } catch (error) {
           throw error;
         }
       };
+
+      const getAllCategories = async()=>{
+         try {
+          const querySnapshot = await firestore().collection(CATEGORY_COLLECTION).get();
+          const categories:any = [];
+          querySnapshot.forEach((documentSnapshot) => {
+            // Get the data of each product document
+            const data = documentSnapshot.data();
+            // Include the document ID as part of the product data
+            categories.push({ id: documentSnapshot.id, ...data });
+          });
+          return categories;
+          
+         } catch (error) {
+          throw error;
+          
+         }
+
+
+
+      }
 
 
       const getAllUsers = async () => {
@@ -334,7 +357,8 @@ export const useFirebase = () => {
         getProductsByUserId,
         getAllUsers,
         getUserByUid,
-        getAllDonors
+        getAllDonors,
+        getAllCategories
 
         // Export other auth functions here if needed
     };

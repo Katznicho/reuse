@@ -1,4 +1,4 @@
-import { StyleSheet, Text, SafeAreaView, TouchableOpacity, View, TextInput, Image, Alert } from 'react-native'
+import { StyleSheet, Text, SafeAreaView, TouchableOpacity, View, TextInput, Image, Alert, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import { ScrollView } from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,7 +19,10 @@ import { useSelector } from 'react-redux';
 import { PRODUCT_STORAGE } from '../../utils/constants/constants';
 import { Button } from 'react-native-paper';
 import { useFirebase } from '../../hooks/useFirebase';
-import { showMessage } from 'react-native-flash-message';
+import * as reactNativeFlashMessage from 'react-native-flash-message';
+import UserLocation from '../onboarding/UserLocation';
+import { useNavigation } from '@react-navigation/native';
+import { API_KEY } from '@env';
 
 
 interface DayDetails {
@@ -52,10 +55,14 @@ interface Output {
 
 const CreateDonationProduct = () => {
 
+     const navigation = useNavigation<any>();
+
     const [showModal, setShowModal] = useState<boolean>(false);
     const [imagePath, setImagePath] = useState<any>(null);
     const { user } = useSelector((state: RootState) => state.user);
-    const [uploadingImages , setUploadingImages] = useState<boolean>(false);
+    const [uploadingImages, setUploadingImages] = useState<boolean>(false);
+
+    const [locationModal, setLocationModal] = useState<boolean>(true);
 
     const [loading, setLoading] = useState<boolean>(false);
     const { createDonationProduct } = useFirebase();
@@ -211,14 +218,10 @@ const CreateDonationProduct = () => {
         isProductRefurbished: false,
         isProductDamaged: false,
         damageDescription: "",
-        receiverDetails: {
-            name: "",
-            email: "",
-            phone: "",
-            address: "",
-        },
-        status:"UPLOADED",
-    
+        receiverCommunity: "",
+        estimatedPickUp: "",
+        status: "UPLOADED",
+
     });
 
 
@@ -272,7 +275,7 @@ const CreateDonationProduct = () => {
 
     const uploadImagesAutomatically = useCallback(async () => {
         try {
-             setUploadingImages(true);
+            setUploadingImages(true);
             const updatedCount = [...count];
             for (let index = 0; index < updatedCount.length; index++) {
                 const item = updatedCount[index];
@@ -302,12 +305,6 @@ const CreateDonationProduct = () => {
             }
             setCount(updatedCount); // Update the state with the uploaded images
 
-            // Update productDetails after all images are uploaded
-            // const updatedImages = updatedCount.map(item => item.imagePath ? item.imagePath : null);
-            // setProductDetails((prev: any) => ({
-            //     ...prev,
-            //     images: updatedImages
-            // }));
             setUploadingImages(false);
         } catch (error) {
             setUploadingImages(false);
@@ -320,7 +317,7 @@ const CreateDonationProduct = () => {
             setLoading(true);
             await createDonationProduct(user?.UID, productDetials);
             setLoading(false);
-            showMessage({
+            reactNativeFlashMessage.showMessage({
                 message: 'Product created successfully',
                 type: 'success',
                 icon: 'success',
@@ -354,13 +351,11 @@ const CreateDonationProduct = () => {
                 isProductRefurbished: false,
                 isProductDamaged: false,
                 damageDescription: "",
-                receiverDetails: {
-                    name: "",
-                    email: "",
-                    phone: "",
-                    address: "",
-                },
+                receiverCommunity: "",
+                estimatedPickUp: ""
             })
+
+            navigation.navigate("MyProducts");
 
         } catch (error) {
             console.log(error);
@@ -371,532 +366,612 @@ const CreateDonationProduct = () => {
 
 
 
-    return (
-        <SafeAreaView style={[generalstyles.container]}>
-            <KeyboardAwareScrollView
-                style={{ flex: 1, width: '100%' }}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="always"
+
+    return locationModal ? <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={generalstyles.container}
+    >
+        <View style={{
+            height:400,
+            marginVertical:20
+            }}>
+            <UserLocation
+                placeholder={"Enter estimated pick up location"}
+                // setPickUpAddress={setProductDetails}
+                onPress={(data:any, details = null) => {
+                    // 'details' is provided when fetchDetails = true
+    
+                    
+    
+                    fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${data?.place_id}&key=${API_KEY}`)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.results && data.results.length > 0) {
+                                 const address = {
+                                     data,
+                                     details,
+                                     location:data.results[0].geometry.location
+                                 }
+    
+                                 setProductDetails((prev: any) => {
+                                    return { ...prev, estimatedPickUp: address }
+                                })
+                            }
+                            else{
+    
+                                const address = {
+                                    data,
+                                    details,
+    
+                                }
+    
+                                setProductDetails((prev: any) => {
+                                    return { ...prev, estimatedPickUp: address }
+                                })
+    
+                            }
+    
+    
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching coordinates:", error);
+                        });
+    
+    
+                }
+            }
+            />
+            <View>
+
+            </View>
+            {/* button */}
+            <Button
+                icon={{ source: 'play', direction: 'ltr' }}
+                mode="contained"
+                contentStyle={{
+                    flexDirection: 'row-reverse',
+                }}
+                buttonColor={reuseTheme.colors.preference.primaryForeground}
+                textColor={reuseTheme.colors.preference.primaryText}
+                onPress={createProduct}
+            disabled={loading}
+
+
             >
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* upload area */}
-                    {
-                        imagePath ? (<View>
-                            <TouchableOpacity
+                {loading?"Creating ...":"Create Product"}
+            </Button>
+            {/* button */}
+
+        </View>
+
+    </KeyboardAvoidingView>
+        : (
+            <SafeAreaView style={[generalstyles.container]}>
+                <KeyboardAwareScrollView
+                    style={{ flex: 1, width: '100%' }}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="always"
+                >
+
+
+
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        {/* upload area */}
+                        {
+                            imagePath ? (<View>
+                                <TouchableOpacity
+                                    onPress={() => {
+
+                                        setShowModal(!showModal);
+
+                                    }}
+                                    style={[generalstyles.centerContent]}>
+                                    <Image
+                                        source={{ uri: imagePath.imagePath }}
+                                        style={[styles.coverStyles, generalstyles.centerContent]}
+                                    />
+
+                                </TouchableOpacity>
+
+
+
+                            </View>) : (<TouchableOpacity
                                 onPress={() => {
 
                                     setShowModal(!showModal);
 
+
                                 }}
-                                style={[ generalstyles.centerContent]}>
-                                <Image
-                                    source={{ uri: imagePath.imagePath }}
-                                    style={[styles.coverStyles, generalstyles.centerContent]}
+                                style={[styles.coverStyles, generalstyles.centerContent]}>
+
+                                <AntDesign
+                                    name={'plus'}
+                                    color={reuseTheme.colors.preference.primaryText}
+                                    size={20}
+                                    style={{
+                                        borderRadius: 10,
+                                        padding: 10,
+                                    }}
                                 />
-
-                            </TouchableOpacity>
-
-
-
-                        </View>) : (<TouchableOpacity
-                            onPress={() => {
-
-                                setShowModal(!showModal);
-
-
-                            }}
-                            style={[styles.coverStyles, generalstyles.centerContent]}>
-
-                            <AntDesign
-                                name={'plus'}
-                                color={reuseTheme.colors.preference.primaryText}
-                                size={20}
-                                style={{
-                                    borderRadius: 10,
-                                    padding: 10,
-                                }}
-                            />
-                            <View>
-                                <Text>Add cover photos</Text>
-                            </View>
-
-                        </TouchableOpacity>)
-                    }
-
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-
-                        {
-                            count.map((item:any, index:number) => (
-                                <View key={item.id}>
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={[styles.imageStyles, generalstyles.centerContent]}
-                                        onPress={() => {
-                                            // Create a copy of the count array to modify the specific item
-                                            const updatedCount = [...count];
-                                            updatedCount[index] = {
-                                                ...updatedCount[index],
-                                                showModal: true, // Set showModal to true for the clicked item
-                                            };
-                                            setCount(updatedCount);
-                                        }}
-                                    >
-                                        {
-                                            item.imagePath ? (<Image
-                                                source={{ uri: item?.imagePath?.imagePath }}
-                                                style={[styles.imageStyles, generalstyles.centerContent]}
-                                            />) : (<AntDesign
-                                                name={'plus'}
-                                                color={reuseTheme.colors.preference.primaryText}
-                                                size={20}
-                                                style={{
-                                                    borderRadius: 10,
-                                                    padding: 10,
-                                                }}
-                                            />)
-                                        }
-
-
-                                    </TouchableOpacity>
-
-
-                                    {item.showModal && (
-                                        <UploadComponent
-                                            image={item.imagePath}
-                                            setImage={(newImage: any) => {
-                                                // Update the image path for the specific item
-                                                const updatedCount = [...count];
-                                                updatedCount[index] = {
-                                                    ...updatedCount[index],
-                                                    imagePath: newImage,
-                                                };
-                                                setCount(updatedCount);
-                                            }}
-                                            setModal={(newModalState: any) => {
-                                                // Update the showModal property for the specific item
-                                                const updatedCount = [...count];
-                                                updatedCount[index] = {
-                                                    ...updatedCount[index],
-                                                    showModal: newModalState,
-                                                };
-                                                setCount(updatedCount);
-                                            }}
-                                            showModal={item.showModal}
-                                            selectDocument={false}
-                                        />
-                                    )}
-
+                                <View>
+                                    <Text>Add cover photos</Text>
                                 </View>
 
-
-
-                            ))
+                            </TouchableOpacity>)
                         }
 
-                    </ScrollView>
-                    {/* upload all */}
-                     <View  style={styles.buttonStyles}>
-                     <Button
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
 
-                            mode="contained"
-                            contentStyle={{
-                                flexDirection: 'row-reverse',
-                            }}
-                            buttonColor={reuseTheme.colors.preference.primaryForeground}
-                            textColor={reuseTheme.colors.preference.primaryText}
-                            onPress={uploadImagesAutomatically}
-                            disabled={count.some((item:any) => item.imagePath === null) || uploadingImages}
-                            loading={uploadingImages}
+                            {
+                                count.map((item: any, index: number) => (
+                                    <View key={item.id}>
+                                        <TouchableOpacity
+                                            key={index}
+                                            style={[styles.imageStyles, generalstyles.centerContent]}
+                                            onPress={() => {
+                                                // Create a copy of the count array to modify the specific item
+                                                const updatedCount = [...count];
+                                                updatedCount[index] = {
+                                                    ...updatedCount[index],
+                                                    showModal: true, // Set showModal to true for the clicked item
+                                                };
+                                                setCount(updatedCount);
+                                            }}
+                                        >
+                                            {
+                                                item.imagePath ? (<Image
+                                                    source={{ uri: item?.imagePath?.imagePath }}
+                                                    style={[styles.imageStyles, generalstyles.centerContent]}
+                                                />) : (<AntDesign
+                                                    name={'plus'}
+                                                    color={reuseTheme.colors.preference.primaryText}
+                                                    size={20}
+                                                    style={{
+                                                        borderRadius: 10,
+                                                        padding: 10,
+                                                    }}
+                                                />)
+                                            }
 
 
-                        >
-                            {/* Create Product */}
-                             Upload Images
-                        </Button>
-                          
-                     </View>
-                    {/* upload all */}
-                    {/* upload area */}
+                                        </TouchableOpacity>
 
-                    <View>
-                        <TextInput
-                            style={generalstyles.InputContainer}
-                            placeholder={'product title'}
-                            keyboardType="default"
-                            placeholderTextColor="#aaaaaa"
-                            onChangeText={text =>
-                                setProductDetails((prev: any) => {
-                                    return { ...prev, title: text }
-                                })
 
+                                        {item.showModal && (
+                                            <UploadComponent
+                                                image={item.imagePath}
+                                                setImage={(newImage: any) => {
+                                                    // Update the image path for the specific item
+                                                    const updatedCount = [...count];
+                                                    updatedCount[index] = {
+                                                        ...updatedCount[index],
+                                                        imagePath: newImage,
+                                                    };
+                                                    setCount(updatedCount);
+                                                }}
+                                                setModal={(newModalState: any) => {
+                                                    // Update the showModal property for the specific item
+                                                    const updatedCount = [...count];
+                                                    updatedCount[index] = {
+                                                        ...updatedCount[index],
+                                                        showModal: newModalState,
+                                                    };
+                                                    setCount(updatedCount);
+                                                }}
+                                                showModal={item.showModal}
+                                                selectDocument={false}
+                                            />
+                                        )}
+
+                                    </View>
+
+
+
+                                ))
                             }
-                            value={productDetials.title}
-                            underlineColorAndroid="transparent"
-                            autoCapitalize="none"
-                        />
 
+                        </ScrollView>
+                        {/* upload all */}
+                        <View style={styles.buttonStyles}>
+                            <Button
 
-                    </View>
-
-                    {/* category */}
-                    <View style={styles.container}>
-
-                        <Dropdown
-                            backgroundColor='transparent'
-                            containerStyle={{
-                                backgroundColor: reuseTheme.colors.preference.primaryBackground,
-                                borderRadius: 10,
-                        
-                            }}
-                            style={[styles.dropdown]}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
-                            itemContainerStyle={{ maxHeight: scale(200), marginHorizontal: 20, backgroundColor: reuseTheme.colors.preference.primaryBackground }}
-                            itemTextStyle={{ color: reuseTheme.colors.preference.primaryText }}
-                            data={category}
-                            search
-                            maxHeight={scale(200)}
-                            labelField="label"
-                            valueField="value"
-                            placeholder={!isFocus ? 'Select Product Category' : '...'}
-                            searchPlaceholder="Search Categories..."
-                            value={productDetials.category}
-                            onFocus={() => setIsFocus(true)}
-                            onBlur={() => setIsFocus(false)}
-                            onChange={item => {
-                                setProductDetails((prev: any) => {
-                                    return { ...prev, category: item.value }
-                                })
-                                setIsFocus(false);
-                            }}
-                            renderLeftIcon={() => (
-                                <AntDesign
-                                    style={styles.icon}
-                                    color={isFocus ? 'blue' : 'black'}
-                                    name="Safety"
-                                    size={scale(20)}
-                                />
-                            )}
-                        />
-                    </View>
-
-                    {/* category */}
-
-                    {/* Radio button */}
-                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
-
-
-                        <View
-                            style={{
-                                width: "25%"
-                            }}
-                        >
-                            <Radio
-                                enabled={productDetials.isDeliveryFeeCovered}
-                                toggle={() => {
-                                    setProductDetails((prev: { isDeliveryFeeCovered: any; }) => {
-                                        return { ...prev, isDeliveryFeeCovered: !prev.isDeliveryFeeCovered }
-                                    })
+                                mode="contained"
+                                contentStyle={{
+                                    flexDirection: 'row-reverse',
                                 }}
-                                containerStyle={{
-                                    marginLeft: -20
-                                }}
+                                buttonColor={reuseTheme.colors.preference.primaryForeground}
+                                textColor={reuseTheme.colors.preference.primaryText}
+                                onPress={uploadImagesAutomatically}
+                                disabled={count.some((item: any) => item.imagePath === null) || uploadingImages}
+                                loading={uploadingImages}
 
 
-                            />
+                            >
+                                {/* Create Product */}
+                                Upload Images
+                            </Button>
+
                         </View>
-                        <Text style={{ marginHorizontal: 10 }}>Is Delivery Fee Covered  ?</Text>
+                        {/* upload all */}
+                        {/* upload area */}
 
-
-                    </View>
-
-                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
-
-
-                        <View
-                            style={{
-                                width: "25%"
-                            }}
-                        >
-                            <Radio
-                                enabled={productDetials.isProductAvailableForAll}
-                                toggle={() => {
-                                    setProductDetails((prev: { isProductAvailableForAll: any; }) => {
-                                        return { ...prev, isProductAvailableForAll: !prev.isProductAvailableForAll }
-                                    })
-                                }}
-                                containerStyle={{
-                                    marginLeft: -20
-                                }}
-
-                            />
-                        </View>
-                        <Text style={{ marginHorizontal: 10 }}>Product Available For All ?</Text>
-
-
-                    </View>
-
-
-                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
-
-
-                        <View
-                            style={{
-                                width: "25%"
-                            }}
-                        >
-                            <Radio
-                                enabled={productDetials.isProductNew}
-                                toggle={() => {
-                                    setProductDetails((prev: { isProductNew: any; }) => {
-                                        return { ...prev, isProductNew: !prev.isProductNew }
-                                    })
-                                }}
-                                containerStyle={{
-                                    marginLeft: -35
-                                }}
-
-                            />
-                        </View>
-                        <Text style={{ marginHorizontal: 10 }}> Is the Product New   ?</Text>
-
-
-                    </View>
-
-
-
-                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
-
-
-                        <View
-                            style={{
-                                width: "25%"
-                            }}
-                        >
-                            <Radio
-                                enabled={productDetials.isProductDamaged}
-                                toggle={() => {
-                                    setProductDetails((prev: { isProductDamaged: any; }) => {
-                                        return { ...prev, isProductDamaged: !prev.isProductDamaged }
-                                    })
-                                }}
-                                containerStyle={{
-                                    marginLeft: -20
-                                }}
-
-                            />
-                        </View>
-                        <Text style={{ marginHorizontal: 10 }}> Product has any damages?</Text>
-
-
-                    </View>
-
-
-
-
-                    {/* Radio button */}
-
-
-
-
-
-
-                    {/* damage description */}
-                    {
-                        productDetials.isProductDamaged && (
-                            <TextArea
-                                placehoder="Tell us about the damage"
-                                text={productDetials.damageDescription}
-                                setText={(text: any) => {
+                        <View>
+                            <TextInput
+                                style={generalstyles.InputContainer}
+                                placeholder={'product title'}
+                                keyboardType="default"
+                                placeholderTextColor="#aaaaaa"
+                                onChangeText={text =>
                                     setProductDetails((prev: any) => {
-                                        return { ...prev, damageDescription: text }
+                                        return { ...prev, title: text }
                                     })
+
                                 }
-                                }
+                                value={productDetials.title}
+                                underlineColorAndroid="transparent"
+                                autoCapitalize="none"
                             />
-                        )
-
-                    }
-
-                    {/* damage description */}
 
 
-                    {/* community */}
-                    {
-                        !productDetials.isProductAvailableForAll && (
-                            <View style={styles.container}>
-                                <Dropdown
-                                    backgroundColor='transparent'
-                                    containerStyle={{
-                                        backgroundColor: reuseTheme.colors.preference.primaryBackground,
-                                        borderRadius: 10,
-                                        // marginHorizontal: 20,
-                                    }}
-                                    style={[styles.dropdown]}
-                                    placeholderStyle={styles.placeholderStyle}
-                                    selectedTextStyle={styles.selectedTextStyle}
-                                    inputSearchStyle={styles.inputSearchStyle}
-                                    iconStyle={styles.iconStyle}
-                                    itemContainerStyle={{ maxHeight: scale(200), marginHorizontal: 20, backgroundColor: reuseTheme.colors.preference.primaryBackground }}
-                                    itemTextStyle={{ color: reuseTheme.colors.preference.primaryText }}
-                                    data={communites}
-                                    search
-                                    maxHeight={scale(200)}
-                                    labelField="label"
-                                    valueField="value"
-                                    placeholder={!isFocus ? 'Select Community' : '...'}
-                                    searchPlaceholder="Search Communities..."
-                                    value={productDetials.category}
-                                    onFocus={() => setIsFocus(true)}
-                                    onBlur={() => setIsFocus(false)}
-                                    onChange={item => {
-                                        setProductDetails((prev: any) => {
-                                            return { ...prev, category: item.value }
+                        </View>
+
+                        {/* category */}
+                        <View style={styles.container}>
+
+                            <Dropdown
+                                backgroundColor='transparent'
+                                containerStyle={{
+                                    backgroundColor: reuseTheme.colors.preference.primaryBackground,
+                                    borderRadius: 10,
+
+                                }}
+                                style={[styles.dropdown]}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                inputSearchStyle={styles.inputSearchStyle}
+                                iconStyle={styles.iconStyle}
+                                itemContainerStyle={{ maxHeight: scale(200), marginHorizontal: 20, backgroundColor: reuseTheme.colors.preference.primaryBackground }}
+                                itemTextStyle={{ color: reuseTheme.colors.preference.primaryText }}
+                                data={category}
+                                search
+                                maxHeight={scale(200)}
+                                labelField="label"
+                                valueField="value"
+                                placeholder={!isFocus ? 'Select Product Category' : '...'}
+                                searchPlaceholder="Search Categories..."
+                                value={productDetials.category}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item => {
+                                    setProductDetails((prev: any) => {
+                                        return { ...prev, category: item.value }
+                                    })
+                                    setIsFocus(false);
+                                }}
+                                renderLeftIcon={() => (
+                                    <AntDesign
+                                        style={styles.icon}
+                                        color={isFocus ? 'blue' : 'black'}
+                                        name="Safety"
+                                        size={scale(20)}
+                                    />
+                                )}
+                            />
+                        </View>
+
+                        {/* category */}
+
+                        {/* Radio button */}
+                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+
+
+                            <View
+                                style={{
+                                    width: "25%"
+                                }}
+                            >
+                                <Radio
+                                    enabled={productDetials.isDeliveryFeeCovered}
+                                    toggle={() => {
+                                        setProductDetails((prev: { isDeliveryFeeCovered: any; }) => {
+                                            return { ...prev, isDeliveryFeeCovered: !prev.isDeliveryFeeCovered }
                                         })
-                                        setIsFocus(false);
                                     }}
-                                    renderLeftIcon={() => (
-                                        <AntDesign
-                                            style={styles.icon}
-                                            color={isFocus ? 'blue' : 'black'}
-                                            name="Safety"
-                                            size={scale(20)}
-                                        />
-                                    )}
+                                    containerStyle={{
+                                        marginLeft: -20
+                                    }}
+
+
                                 />
                             </View>
-                        )
-                    }
+                            <Text style={{ marginHorizontal: 10 }}>Is Delivery Fee Covered  ?</Text>
 
 
-                    {/* community */}
+                        </View>
+
+                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+
+
+                            <View
+                                style={{
+                                    width: "25%"
+                                }}
+                            >
+                                <Radio
+                                    enabled={productDetials.isProductAvailableForAll}
+                                    toggle={() => {
+                                        setProductDetails((prev: { isProductAvailableForAll: any; }) => {
+                                            return { ...prev, isProductAvailableForAll: !prev.isProductAvailableForAll }
+                                        })
+                                    }}
+                                    containerStyle={{
+                                        marginLeft: -20
+                                    }}
+
+                                />
+                            </View>
+                            <Text style={{ marginHorizontal: 10 }}>Product Available For All ?</Text>
+
+
+                        </View>
+
+
+                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+
+
+                            <View
+                                style={{
+                                    width: "25%"
+                                }}
+                            >
+                                <Radio
+                                    enabled={productDetials.isProductNew}
+                                    toggle={() => {
+                                        setProductDetails((prev: { isProductNew: any; }) => {
+                                            return { ...prev, isProductNew: !prev.isProductNew }
+                                        })
+                                    }}
+                                    containerStyle={{
+                                        marginLeft: -35
+                                    }}
+
+                                />
+                            </View>
+                            <Text style={{ marginHorizontal: 10 }}> Is the Product New   ?</Text>
+
+
+                        </View>
+
+
+
+                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+
+
+                            <View
+                                style={{
+                                    width: "25%"
+                                }}
+                            >
+                                <Radio
+                                    enabled={productDetials.isProductDamaged}
+                                    toggle={() => {
+                                        setProductDetails((prev: { isProductDamaged: any; }) => {
+                                            return { ...prev, isProductDamaged: !prev.isProductDamaged }
+                                        })
+                                    }}
+                                    containerStyle={{
+                                        marginLeft: -20
+                                    }}
+
+                                />
+                            </View>
+                            <Text style={{ marginHorizontal: 10 }}> Product has any damages?</Text>
+
+
+                        </View>
+
+
+
+
+                        {/* Radio button */}
 
 
 
 
 
-                    {/* estimated weight */}
-                    <View>
-                        <TextInput
-                            style={generalstyles.InputContainer}
-                            placeholder={'enter estimated weight... in kgs'}
-                            keyboardType="default"
-                            placeholderTextColor="#aaaaaa"
-                            onChangeText={text =>
+
+                        {/* damage description */}
+                        {
+                            productDetials.isProductDamaged && (
+                                <TextArea
+                                    placehoder="Tell us about the damage"
+                                    text={productDetials.damageDescription}
+                                    setText={(text: any) => {
+                                        setProductDetails((prev: any) => {
+                                            return { ...prev, damageDescription: text }
+                                        })
+                                    }
+                                    }
+                                />
+                            )
+
+                        }
+
+                        {/* damage description */}
+
+
+                        {/* community */}
+                        {
+                            !productDetials.isProductAvailableForAll && (
+                                <View style={styles.container}>
+                                    <Dropdown
+                                        backgroundColor='transparent'
+                                        containerStyle={{
+                                            backgroundColor: reuseTheme.colors.preference.primaryBackground,
+                                            borderRadius: 10,
+                                            // marginHorizontal: 20,
+                                        }}
+                                        style={[styles.dropdown]}
+                                        placeholderStyle={styles.placeholderStyle}
+                                        selectedTextStyle={styles.selectedTextStyle}
+                                        inputSearchStyle={styles.inputSearchStyle}
+                                        iconStyle={styles.iconStyle}
+                                        itemContainerStyle={{ maxHeight: scale(200), marginHorizontal: 20, backgroundColor: reuseTheme.colors.preference.primaryBackground }}
+                                        itemTextStyle={{ color: reuseTheme.colors.preference.primaryText }}
+                                        data={communites}
+                                        search
+                                        maxHeight={scale(200)}
+                                        labelField="label"
+                                        valueField="value"
+                                        placeholder={!isFocus ? 'Select Community' : '...'}
+                                        searchPlaceholder="Search Communities..."
+                                        value={productDetials.category}
+                                        onFocus={() => setIsFocus(true)}
+                                        onBlur={() => setIsFocus(false)}
+                                        onChange={item => {
+                                            setProductDetails((prev: any) => {
+                                                return { ...prev, category: item.value }
+                                            })
+                                            setIsFocus(false);
+                                        }}
+                                        renderLeftIcon={() => (
+                                            <AntDesign
+                                                style={styles.icon}
+                                                color={isFocus ? 'blue' : 'black'}
+                                                name="Safety"
+                                                size={scale(20)}
+                                            />
+                                        )}
+                                    />
+                                </View>
+                            )
+                        }
+
+
+                        {/* community */}
+
+
+
+
+
+                        {/* estimated weight */}
+                        <View>
+                            <TextInput
+                                style={generalstyles.InputContainer}
+                                placeholder={'enter estimated weight... in kgs'}
+                                keyboardType="default"
+                                placeholderTextColor="#aaaaaa"
+                                onChangeText={text =>
+                                    setProductDetails((prev: any) => {
+                                        return { ...prev, estimatedWeight: text }
+                                    })
+
+                                }
+                                value={productDetials.estimatedWeight}
+                                underlineColorAndroid="transparent"
+                                autoCapitalize="none"
+                            />
+                        </View>
+                        {/* estimated weight */}
+
+                        {/* pick up da */}
+                        <View>
+                            <TextInput
+                                style={generalstyles.InputContainer}
+                                placeholder={'estimate pick up date (optional)'}
+                                keyboardType="default"
+                                placeholderTextColor="#aaaaaa"
+                                editable={false}
+                                value={productDetials.pickupDate}
+                                underlineColorAndroid="transparent"
+                                autoCapitalize="none"
+                            />
+                        </View>
+
+                        <View>
+                            <CalendarComponent
+                                containerStyles={{
+                                    borderWidth: 1,
+                                    borderColor: reuseTheme.colors.preference.primaryBackground,
+                                    height: 400,
+                                    // marginHorizontal: 25,
+                                    marginTop: 10,
+                                    borderRadius: 10,
+                                    backgroundColor: reuseTheme.colors.preference.primaryBackground,
+                                    color: reuseTheme.colors.preference.primaryText,
+                                    fontWeight: 'bold',
+                                    elevation: 30,
+                                }}
+                                disableAllTouchEventsForDays={false}
+                                handleDayPress={setStartDate}
+                                markedDates={markedDates}
+
+                            />
+
+                        </View>
+
+
+                        {/* pickup date */}
+
+
+
+                        {/* descriptin */}
+                        <TextArea
+                            placeholder="Tell us about your product"
+                            text={productDetials.description}
+                            setText={(text: any) => {
                                 setProductDetails((prev: any) => {
-                                    return { ...prev, estimatedWeight: text }
+                                    return { ...prev, description: text }
                                 })
-
                             }
-                            value={productDetials.estimatedWeight}
-                            underlineColorAndroid="transparent"
-                            autoCapitalize="none"
+                            }
                         />
-                    </View>
-                    {/* estimated weight */}
+                        {/* description */}
 
-                    {/* pick up da */}
-                    <View>
-                        <TextInput
-                            style={generalstyles.InputContainer}
-                            placeholder={'estimate pick up date (optional)'}
-                            keyboardType="default"
-                            placeholderTextColor="#aaaaaa"
-                            editable={false}
-                            value={productDetials.pickupDate}
-                            underlineColorAndroid="transparent"
-                            autoCapitalize="none"
-                        />
-                    </View>
-
-                    <View>
-                        <CalendarComponent
-                            containerStyles={{
-                                borderWidth: 1,
-                                borderColor: reuseTheme.colors.preference.primaryBackground,
-                                height: 400,
-                                // marginHorizontal: 25,
-                                marginTop: 10,
-                                borderRadius: 10,
-                                backgroundColor: reuseTheme.colors.preference.primaryBackground,
-                                color: reuseTheme.colors.preference.primaryText,
-                                fontWeight: 'bold',
-                                elevation: 30,
-                            }}
-                            disableAllTouchEventsForDays={false}
-                            handleDayPress={setStartDate}
-                            markedDates={markedDates}
-
-                        />
-
-                    </View>
-
-
-                    {/* pickup date */}
-
-
-
-                    {/* descriptin */}
-                    <TextArea
-                        placeholder="Tell us about your product"
-                        text={productDetials.description}
-                        setText={(text: any) => {
-                            setProductDetails((prev: any) => {
-                                return { ...prev, description: text }
-                            })
-                        }
-                        }
-                    />
-                    {/* description */}
-
-                    <View
-                        style={styles.buttonStyles}
-                    >
-                        {/* button */}
-                        <Button
-                            icon={{ source: 'play', direction: 'ltr' }}
-                            mode="contained"
-                            contentStyle={{
-                                flexDirection: 'row-reverse',
-                            }}
-                            buttonColor={reuseTheme.colors.preference.primaryForeground}
-                            textColor={reuseTheme.colors.preference.primaryText}
-                            onPress={createProduct}
-                            disabled={loading}
-
-
+                        <View
+                            style={styles.buttonStyles}
                         >
-                            {/* Create Product */}
-                            {
-                                loading ? "Creating Product..." : "Create Product"
-                            }
-                        </Button>
-                        {/* button */}
-                    </View>
-                </ScrollView>
-
-                {/* modal section */}
-                {showModal && (
-                    <UploadComponent
-                        image={imagePath}
-                        setImage={setImagePath}
-                        setModal={setShowModal}
-                        showModal={showModal}
-                        selectDocument={false}
-                    />
-                )}
-
-                {/* modal section */}
-
-            </KeyboardAwareScrollView>
-
-        </SafeAreaView>
+                            {/* button */}
+                            <Button
+                                icon={{ source: 'play', direction: 'ltr' }}
+                                mode="contained"
+                                contentStyle={{
+                                    flexDirection: 'row-reverse',
+                                }}
+                                buttonColor={reuseTheme.colors.preference.primaryForeground}
+                                textColor={reuseTheme.colors.preference.primaryText}
+                                onPress={() => setLocationModal(true)}
+                            // disabled={loading}
 
 
-    )
+                            >
+
+                                Continue
+                            </Button>
+                            {/* button */}
+                        </View>
+                    </ScrollView>
+
+                    {/* modal section */}
+                    {showModal && (
+                        <UploadComponent
+                            image={imagePath}
+                            setImage={setImagePath}
+                            setModal={setShowModal}
+                            showModal={showModal}
+                            selectDocument={false}
+                        />
+                    )}
+
+                    {/* modal section */}
+
+                </KeyboardAwareScrollView>
+
+            </SafeAreaView>
+
+
+        )
 }
 
 export default CreateDonationProduct
@@ -975,10 +1050,13 @@ const productStyles = (theme: ReuseTheme) => StyleSheet.create({
         borderWidth: 0,
 
     },
-    buttonStyles:{
+    buttonStyles: {
         flexDirection: "row",
         alignItems: "center",
         marginVertical: 10,
         marginHorizontal: 20
+    },
+    modalStyles: {
+        backgroundColor: theme.colors.preference.primaryBackground
     }
 })
