@@ -308,7 +308,7 @@ export const useFirebase = () => {
             return { id: userDoc.id, ...userDoc.data() };
           } else {
             // User document not found
-            return null;
+            return {};
           }
         } catch (error) {
           console.error('Error getting user by UID:', error);

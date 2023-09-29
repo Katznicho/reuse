@@ -12,6 +12,7 @@ import { ReuseTheme } from '../types/types';
 import UploadComponent from './UploadComponent';
 import { Avatar, IconButton } from 'react-native-paper';
 import { updateProfilePicture } from '../redux/store/slices/UserSlice';
+import { useFirebase } from '../hooks/useFirebase';
 
 const HeadProfileCard = () => {
 
@@ -23,6 +24,34 @@ const HeadProfileCard = () => {
   const { user, isLoggedIn } = useSelector((state: RootState) => state.user);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [imagePath, setImagePath] = useState<any>(null);
+  const {getUserByUid} = useFirebase();
+  const [photoURL, setPhotoURL] = useState<string>(""); 
+
+  useEffect(() => {
+    // Fetch user data including photoURL if it hasn't been fetched yet
+    
+      getUserByUid(user?.UID)
+        .then((userData) => {
+          // Assuming 'photoURL' is a property in 'userData'
+          // const { photoURL } = userData;
+          if(userData !=null){
+            if(userData?.photoURL){
+              setPhotoURL(userData?.photoURL); 
+
+  
+            }
+
+          }
+          
+
+
+        })
+        .catch((error) => {
+          // Handle any errors from the API call
+
+        });
+    
+  }, [getUserByUid, user]);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -53,9 +82,7 @@ const HeadProfileCard = () => {
   };
 
   useEffect(() => {
-    console.log("=========================")
-     console.log(user.displayPicture);
-    console.log("=========================")
+
   }, [imagePath]);
 
   return (
@@ -93,9 +120,7 @@ const HeadProfileCard = () => {
             size={80}
             source={{
               uri: `${
-                user?.displayPicture
-                  ? user?.displayPicture
-                  : DEFAULT_USER_PROFILE
+                photoURL || DEFAULT_USER_PROFILE
               }
             `,
             }}

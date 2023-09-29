@@ -9,6 +9,10 @@ import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { View } from 'react-native';
 import ProfileStack from '../../../screens/ProfileScreens/ProfileStack';
 import ProductTabs from '../../../screens/CreateScreens/ProductTabs';
+import { useFirebase } from '../../../hooks/useFirebase';
+import { RootState } from '../../../redux/store/dev';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 
 
@@ -25,7 +29,39 @@ const Tab = createBottomTabNavigator();
 
 
 export default function BottomTabs() {
+
+  const { user } = useSelector((state: RootState) => state.user);
   const {reuseTheme} =  useUserPreferredTheme();
+  const {getUserByUid} = useFirebase();
+  const [photoURL, setPhotoURL] = useState<string>(""); 
+  
+
+  useEffect(() => {
+    // Fetch user data including photoURL if it hasn't been fetched yet
+    
+      getUserByUid(user?.UID)
+        .then((userData) => {
+          // Assuming 'photoURL' is a property in 'userData'
+          // const { photoURL } = userData;
+          if(userData !=null){
+            if(userData?.photoURL){
+              setPhotoURL(userData?.photoURL); 
+
+  
+            }
+
+          }
+          
+
+
+        })
+        .catch((error) => {
+          // Handle any errors from the API call
+
+        });
+    
+  }, [getUserByUid, user]);
+
   return (
     <Tab.Navigator
       initialRouteName="HomeStack"
@@ -123,9 +159,9 @@ export default function BottomTabs() {
         ),
       }}
       />
-      {/* mine */}
 
-      {/* saved books */}
+
+
       <Tab.Screen name="Notifications"
         component={Empty}
         options={{
@@ -140,7 +176,7 @@ export default function BottomTabs() {
         }}
       />
             
-      {/* saved books */}
+
 
       <Tab.Screen name="Profile"
       component={ProfileStack}
@@ -151,7 +187,7 @@ export default function BottomTabs() {
           <Avatar.Image
             size={30}
             source={{
-              uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+              uri:photoURL?photoURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
             }}
           />
         ),
