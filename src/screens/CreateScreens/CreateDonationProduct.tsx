@@ -62,7 +62,7 @@ const CreateDonationProduct = () => {
     const { user } = useSelector((state: RootState) => state.user);
     const [uploadingImages, setUploadingImages] = useState<boolean>(false);
 
-    const [locationModal, setLocationModal] = useState<boolean>(true);
+    const [locationModal, setLocationModal] = useState<boolean>(false);
 
     const [loading, setLoading] = useState<boolean>(false);
     const { createDonationProduct } = useFirebase();

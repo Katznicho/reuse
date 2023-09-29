@@ -41,14 +41,14 @@ const ScrollCardDetails = ({
                     resizeMode: "cover",
                     borderRadius: 20
                 }}
-                source={{ uri: item?.imageUri }}
+                source={{ uri: item?.coverImage }}
             />
             {/* image */}
             {/* names */}
             <View style={styles.packageViewStyles}>
                 <View style={[generalstyles.flexStyles, generalstyles.centerContent]}>
 
-                    <Text style={styles.nameStyles}>{item?.name}</Text>
+                    <Text style={styles.nameStyles}>{item?.title}</Text>
                 </View>
             </View>
             {/* names */}
@@ -56,12 +56,12 @@ const ScrollCardDetails = ({
             {/* rating */}
             <View style={[generalstyles.centerContent, generalstyles.flexStyles]}>
                 {
-                    Array(4).fill(4)?.map((_, index) => (
+                    Array(4).fill(4)?.map((item, index) => (
                         <AntDesign
                             name="star"
                             color={reuseTheme.colors.preference.primaryText}
                             size={15}
-                            key={index}
+                            key={item}
                         />
                     ))
                 }

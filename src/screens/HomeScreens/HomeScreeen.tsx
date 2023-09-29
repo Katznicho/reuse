@@ -12,6 +12,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { useFirebase } from '../../hooks/useFirebase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store/dev';
+import { ActivityIndicator } from '../../components/ActivityIndicator';
 
 
 
@@ -21,9 +22,14 @@ const HomeScreeen = () => {
   const generalstyles = dynamicGeneralStyles(reuseTheme);
   const {user} =  useSelector((state:RootState) => state.user);
 
+
   const {updateUserLocation} = useFirebase();
 
-   const [products, setProducts] = useState<any[]>(FAKE_PRODUCTS);
+   const [products, setProducts] = useState<any[]>([]);
+   const [loading , setLoading] =  useState<boolean>(false);
+   const {getAllProducts} = useFirebase();
+
+
 
    const getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
@@ -38,10 +44,16 @@ const HomeScreeen = () => {
 };
 
 useEffect(() => {
+  setLoading(true);
+   getAllProducts().then((products)=>{
+     setProducts(products);
+   })
+   setLoading(false);
   getCurrentPosition();
   if(position){
     updateUserLocation(user?.UID, position.latitude, position.longitude);
   }
+
 
 }, []);
 
@@ -87,7 +99,9 @@ const [position, setPosition] = useState<any>(null);
         {/* most receommended */}
         <TextTypes text="Our Recommendations"  />
         {
-          products.length>0 && <ScrollCard cardProducts={products} />
+
+          products.length? <ScrollCard cardProducts={products} />:
+          <ActivityIndicator/>
         }
 
         {/* most recommended */}
@@ -95,8 +109,10 @@ const [position, setPosition] = useState<any>(null);
         {/* popular */}
         <TextTypes text="Most Popular" />
         {
-          products.length>0 && <ScrollCard cardProducts={products} />
-        }
+
+products.length? <ScrollCard cardProducts={products} />:
+<ActivityIndicator/>
+}
         {/* popular */}
 
         {/* nearby */}
