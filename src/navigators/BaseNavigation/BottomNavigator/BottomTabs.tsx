@@ -13,6 +13,8 @@ import { useFirebase } from '../../../hooks/useFirebase';
 import { RootState } from '../../../redux/store/dev';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { DEFAULT_USER_PROFILE } from '../../../utils/constants/constants';
+import NotificationStack from '../../../screens/NotificationScreens/NotificationStack';
 
 
 
@@ -22,8 +24,8 @@ import { useEffect, useState } from 'react';
 const Tab = createBottomTabNavigator();
 
 
- //create an empty screen for create tab
- const Empty = () => {
+//create an empty screen for create tab
+const Empty = () => {
   return null;
 }
 
@@ -31,43 +33,41 @@ const Tab = createBottomTabNavigator();
 export default function BottomTabs() {
 
   const { user } = useSelector((state: RootState) => state.user);
-  const {reuseTheme} =  useUserPreferredTheme();
-  const {getUserByUid} = useFirebase();
-  const [photoURL, setPhotoURL] = useState<string>(""); 
-  
+  const { reuseTheme } = useUserPreferredTheme();
+  const { getUserByUid } = useFirebase();
+  const [photoURL, setPhotoURL] = useState<string>("");
+
 
   useEffect(() => {
     // Fetch user data including photoURL if it hasn't been fetched yet
-    
-      getUserByUid(user?.UID)
-        .then((userData) => {
-          // Assuming 'photoURL' is a property in 'userData'
-          // const { photoURL } = userData;
-          if(userData !=null){
-            if(userData?.photoURL){
-              setPhotoURL(userData?.photoURL); 
 
-  
-            }
+    getUserByUid(user?.UID)
+      .then((userData) => {
+        // Assuming 'photoURL' is a property in 'userData'
+        // const { photoURL } = userData;
+        if (userData != null) {
+          if (userData?.photoURL) {
+            setPhotoURL(userData?.photoURL);
+
 
           }
-          
+
+        }
 
 
-        })
-        .catch((error) => {
-          // Handle any errors from the API call
 
-        });
-    
+      })
+      .catch((error) => {
+        // Handle any errors from the API call
+
+      });
+
   }, [getUserByUid, user]);
 
   return (
     <Tab.Navigator
       initialRouteName="HomeStack"
-      // screenOptions={{
-      //   headerShown: false,
-      // }}
+
       sceneContainerStyle={{
         backgroundColor: reuseTheme.colors.preference.primaryBackground,
         flex: 1,
@@ -75,7 +75,7 @@ export default function BottomTabs() {
       screenOptions={
         {
           tabBarStyle: {
-            backgroundColor:reuseTheme.colors.preference.primaryBackground,
+            backgroundColor: reuseTheme.colors.preference.primaryBackground,
             borderWidth: 0,
             borderTopWidth: 0,
             borderColor: reuseTheme.colors.preference.primaryBackground,
@@ -84,86 +84,86 @@ export default function BottomTabs() {
           },
           headerShown: false,
           tabBarActiveTintColor: reuseTheme.colors.preference.grey6,
-          tabBarInactiveTintColor:reuseTheme.colors.preference.primaryText,
-  
-  
-  
+          tabBarInactiveTintColor: reuseTheme.colors.preference.primaryText,
+
+
+
         }
       }
-      
+
     >
-      <Tab.Screen 
-      name="HomeStack" 
-      component={HomeStack} 
-      options={{
-        tabBarLabel: 'Home',
-        tabBarIcon: ({ color }:any) => (
+      <Tab.Screen
+        name="HomeStack"
+        component={HomeStack}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ color }: any) => (
             <MaterialCommunityIcons
-            name="home-variant"
-            color={color}
-            size={26}
-          />
-          
-        ),
-      }}
-      />
-      <Tab.Screen name="Create" 
-      component={ProductTabs} 
-      options={{
-        tabBarLabel: 'Create',
-        tabBarIcon: ({ color }) => (
-            <AntDesign
-            name="pluscircleo"
-            color={color}
-            size={26}
-          />
-        ),
-      }}
-      />
-      {/* mine */}
-      <Tab.Screen name="Reuse" 
-      component={Empty} 
-      options={{
-        tabBarLabel: 'Reuse',
-        tabBarAccessibilityLabel: 'Reuse',
-        tabBarIcon: ({ color }: any) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: reuseTheme.colors.preference.primaryBackground,
-               borderRadius: 50,
-              width: 80,
-              //move the tab bar to the top
-              position: 'absolute',
-              // top: -20,
-              //...styles.shadowStyles,
-
-            }}
-          >
-            <Avatar.Image
-              size={35}
-              source={require("../../../assets/images/logo_white.png")}
-              style={{
-                backgroundColor:reuseTheme.colors.preference.primaryBackground,
-                borderRadius: 50,
-                // marginVertical: 10,
-                // height: 80,
-                borderColor: reuseTheme.colors.preference.primaryText,
-              }}
-
+              name="home-variant"
+              color={color}
+              size={26}
             />
 
-          </View>
-        ),
-      }}
+          ),
+        }}
+      />
+      <Tab.Screen name="Create"
+        component={ProductTabs}
+        options={{
+          tabBarLabel: 'Create',
+          tabBarIcon: ({ color }) => (
+            <AntDesign
+              name="pluscircleo"
+              color={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      {/* mine */}
+      <Tab.Screen name="Reuse"
+        component={Empty}
+        options={{
+          tabBarLabel: 'Reuse',
+          tabBarAccessibilityLabel: 'Reuse',
+          tabBarIcon: ({ color }: any) => (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: reuseTheme.colors.preference.primaryBackground,
+                borderRadius: 50,
+                width: 80,
+                //move the tab bar to the top
+                position: 'absolute',
+                // top: -20,
+                //...styles.shadowStyles,
+
+              }}
+            >
+              <Avatar.Image
+                size={35}
+                source={require("../../../assets/images/logo_white.png")}
+                style={{
+                  backgroundColor: reuseTheme.colors.preference.primaryBackground,
+                  borderRadius: 50,
+                  // marginVertical: 10,
+                  // height: 80,
+                  borderColor: reuseTheme.colors.preference.primaryText,
+                }}
+
+              />
+
+            </View>
+          ),
+        }}
       />
 
 
 
       <Tab.Screen name="Notifications"
-        component={Empty}
+        component={NotificationStack}
         options={{
           tabBarLabel: 'Notifications',
           tabBarIcon: ({ color }) => (
@@ -175,23 +175,23 @@ export default function BottomTabs() {
           ),
         }}
       />
-            
+
 
 
       <Tab.Screen name="Profile"
-      component={ProfileStack}
-      options={{
-        tabBarLabel: 'Profile',
+        component={ProfileStack}
+        options={{
+          tabBarLabel: 'Profile',
 
-        tabBarIcon: ({color }:any) => (
-          <Avatar.Image
-            size={30}
-            source={{
-              uri:photoURL?photoURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-            }}
-          />
-        ),
-      }}
+          tabBarIcon: ({ color }: any) => (
+            <Avatar.Image
+              size={30}
+              source={{
+                uri: photoURL ? photoURL : DEFAULT_USER_PROFILE
+              }}
+            />
+          ),
+        }}
 
       />
     </Tab.Navigator>
