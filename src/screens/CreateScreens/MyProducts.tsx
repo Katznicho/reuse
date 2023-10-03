@@ -16,10 +16,12 @@ import { useSelector } from 'react-redux';
 import { useFirebase } from '../../hooks/useFirebase';
 import { ActivityIndicator } from '../../components/ActivityIndicator';
 import NotAvailable from '../../components/NotAvailable';
-import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
+
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
 
+//https://wix.github.io/react-native-ui-lib/docs/components/overlays/FeatureHighlight
+//tamagui
   
   const MyProducts = () => {
     const { user } = useSelector((state: RootState) => state.user);
@@ -36,7 +38,7 @@ import { Button } from 'react-native-paper';
        setLoading(true);
          getProductsByUserId(user.UID).then((userproducts)=>{
            setProducts(userproducts)
-           console.log('done');
+           
          }).catch((error)=>{
            console.log("An error occured")
          })
@@ -45,28 +47,7 @@ import { Button } from 'react-native-paper';
 
     const { reuseTheme } = useUserPreferredTheme();
     const styles = productStyles(reuseTheme);
-    const generalstyles = dynamicGeneralStyles(reuseTheme);
 
-    const [recent] = useState<any>([
-      {
-        id: 1,
-        name: 'Woofers',
-        date: 'Electronics',
-        time: 'This is a woofer',
-        status: 'Accepted',
-        trainer: 'Trainer 1',
-        image: 'https://picsum.photos/700',
-      },
-      {
-        id: 2,
-        name:"Blankets",
-        date: 'Clothes',
-        time: 'This is a product',
-        status: 'Rejected',
-        trainer: 'Trainer 2',
-        image: 'https://picsum.photos/700',
-      },
-    ]);
 
     if(loading) return <ActivityIndicator/>
   
@@ -91,7 +72,7 @@ import { Button } from 'react-native-paper';
                 {/* icon */}
                 <Image
                   source={{
-                    uri: item?.image,
+                    uri: item?.coverImage,
                   }}
                   style={{
                     width: 60,
@@ -110,9 +91,9 @@ import { Button } from 'react-native-paper';
                 }}
               >
                 {/* team name */}
-                <Text style={styles.date}>{item?.name}</Text>
-                <Text style={styles.status}>{item?.date}</Text>
-                <Text style={styles.date}>{item?.time}</Text>
+                <Text style={styles.date}>{item?.title}</Text>
+                <Text style={styles.status}>{item?.category}</Text>
+                <Text style={styles.date}>{item?.description}</Text>
   
                 {/* team name */}
               </View>

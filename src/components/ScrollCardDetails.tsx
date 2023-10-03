@@ -58,10 +58,11 @@ const ScrollCardDetails = ({
                 {
                     Array(4).fill(4)?.map((item, index) => (
                         <AntDesign
+                           key={index}
                             name="star"
                             color={reuseTheme.colors.preference.primaryText}
                             size={15}
-                            key={item}
+                            
                         />
                     ))
                 }

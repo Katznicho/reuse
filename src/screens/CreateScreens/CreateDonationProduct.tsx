@@ -1,77 +1,54 @@
-import { StyleSheet, Text, SafeAreaView, TouchableOpacity, View, TextInput, Image, Alert, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState, useEffect, useCallback } from 'react'
-import { ScrollView } from 'react-native-gesture-handler';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import TextArea from '../../components/TextArea';
+import { StyleSheet, Text, SafeAreaView, TouchableOpacity, View, Image, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
-import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
+import { TextField, Wizard, WizardStepStates, Picker, Switch, DateTimePicker, NumberInput, NumberInputData } from 'react-native-ui-lib';
 import { ReuseTheme } from '../../types/types';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Dropdown } from 'react-native-element-dropdown';
-import { scale } from 'react-native-size-scaling';
-import CalendarComponent from '../../components/CalendarComponent';
-import Radio from '../../components/Radio/Radio';
-import UploadComponent from '../../components/UploadComponent';
-import { UploadImage } from '../../hooks/UploadImage';
-import { RootState } from '../../redux/store/dev';
-import { useSelector } from 'react-redux';
-import { PRODUCT_STORAGE } from '../../utils/constants/constants';
 import { Button } from 'react-native-paper';
+import { RootState } from '../../redux/store/dev';
 import { useFirebase } from '../../hooks/useFirebase';
+import { useSelector } from 'react-redux';
+import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
+import UploadComponent from '../../components/UploadComponent';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { PRODUCT_STORAGE } from '../../utils/constants/constants';
+import { UploadImage } from '../../hooks/UploadImage';
+import TextArea from '../../components/TextArea';
 import * as reactNativeFlashMessage from 'react-native-flash-message';
 import UserLocation from '../onboarding/UserLocation';
 import { useNavigation } from '@react-navigation/native';
 import { API_KEY } from '@env';
 
 
-interface DayDetails {
-    dateString: string
-    day: number,
-    month: number,
-    timestamp: number,
-    year: number
-}
 
-interface CustomStyles {
-    container: {
-        backgroundColor: string;
-    };
-    text: {
-        color: string;
-    };
-}
-
-interface Output {
-    [key: string]: {
-        customStyles: CustomStyles;
-        isBooked: boolean;
-
-
-    };
+interface State {
+    activeIndex: number;
+    completedStepIndex?: number;
+    allTypesIndex: number;
+    toastMessage?: string;
 }
 
 
 
 const CreateDonationProduct = () => {
-
-     const navigation = useNavigation<any>();
-
+    const { reuseTheme } = useUserPreferredTheme();
+    const generalstyles = dynamicGeneralStyles(reuseTheme);
+    const styles = productStyles(reuseTheme);
+    //product details
     const [showModal, setShowModal] = useState<boolean>(false);
     const [imagePath, setImagePath] = useState<any>(null);
     const { user } = useSelector((state: RootState) => state.user);
     const [uploadingImages, setUploadingImages] = useState<boolean>(false);
 
-    const [locationModal, setLocationModal] = useState<boolean>(false);
-
     const [loading, setLoading] = useState<boolean>(false);
     const { createDonationProduct } = useFirebase();
 
-    const { reuseTheme } = useUserPreferredTheme();
-    const generalstyles = dynamicGeneralStyles(reuseTheme);
-    const styles = productStyles(reuseTheme);
-    const [isFocus, setIsFocus] = useState<boolean>(false);
-    const [markedDates, setMarkedDates] = useState<Output>({});
+    const navigation = useNavigation<any>();
+
+
+
+
+
     const [category] = useState<any[]>([
         {
             label: "Clothes",
@@ -100,7 +77,6 @@ const CreateDonationProduct = () => {
         },
     ])
 
-
     const [communites, setCommunities] = useState<any[]>([
         {
             label: "Community One",
@@ -113,83 +89,6 @@ const CreateDonationProduct = () => {
     ])
 
 
-    const setStartDate = (day: DayDetails) => {
-
-
-        if (!productDetials.pickupDate) {
-
-            setProductDetails((prevState: any) => {
-                return { ...prevState, pickupDate: day.dateString }
-            })
-        } else {
-
-            setProductDetails((prevState: any) => {
-                return { ...prevState, pickupDate: day.dateString }
-            })
-
-
-        }
-
-        const updatedMarkedDates: Output = {};
-
-        updatedMarkedDates[productDetials.pickupDate] = {
-            customStyles: {
-                container: {
-                    backgroundColor: reuseTheme.colors.preference.primaryForeground,
-                },
-                text: {
-                    color: 'white',
-                },
-            },
-            isBooked: true,
-        };
-
-        //keep the previous marked dates
-        setMarkedDates((prevState) => ({
-            ...prevState,
-            ...updatedMarkedDates,
-        }));
-
-
-    };
-
-    async function uploadImage(imagePath: any) {
-        try {
-            if (imagePath) {
-                const { image, error } = await UploadImage(
-                    user?.UID,
-                    imagePath.imagePath,
-                    PRODUCT_STORAGE,
-                );
-                //update the cpver image
-                if (error) {
-                    Alert.alert('Something went wrong please try aagin');
-                }
-                if (image) {
-                    setProductDetails((prev: any) => {
-                        return { ...prev, coverImage: image }
-                    })
-
-                }
-            }
-
-
-        } catch (error) {
-
-        }
-
-    }
-
-
-    useEffect(() => {
-        uploadImage(imagePath);
-    },
-        [imagePath])
-
-
-
-
-
     const [productDetials, setProductDetails] = useState<any>({
         title: "",
         description: "",
@@ -199,14 +98,10 @@ const CreateDonationProduct = () => {
         images: [],
         coverImage: "",
         location: "",
-        locationCoordinates: {
-            latitude: 0,
-            longitude: 0
-        },
         estimatedWeight: 0,
         pickupDate: "",
         isNegotiable: false,
-        isFree: false,
+        isFree: true,
         isDonation: true,
         isExchange: false,
         isDeliveryAvailable: false,
@@ -223,29 +118,6 @@ const CreateDonationProduct = () => {
         status: "UPLOADED",
 
     });
-
-
-    useEffect(() => {
-        if (productDetials.pickupDate) {
-            const updatedMarkedDates: Output = {};
-            updatedMarkedDates[productDetials.pickupDate] = {
-                customStyles: {
-                    container: {
-                        backgroundColor: reuseTheme.colors.preference.primaryForeground,
-                    },
-                    text: {
-                        color: 'white',
-                    },
-                },
-                isBooked: true,
-            };
-            setMarkedDates(updatedMarkedDates);
-        }
-
-
-
-
-    }, [productDetials.pickupDate])
 
     const [count, setCount] = useState<any>([
         {
@@ -270,7 +142,6 @@ const CreateDonationProduct = () => {
             imagePath: null
         },
     ])
-
 
 
     const uploadImagesAutomatically = useCallback(async () => {
@@ -311,6 +182,67 @@ const CreateDonationProduct = () => {
         }
     }, [count, setCount]);
 
+    //product details
+
+
+    const [state, setState] = useState<State>({
+        activeIndex: 0,
+        completedStepIndex: undefined,
+        allTypesIndex: 0,
+
+    })
+    const onActiveIndexChanged = (activeIndex: number) => {
+        // Update the activeIndex in the state
+        setState((prevState) => ({
+            ...prevState,
+            activeIndex,
+        }));
+    };
+
+
+
+    const goToNextStep = () => {
+        const { activeIndex: prevActiveIndex, completedStepIndex: prevCompletedStepIndex } = state;
+        const reset = prevActiveIndex === 2;
+
+        if (reset) {
+        } else {
+            const activeIndex = prevActiveIndex + 1;
+            let completedStepIndex: number | undefined = prevCompletedStepIndex;
+
+            if (!prevCompletedStepIndex || prevCompletedStepIndex < prevActiveIndex) {
+                completedStepIndex = prevActiveIndex;
+            }
+
+            // Check if the activeIndex or completedStepIndex needs updating
+            if (activeIndex !== prevActiveIndex || completedStepIndex !== prevCompletedStepIndex) {
+                // Update the state to move to the next step
+                setState((prevState) => ({
+                    ...prevState,
+                    activeIndex,
+                    completedStepIndex,
+                }));
+            }
+        }
+    };
+
+
+    const goBack = () => {
+        const { activeIndex: prevActiveIndex } = state;
+        const activeIndex = prevActiveIndex === 0 ? 0 : prevActiveIndex - 1;
+
+        setState((prevState) => ({
+            ...prevState,
+            activeIndex,
+        }));
+    };
+
+    useEffect(() => {
+        console.log("==========================");
+        console.log(productDetials);
+        console.log("============================");
+    }, [productDetials])
+
 
     const createProduct = async () => {
         try {
@@ -332,10 +264,7 @@ const CreateDonationProduct = () => {
                 images: [],
                 coverImage: "",
                 location: "",
-                locationCoordinates: {
-                    latitude: 0,
-                    longitude: 0
-                },
+
                 estimatedWeight: 0,
                 pickupDate: "",
                 isNegotiable: false,
@@ -366,426 +295,363 @@ const CreateDonationProduct = () => {
 
 
 
+    const renderCurrentStep = () => {
+        switch (state.activeIndex) {
+            case 0:
+                return <View>
 
-    return locationModal ? <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={generalstyles.container}
-    >
-        <View style={{
-            height:400,
-            marginVertical:20
-            }}>
-            <UserLocation
-                placeholder={"Enter estimated pick up location"}
-                // setPickUpAddress={setProductDetails}
-                onPress={(data:any, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-    
-                    
-    
-                    fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${data?.place_id}&key=${API_KEY}`)
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (data.results && data.results.length > 0) {
-                                 const address = {
-                                     data,
-                                     details,
-                                     location:data.results[0].geometry.location
-                                 }
-    
-                                 setProductDetails((prev: any) => {
-                                    return { ...prev, estimatedPickUp: address }
-                                })
-                            }
-                            else{
-    
-                                const address = {
-                                    data,
-                                    details,
-    
-                                }
-    
-                                setProductDetails((prev: any) => {
-                                    return { ...prev, estimatedPickUp: address }
-                                })
-    
-                            }
-    
-    
-                        })
-                        .catch((error) => {
-                            console.error("Error fetching coordinates:", error);
-                        });
-    
-    
-                }
-            }
-            />
-            <View>
-
-            </View>
-            {/* button */}
-            <Button
-                icon={{ source: 'play', direction: 'ltr' }}
-                mode="contained"
-                contentStyle={{
-                    flexDirection: 'row-reverse',
-                }}
-                buttonColor={reuseTheme.colors.preference.primaryForeground}
-                textColor={reuseTheme.colors.preference.primaryText}
-                onPress={createProduct}
-            disabled={loading}
-
-
-            >
-
-                {loading?"Creating ...":"Create Product"}
-            </Button>
-            {/* button */}
-
-        </View>
-
-    </KeyboardAvoidingView>
-        : (
-            <SafeAreaView style={[generalstyles.container]}>
-                <KeyboardAwareScrollView
-                    style={{ flex: 1, width: '100%' }}
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="always"
-                >
-
-
-
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        {/* upload area */}
-                        {
-                            imagePath ? (<View>
-                                <TouchableOpacity
-                                    onPress={() => {
-
-                                        setShowModal(!showModal);
-
-                                    }}
-                                    style={[generalstyles.centerContent]}>
-                                    <Image
-                                        source={{ uri: imagePath.imagePath }}
-                                        style={[styles.coverStyles, generalstyles.centerContent]}
-                                    />
-
-                                </TouchableOpacity>
-
-
-
-                            </View>) : (<TouchableOpacity
+                    {
+                        imagePath ? (<View>
+                            <TouchableOpacity
                                 onPress={() => {
 
                                     setShowModal(!showModal);
 
-
                                 }}
-                                style={[styles.coverStyles, generalstyles.centerContent]}>
-
-                                <AntDesign
-                                    name={'plus'}
-                                    color={reuseTheme.colors.preference.primaryText}
-                                    size={20}
-                                    style={{
-                                        borderRadius: 10,
-                                        padding: 10,
-                                    }}
+                                style={[generalstyles.centerContent]}>
+                                <Image
+                                    source={{ uri: imagePath.imagePath }}
+                                    style={[styles.coverStyles, generalstyles.centerContent]}
                                 />
-                                <View>
-                                    <Text>Add cover photos</Text>
-                                </View>
 
-                            </TouchableOpacity>)
-                        }
+                            </TouchableOpacity>
 
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
 
-                            {
-                                count.map((item: any, index: number) => (
-                                    <View key={item.id}>
-                                        <TouchableOpacity
-                                            key={index}
-                                            style={[styles.imageStyles, generalstyles.centerContent]}
-                                            onPress={() => {
-                                                // Create a copy of the count array to modify the specific item
+
+                        </View>) : (<TouchableOpacity
+                            onPress={() => {
+
+                                setShowModal(!showModal);
+
+
+                            }}
+                            style={[styles.coverStyles, generalstyles.centerContent]}>
+
+                            <AntDesign
+                                name={'plus'}
+                                color={reuseTheme.colors.preference.primaryText}
+                                size={20}
+                                style={{
+                                    borderRadius: 10,
+                                    padding: 10,
+                                }}
+                            />
+                            <View>
+                                <Text>Add cover photos</Text>
+                            </View>
+
+                        </TouchableOpacity>)
+                    }
+
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+
+                        {
+                            count.map((item: any, index: number) => (
+                                <View key={item.id}>
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={[styles.imageStyles, generalstyles.centerContent]}
+                                        onPress={() => {
+                                            // Create a copy of the count array to modify the specific item
+                                            const updatedCount = [...count];
+                                            updatedCount[index] = {
+                                                ...updatedCount[index],
+                                                showModal: true, // Set showModal to true for the clicked item
+                                            };
+                                            setCount(updatedCount);
+                                        }}
+                                    >
+                                        {
+                                            item.imagePath ? (<Image
+                                                source={{ uri: item?.imagePath?.imagePath }}
+                                                style={[styles.imageStyles, generalstyles.centerContent]}
+                                            />) : (<AntDesign
+                                                name={'plus'}
+                                                color={reuseTheme.colors.preference.primaryText}
+                                                size={20}
+                                                style={{
+                                                    borderRadius: 10,
+                                                    padding: 10,
+                                                }}
+                                            />)
+                                        }
+
+
+                                    </TouchableOpacity>
+
+
+                                    {item.showModal && (
+                                        <UploadComponent
+                                            image={item.imagePath}
+                                            setImage={(newImage: any) => {
+                                                // Update the image path for the specific item
                                                 const updatedCount = [...count];
                                                 updatedCount[index] = {
                                                     ...updatedCount[index],
-                                                    showModal: true, // Set showModal to true for the clicked item
+                                                    imagePath: newImage,
                                                 };
                                                 setCount(updatedCount);
                                             }}
-                                        >
-                                            {
-                                                item.imagePath ? (<Image
-                                                    source={{ uri: item?.imagePath?.imagePath }}
-                                                    style={[styles.imageStyles, generalstyles.centerContent]}
-                                                />) : (<AntDesign
-                                                    name={'plus'}
-                                                    color={reuseTheme.colors.preference.primaryText}
-                                                    size={20}
-                                                    style={{
-                                                        borderRadius: 10,
-                                                        padding: 10,
-                                                    }}
-                                                />)
-                                            }
+                                            setModal={(newModalState: any) => {
+                                                // Update the showModal property for the specific item
+                                                const updatedCount = [...count];
+                                                updatedCount[index] = {
+                                                    ...updatedCount[index],
+                                                    showModal: newModalState,
+                                                };
+                                                setCount(updatedCount);
+                                            }}
+                                            showModal={item.showModal}
+                                            selectDocument={false}
+                                        />
+                                    )}
 
-
-                                        </TouchableOpacity>
-
-
-                                        {item.showModal && (
-                                            <UploadComponent
-                                                image={item.imagePath}
-                                                setImage={(newImage: any) => {
-                                                    // Update the image path for the specific item
-                                                    const updatedCount = [...count];
-                                                    updatedCount[index] = {
-                                                        ...updatedCount[index],
-                                                        imagePath: newImage,
-                                                    };
-                                                    setCount(updatedCount);
-                                                }}
-                                                setModal={(newModalState: any) => {
-                                                    // Update the showModal property for the specific item
-                                                    const updatedCount = [...count];
-                                                    updatedCount[index] = {
-                                                        ...updatedCount[index],
-                                                        showModal: newModalState,
-                                                    };
-                                                    setCount(updatedCount);
-                                                }}
-                                                showModal={item.showModal}
-                                                selectDocument={false}
-                                            />
-                                        )}
-
-                                    </View>
+                                </View>
 
 
 
-                                ))
+                            ))
+                        }
+
+                    </ScrollView>
+
+                    {/* upload all */}
+                    <View style={styles.buttonStyles}>
+                        <Button
+
+                            mode="contained"
+                            contentStyle={{
+                                flexDirection: 'row-reverse',
+                            }}
+                            buttonColor={reuseTheme.colors.preference.primaryForeground}
+                            textColor={reuseTheme.colors.preference.primaryText}
+                            onPress={uploadImagesAutomatically}
+                            disabled={count.some((item: any) => item.imagePath === null) || uploadingImages}
+                            loading={uploadingImages}
+
+
+                        >
+                            {/* Create Product */}
+                            Upload Images
+                        </Button>
+
+                        <Button
+                            icon={{ source: 'play', direction: 'ltr' }}
+                            mode="contained"
+                            contentStyle={{
+                                flexDirection: 'row-reverse',
+                            }}
+                            style={styles.buttonSpaceStyles}
+                            buttonColor={reuseTheme.colors.preference.primaryForeground}
+                            textColor={reuseTheme.colors.preference.primaryText}
+                            onPress={goToNextStep}
+                            disabled={count.some((item: any) => item.imagePath === null) || uploadingImages}
+                        >
+
+                            Next
+                        </Button>
+
+                    </View>
+                    {/* upload all */}
+
+
+
+                </View>; // Replace with your Step 1 component
+            case 1:
+                return <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        marginVertical: 10,
+                        marginHorizontal: 5
+                    }}
+                >
+
+                    <View
+                        style={styles.viewStyles}
+                    >
+                        <TextField
+                            style={styles.fieldStyles}
+                            placeholder={'enter product name'}
+                            hint={"enter product name"}
+                            labelStyle={{
+                                marginHorizontal: 10
+                            }}
+                            label='Product Name'
+                            labelColor={reuseTheme.colors.preference.primaryText}
+                            placeholderTextColor={reuseTheme.colors.preference.grey3}
+                            color={reuseTheme.colors.preference.primaryText}
+
+                            onChangeText={text =>
+                                setProductDetails((prev: any) => {
+                                    return { ...prev, title: text }
+                                })
+
                             }
+                            enableErrors
+                            validate={['required']}
+                            validationMessage={['Product name is required']}
+                            showCharCounter
+                            maxLength={30}
+                        />
 
-                        </ScrollView>
-                        {/* upload all */}
-                        <View style={styles.buttonStyles}>
-                            <Button
-
-                                mode="contained"
-                                contentStyle={{
-                                    flexDirection: 'row-reverse',
-                                }}
-                                buttonColor={reuseTheme.colors.preference.primaryForeground}
-                                textColor={reuseTheme.colors.preference.primaryText}
-                                onPress={uploadImagesAutomatically}
-                                disabled={count.some((item: any) => item.imagePath === null) || uploadingImages}
-                                loading={uploadingImages}
+                    </View>
 
 
-                            >
-                                {/* Create Product */}
-                                Upload Images
-                            </Button>
+                    {/* category */}
+                    <View
+                        style={styles.viewStyles}
+                    >
+                        <Picker
+                            style={styles.fieldStyles}
+                            placeholder=" enter product category"
+                            // floatingPlaceholder
+                            label='Product Category'
+                            labelColor={reuseTheme.colors.preference.primaryText}
+                            placeholderTextColor={reuseTheme.colors.preference.grey3}
+                            value={productDetials.category}
+                            enableModalBlur={false}
+                            onChange={item => {
+                                setProductDetails((prev: any) => {
+                                    return { ...prev, category: item }
+                                })
 
-                        </View>
-                        {/* upload all */}
-                        {/* upload area */}
+                            }}
+                            color={reuseTheme.colors.preference.primaryText}
+                            topBarProps={{ title: 'Product Categories' }}
 
-                        <View>
-                            <TextInput
-                                style={generalstyles.InputContainer}
-                                placeholder={'product title'}
-                                keyboardType="default"
-                                placeholderTextColor="#aaaaaa"
-                                onChangeText={text =>
-                                    setProductDetails((prev: any) => {
-                                        return { ...prev, title: text }
+                            showSearch
+                            searchPlaceholder={'Search a product category'}
+                            searchStyle={{ color: reuseTheme.colors.preference.primaryForeground, placeholderTextColor: reuseTheme.colors.preference.grey3 }}
+                        // onSearchChange={value => console.warn('value', value)}
+                        >
+                            {category.map((item, index) => (
+                                <Picker.Item key={item.value}
+                                    value={item.value}
+                                    label={item.label}
+                                />
+                            ))}
+                        </Picker>
+                    </View>
+                    {/* category */}
+
+                    {/* switches  */}
+
+                    {/* free product */}
+                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+
+                        <Switch
+                            width={80}
+                            height={38}
+                            thumbSize={34}
+                            thumbColor={reuseTheme.colors.preference.primaryBackground}
+                            value={productDetials.isFree}
+                            onValueChange={
+                                () => {
+                                    setProductDetails((prev: { isFree: any; }) => {
+                                        return { ...prev, isFree: !prev.isFree }
                                     })
-
                                 }
-                                value={productDetials.title}
-                                underlineColorAndroid="transparent"
-                                autoCapitalize="none"
-                            />
+                            }
+                            onColor={reuseTheme.colors.preference.primaryForeground}
+                        />
+                        <Text style={{ marginHorizontal: 10 }}>Is Product free of Charge  ?</Text>
+                    </View>
 
+                    {/* free product */}
 
-                        </View>
+                    {
+                        !productDetials.isFree && (<View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
 
-                        {/* category */}
-                        <View style={styles.container}>
-
-                            <Dropdown
-                                backgroundColor='transparent'
-                                containerStyle={{
-                                    backgroundColor: reuseTheme.colors.preference.primaryBackground,
-                                    borderRadius: 10,
-
-                                }}
-                                style={[styles.dropdown]}
-                                placeholderStyle={styles.placeholderStyle}
-                                selectedTextStyle={styles.selectedTextStyle}
-                                inputSearchStyle={styles.inputSearchStyle}
-                                iconStyle={styles.iconStyle}
-                                itemContainerStyle={{ maxHeight: scale(200), marginHorizontal: 20, backgroundColor: reuseTheme.colors.preference.primaryBackground }}
-                                itemTextStyle={{ color: reuseTheme.colors.preference.primaryText }}
-                                data={category}
-                                search
-                                maxHeight={scale(200)}
-                                labelField="label"
-                                valueField="value"
-                                placeholder={!isFocus ? 'Select Product Category' : '...'}
-                                searchPlaceholder="Search Categories..."
-                                value={productDetials.category}
-                                onFocus={() => setIsFocus(true)}
-                                onBlur={() => setIsFocus(false)}
-                                onChange={item => {
-                                    setProductDetails((prev: any) => {
-                                        return { ...prev, category: item.value }
-                                    })
-                                    setIsFocus(false);
-                                }}
-                                renderLeftIcon={() => (
-                                    <AntDesign
-                                        style={styles.icon}
-                                        color={isFocus ? 'blue' : 'black'}
-                                        name="Safety"
-                                        size={scale(20)}
-                                    />
-                                )}
-                            />
-                        </View>
-
-                        {/* category */}
-
-                        {/* Radio button */}
-                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
-
-
-                            <View
-                                style={{
-                                    width: "25%"
-                                }}
-                            >
-                                <Radio
-                                    enabled={productDetials.isDeliveryFeeCovered}
-                                    toggle={() => {
+                            <Switch
+                                width={80}
+                                height={38}
+                                thumbSize={34}
+                                thumbColor={reuseTheme.colors.preference.primaryBackground}
+                                value={productDetials.isDeliveryFeeCovered}
+                                onValueChange={
+                                    () => {
                                         setProductDetails((prev: { isDeliveryFeeCovered: any; }) => {
                                             return { ...prev, isDeliveryFeeCovered: !prev.isDeliveryFeeCovered }
                                         })
-                                    }}
-                                    containerStyle={{
-                                        marginLeft: -20
-                                    }}
+                                    }
+                                }
+                                onColor={reuseTheme.colors.preference.primaryForeground}
+                            />
+                            <Text style={{ marginHorizontal: 10 }}>Is  Delivery Fee  Covered    ?</Text>
+                        </View>)
+                    }
 
 
-                                />
-                            </View>
-                            <Text style={{ marginHorizontal: 10 }}>Is Delivery Fee Covered  ?</Text>
+                    {/* for all */}
+                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+                        <Switch
+                            width={80}
+                            height={38}
+                            thumbSize={34}
+                            thumbColor={reuseTheme.colors.preference.primaryBackground}
+                            value={productDetials.isProductAvailableForAll}
+                            onValueChange={
+                                () => {
+                                    setProductDetails((prev: { isProductAvailableForAll: any; }) => {
+                                        return { ...prev, isProductAvailableForAll: !prev.isProductAvailableForAll }
+                                    })
+                                }
+                            }
+                            onColor={reuseTheme.colors.preference.primaryForeground}
+                        />
+                        <Text style={{ marginHorizontal: 10 }}>Is Product Available For All ?</Text>
+                    </View>
+                    {/* for all */}
 
+                    {/* product new */}
+                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+                        <Switch
+                            width={80}
+                            height={38}
+                            thumbSize={34}
+                            thumbColor={reuseTheme.colors.preference.primaryBackground}
+                            value={productDetials.isProductNew}
+                            onValueChange={
+                                () => {
+                                    setProductDetails((prev: { isProductNew: any; }) => {
+                                        return { ...prev, isProductNew: !prev.isProductNew }
+                                    })
+                                }
+                            }
+                            onColor={reuseTheme.colors.preference.primaryForeground}
+                        />
+                        <Text style={{ marginHorizontal: 10 }}>Is the Created Product New ?</Text>
+                    </View>
+                    {/* product new */}
 
-                        </View>
+                    {/* damages */}
+                    <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+                        <Switch
+                            width={80}
+                            height={38}
+                            thumbSize={34}
+                            thumbColor={reuseTheme.colors.preference.primaryBackground}
+                            value={productDetials.isProductDamaged}
+                            onValueChange={
+                                () => {
+                                    setProductDetails((prev: { isProductDamaged: any; }) => {
+                                        return { ...prev, isProductDamaged: !prev.isProductDamaged }
+                                    })
+                                }
+                            }
+                            onColor={reuseTheme.colors.preference.primaryForeground}
+                        />
+                        <Text style={{ marginHorizontal: 10 }}> Product has any damages ?</Text>
+                    </View>
+                    {/* damages */}
 
-                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
+                    {/* switches */}
 
-
-                            <View
-                                style={{
-                                    width: "25%"
-                                }}
-                            >
-                                <Radio
-                                    enabled={productDetials.isProductAvailableForAll}
-                                    toggle={() => {
-                                        setProductDetails((prev: { isProductAvailableForAll: any; }) => {
-                                            return { ...prev, isProductAvailableForAll: !prev.isProductAvailableForAll }
-                                        })
-                                    }}
-                                    containerStyle={{
-                                        marginLeft: -20
-                                    }}
-
-                                />
-                            </View>
-                            <Text style={{ marginHorizontal: 10 }}>Product Available For All ?</Text>
-
-
-                        </View>
-
-
-                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
-
-
-                            <View
-                                style={{
-                                    width: "25%"
-                                }}
-                            >
-                                <Radio
-                                    enabled={productDetials.isProductNew}
-                                    toggle={() => {
-                                        setProductDetails((prev: { isProductNew: any; }) => {
-                                            return { ...prev, isProductNew: !prev.isProductNew }
-                                        })
-                                    }}
-                                    containerStyle={{
-                                        marginLeft: -35
-                                    }}
-
-                                />
-                            </View>
-                            <Text style={{ marginHorizontal: 10 }}> Is the Product New   ?</Text>
-
-
-                        </View>
-
-
-
-                        <View style={[generalstyles.flexStyles, { alignItems: "center", justifyContent: "center", marginVertical: 10 }]}>
-
-
-                            <View
-                                style={{
-                                    width: "25%"
-                                }}
-                            >
-                                <Radio
-                                    enabled={productDetials.isProductDamaged}
-                                    toggle={() => {
-                                        setProductDetails((prev: { isProductDamaged: any; }) => {
-                                            return { ...prev, isProductDamaged: !prev.isProductDamaged }
-                                        })
-                                    }}
-                                    containerStyle={{
-                                        marginLeft: -20
-                                    }}
-
-                                />
-                            </View>
-                            <Text style={{ marginHorizontal: 10 }}> Product has any damages?</Text>
-
-
-                        </View>
-
-
-
-
-                        {/* Radio button */}
-
-
-
-
-
-
-                        {/* damage description */}
+                    <View>
                         {
                             productDetials.isProductDamaged && (
                                 <TextArea
-                                    placehoder="Tell us about the damage"
+                                    placeholder="Tell us about the damage"
                                     text={productDetials.damageDescription}
                                     setText={(text: any) => {
                                         setProductDetails((prev: any) => {
@@ -797,126 +663,145 @@ const CreateDonationProduct = () => {
                             )
 
                         }
+                    </View>
 
-                        {/* damage description */}
+                    {/* product price  */}
+                    {
+                        !productDetials.isFree && (
+                            <View style={styles.viewStyles}>
+                                <NumberInput
 
+                                    leadingText={"shs"}
+                                    leadingTextStyle={{
+                                        fontSize: 30,
+                                        color: reuseTheme.colors.preference.primaryText,
+                                        marginRight: 10
 
-                        {/* community */}
-                        {
-                            !productDetials.isProductAvailableForAll && (
-                                <View style={styles.container}>
-                                    <Dropdown
-                                        backgroundColor='transparent'
-                                        containerStyle={{
-                                            backgroundColor: reuseTheme.colors.preference.primaryBackground,
-                                            borderRadius: 10,
-                                            // marginHorizontal: 20,
-                                        }}
-                                        style={[styles.dropdown]}
-                                        placeholderStyle={styles.placeholderStyle}
-                                        selectedTextStyle={styles.selectedTextStyle}
-                                        inputSearchStyle={styles.inputSearchStyle}
-                                        iconStyle={styles.iconStyle}
-                                        itemContainerStyle={{ maxHeight: scale(200), marginHorizontal: 20, backgroundColor: reuseTheme.colors.preference.primaryBackground }}
-                                        itemTextStyle={{ color: reuseTheme.colors.preference.primaryText }}
-                                        data={communites}
-                                        search
-                                        maxHeight={scale(200)}
-                                        labelField="label"
-                                        valueField="value"
-                                        placeholder={!isFocus ? 'Select Community' : '...'}
-                                        searchPlaceholder="Search Communities..."
-                                        value={productDetials.category}
-                                        onFocus={() => setIsFocus(true)}
-                                        onBlur={() => setIsFocus(false)}
-                                        onChange={item => {
-                                            setProductDetails((prev: any) => {
-                                                return { ...prev, category: item.value }
-                                            })
-                                            setIsFocus(false);
-                                        }}
-                                        renderLeftIcon={() => (
-                                            <AntDesign
-                                                style={styles.icon}
-                                                color={isFocus ? 'blue' : 'black'}
-                                                name="Safety"
-                                                size={scale(20)}
-                                            />
-                                        )}
-                                    />
-                                </View>
-                            )
-                        }
+                                    }}
+                                    textFieldProps={{
+                                        label: "Price",
+                                        labelColor: reuseTheme.colors.preference.primaryText,
+                                        //style: styles.fieldStyles,
+                                        color: reuseTheme.colors.preference.primaryText
 
 
-                        {/* community */}
+                                    }}
+                                    // fractionDigits={2}
+                                    // initialNumber={productDetials.price}
+                                    onChangeNumber={(data: NumberInputData) => {
+                                        setProductDetails((prev: any) => {
+                                            return { ...prev, price: data }
+                                        })
 
+                                    }}
+                                    containerStyle={styles.fieldStyles}
 
+                                />
 
+                            </View>
+                        )
+                    }
+                    {/* product price */}
 
+                    {/* community */}
+                    {
+                        !productDetials.isProductAvailableForAll && (<View
+                            style={styles.viewStyles}
+                        >
+                            <Picker
+                                style={styles.fieldStyles}
+                                placeholder="enter community "
+                                // floatingPlaceholder
+                                label='Community'
+                                labelColor={reuseTheme.colors.preference.primaryText}
 
-                        {/* estimated weight */}
-                        <View>
-                            <TextInput
-                                style={generalstyles.InputContainer}
-                                placeholder={'enter estimated weight... in kgs'}
-                                keyboardType="default"
-                                placeholderTextColor="#aaaaaa"
-                                onChangeText={text =>
+                                placeholderTextColor={reuseTheme.colors.preference.grey3}
+                                value={productDetials.receiverCommunity}
+                                enableModalBlur={false}
+                                onChange={item => {
                                     setProductDetails((prev: any) => {
-                                        return { ...prev, estimatedWeight: text }
+                                        return { ...prev, receiverCommunity: item }
                                     })
-
-                                }
-                                value={productDetials.estimatedWeight}
-                                underlineColorAndroid="transparent"
-                                autoCapitalize="none"
-                            />
-                        </View>
-                        {/* estimated weight */}
-
-                        {/* pick up da */}
-                        <View>
-                            <TextInput
-                                style={generalstyles.InputContainer}
-                                placeholder={'estimate pick up date (optional)'}
-                                keyboardType="default"
-                                placeholderTextColor="#aaaaaa"
-                                editable={false}
-                                value={productDetials.pickupDate}
-                                underlineColorAndroid="transparent"
-                                autoCapitalize="none"
-                            />
-                        </View>
-
-                        <View>
-                            <CalendarComponent
-                                containerStyles={{
-                                    borderWidth: 1,
-                                    borderColor: reuseTheme.colors.preference.primaryBackground,
-                                    height: 400,
-                                    // marginHorizontal: 25,
-                                    marginTop: 10,
-                                    borderRadius: 10,
-                                    backgroundColor: reuseTheme.colors.preference.primaryBackground,
-                                    color: reuseTheme.colors.preference.primaryText,
-                                    fontWeight: 'bold',
-                                    elevation: 30,
                                 }}
-                                disableAllTouchEventsForDays={false}
-                                handleDayPress={setStartDate}
-                                markedDates={markedDates}
+                                color={reuseTheme.colors.preference.primaryText}
+                                topBarProps={{ title: 'Available Communities' }}
 
-                            />
+                                showSearch
+                                searchPlaceholder={'Search for a community'}
+                                searchStyle={{ color: reuseTheme.colors.preference.primaryForeground, placeholderTextColor: reuseTheme.colors.preference.grey3 }}
 
-                        </View>
+                            >
+                                {communites.map((item, index) => (
+                                    <Picker.Item key={item.value}
+                                        value={item.value}
+                                        label={item.label}
+                                    //   disabled={option.disabled}
+                                    />
+                                ))}
+                            </Picker>
+                        </View>)
+
+                    }
 
 
-                        {/* pickup date */}
+                    {/* community */}
 
+                    {/* estimated weight */}
+                    <View
+                        style={styles.viewStyles}
+                    >
+                        <TextField
+                            style={styles.fieldStyles}
+                            placeholder={'enter estimated weight in(kgs)'}
+                            hint={"enter estimated  weight"}
+                            labelStyle={{
+                                marginHorizontal: 10
+                            }}
+                            label='Estimated Weight(kgs)'
+                            labelColor={reuseTheme.colors.preference.primaryText}
+                            placeholderTextColor={reuseTheme.colors.preference.grey3}
+                            color={reuseTheme.colors.preference.primaryText}
 
+                            onChangeText={text =>
+                                setProductDetails((prev: any) => {
+                                    return { ...prev, estimatedWeight: text }
+                                })
 
-                        {/* descriptin */}
+                            }
+                            enableErrors
+                            validate={['required']}
+                            validationMessage={['Estimated  weight name is required']}
+                            showCharCounter
+                            maxLength={30}
+                        />
+
+                    </View>
+
+                    {/* estimated weight */}
+
+                    {/* estimated pick up date */}
+                    <View style={styles.viewStyles}>
+                        <DateTimePicker
+                            // title={'Select time'}
+                            label={"Estimated Pick Up Date"}
+                            labelColor={reuseTheme.colors.preference.primaryText}
+                            placeholder={"select estimated pick up date"}
+                            placeholderTextColor={reuseTheme.colors.preference.grey3}
+                            mode={'date'}
+                            onChange={date =>
+                                setProductDetails((prev: any) => {
+                                    return { ...prev, pickupDate: date }
+                                })
+                            }
+                            style={styles.fieldStyles}
+                            color={reuseTheme.colors.preference.primaryText}
+
+                        />
+                    </View>
+
+                    {/* estimated pick up  date*/}
+
+                    <View>
                         <TextArea
                             placeholder="Tell us about your product"
                             text={productDetials.description}
@@ -927,51 +812,230 @@ const CreateDonationProduct = () => {
                             }
                             }
                         />
-                        {/* description */}
+                    </View>
 
-                        <View
-                            style={styles.buttonStyles}
+                    <View style={styles.buttonStyles}>
+
+                        <Button
+                            icon={{ source: 'play', direction: 'rtl' }}
+                            mode="contained"
+
+                            style={styles.buttonSpaceStyles}
+                            buttonColor={reuseTheme.colors.preference.primaryForeground}
+                            textColor={reuseTheme.colors.preference.primaryText}
+                            onPress={goBack}
                         >
-                            {/* button */}
-                            <Button
-                                icon={{ source: 'play', direction: 'ltr' }}
-                                mode="contained"
-                                contentStyle={{
-                                    flexDirection: 'row-reverse',
-                                }}
-                                buttonColor={reuseTheme.colors.preference.primaryForeground}
-                                textColor={reuseTheme.colors.preference.primaryText}
-                                onPress={() => setLocationModal(true)}
-                            // disabled={loading}
+
+                            Prev
+                        </Button>
+
+                        <Button
+                            icon={{ source: 'play', direction: 'ltr' }}
+                            mode="contained"
+                            contentStyle={{
+                                flexDirection: 'row-reverse',
+                            }}
+                            style={styles.buttonSpaceStyles}
+                            buttonColor={reuseTheme.colors.preference.primaryForeground}
+                            textColor={reuseTheme.colors.preference.primaryText}
+                            onPress={goToNextStep}
+                        //disabled={count.some((item: any) => item.imagePath === null) || uploadingImages}
+                        >
+
+                            Next
+                        </Button>
+
+                    </View>
+                </ScrollView>
+
+            case 2:
+                return <View>
+
+                    <View
+                        style={styles.viewStyles}
+                    >
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            style={generalstyles.container}
+                        >
+                            <View style={{
+                                height: 400,
+                                marginVertical: 20
+                            }}>
+                                <UserLocation
+                                    placeholder={"Enter estimated pick up location"}
+                                    // setPickUpAddress={setProductDetails}
+                                    onPress={(data: any, details = null) => {
+                                        // 'details' is provided when fetchDetails = true
 
 
-                            >
 
-                                Continue
-                            </Button>
-                            {/* button */}
-                        </View>
-                    </ScrollView>
+                                        fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${data?.place_id}&key=${API_KEY}`)
+                                            .then((response) => response.json())
+                                            .then((data) => {
+                                                if (data.results && data.results.length > 0) {
+                                                    const address = {
+                                                        data,
+                                                        details,
+                                                        location: data.results[0].geometry.location
+                                                    }
 
-                    {/* modal section */}
-                    {showModal && (
-                        <UploadComponent
-                            image={imagePath}
-                            setImage={setImagePath}
-                            setModal={setShowModal}
-                            showModal={showModal}
-                            selectDocument={false}
-                        />
-                    )}
+                                                    setProductDetails((prev: any) => {
+                                                        return { ...prev, estimatedPickUp: address }
+                                                    })
+                                                }
+                                                else {
 
-                    {/* modal section */}
+                                                    const address = {
+                                                        data,
+                                                        details,
 
-                </KeyboardAwareScrollView>
+                                                    }
 
-            </SafeAreaView>
+                                                    setProductDetails((prev: any) => {
+                                                        return { ...prev, estimatedPickUp: address }
+                                                    })
+
+                                                }
 
 
-        )
+                                            })
+                                            .catch((error) => {
+                                                console.error("Error fetching coordinates:", error);
+                                            });
+
+
+                                    }
+                                    }
+                                />
+
+                                <View style={styles.buttonStyles}>
+
+                                    <Button
+                                        icon={{ source: 'play', direction: 'rtl' }}
+                                        mode="contained"
+
+                                        style={styles.buttonSpaceStyles}
+                                        buttonColor={reuseTheme.colors.preference.primaryForeground}
+                                        textColor={reuseTheme.colors.preference.primaryText}
+                                        onPress={goBack}
+                                    >
+
+                                        Prev
+                                    </Button>
+
+                                    {/* button */}
+                                    <Button
+                                        icon={{ source: 'play', direction: 'ltr' }}
+                                        mode="contained"
+                                        contentStyle={{
+                                            flexDirection: 'row-reverse',
+                                        }}
+                                        buttonColor={reuseTheme.colors.preference.primaryForeground}
+                                        textColor={reuseTheme.colors.preference.primaryText}
+                                        onPress={createProduct}
+                                        disabled={loading}
+
+
+                                    >
+
+                                        {loading ? "Creating ..." : "Create Product"}
+                                    </Button>
+                                    {/* button */}
+
+                                </View>
+
+
+
+                            </View>
+
+                        </KeyboardAvoidingView>
+                    </View>
+
+                </View>;
+            default:
+                return null;
+        }
+    };
+
+    const getStepState = (index: number) => {
+        const { activeIndex, completedStepIndex } = state;
+        let stepState = Wizard.States.DISABLED;
+
+        if (completedStepIndex && completedStepIndex > index - 1) {
+            stepState = Wizard.States.COMPLETED;
+        } else if (activeIndex === index || completedStepIndex === index - 1) {
+            stepState = Wizard.States.ENABLED;
+        }
+
+        return stepState;
+    };
+
+
+
+
+
+    return (
+        <SafeAreaView
+            style={{
+                flex: 1,
+                backgroundColor: reuseTheme.colors.preference.primaryBackground,
+                marginVertical: 10,
+                marginHorizontal: 5
+            }}
+        >
+
+            {/* Wizard for your main steps */}
+            <Wizard testID={'uilib.wizard'}
+                activeIndex={state.activeIndex} onActiveIndexChanged={onActiveIndexChanged}
+                containerStyle={{
+                    marginHorizontal: 0,
+                    marginVertical: 10,
+                    borderRadius: 20,
+                    backgroundColor: reuseTheme.colors.preference.primaryText
+                }}
+                activeConfig={
+                    {
+                        color: reuseTheme.colors.preference.primaryText,
+                        state: WizardStepStates.ENABLED,
+                        circleSize: 30,
+                        circleBackgroundColor: reuseTheme.colors.preference.primaryBackground,
+                        circleColor: reuseTheme.colors.preference.primaryBackground,
+
+
+                    }
+
+                }
+
+            >
+                <Wizard.Step
+                    state={getStepState(0)}
+                    label={'Image Upload'}
+                    enabled={true}
+
+                />
+                <Wizard.Step state={getStepState(1)} label={'Product Information'} />
+                <Wizard.Step state={getStepState(2)} label={'Pick Up'} />
+            </Wizard>
+
+            {/* Render the current step */}
+            {renderCurrentStep()}
+
+            {/* modal section */}
+            {showModal && (
+                <UploadComponent
+                    image={imagePath}
+                    setImage={setImagePath}
+                    setModal={setShowModal}
+                    showModal={showModal}
+                    selectDocument={false}
+                />
+            )}
+
+            {/* modal section */}
+
+        </SafeAreaView>
+    )
 }
 
 export default CreateDonationProduct
@@ -997,66 +1061,26 @@ const productStyles = (theme: ReuseTheme) => StyleSheet.create({
         borderStyle: "dotted",
         borderRadius: 10
     },
-    textStyle: {
-        color: theme.colors.preference.primaryText,
-        fontSize: 18,
-        fontWeight: "bold",
-        textAlign: "center"
-    },
-    container: {
-        backgroundColor: theme.colors.preference.primaryBackground,
-        paddingTop: 16,
-        marginHorizontal: 30
-    },
-    dropdown: {
-        height: 40,
-        borderColor: theme.colors.preference.grey3,
-        borderWidth: 2,
-        borderRadius: 20,
-        paddingHorizontal: 8,
-        backgroundColor: theme.colors.preference.primaryBackground,
 
-    },
-    icon: {
-        marginRight: 5,
-    },
-    label: {
-        position: 'absolute',
-        backgroundColor: theme.colors.preference.primaryText,
-        left: 16,
-        top: 8,
-        zIndex: 999,
-        paddingHorizontal: 8,
-        fontSize: 14,
-    },
-    placeholderStyle: {
-        fontSize: 16,
-    },
-    selectedTextStyle: {
-        fontSize: 16,
-        color: theme.colors.preference.primaryText,
-        borderWidth: 0,
-        backgroundColor: theme.colors.preference.primaryBackground,
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
-    inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
-        backgroundColor: theme.colors.preference.primaryBackground,
-        color: theme.colors.preference.primaryText,
-        borderWidth: 0,
-
-    },
     buttonStyles: {
         flexDirection: "row",
         alignItems: "center",
         marginVertical: 10,
         marginHorizontal: 20
     },
+    buttonSpaceStyles: {
+        marginHorizontal: 10
+    },
     modalStyles: {
         backgroundColor: theme.colors.preference.primaryBackground
+    },
+    fieldStyles: {
+        borderBottomColor: theme.colors.preference.primaryText,
+        borderBottomWidth: 2
+    },
+    viewStyles: {
+        marginHorizontal: 20,
+        marginVertical: 10,
+        height: 60
     }
 })
