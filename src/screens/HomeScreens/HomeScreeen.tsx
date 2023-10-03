@@ -1,6 +1,5 @@
-import {  View, SafeAreaView, ScrollView, Alert } from 'react-native'
-import React, { useState , useEffect} from 'react'
-import { FAKE_PRODUCTS } from '../../fakedata/data'
+import { View, SafeAreaView, ScrollView, Alert } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import SearchComponent from '../../components/SearcComponent';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
@@ -13,51 +12,70 @@ import { useFirebase } from '../../hooks/useFirebase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store/dev';
 import { ActivityIndicator } from '../../components/ActivityIndicator';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 
 
 
 const HomeScreeen = () => {
 
-  const {reuseTheme} =  useUserPreferredTheme();
+  const { reuseTheme } = useUserPreferredTheme();
   const generalstyles = dynamicGeneralStyles(reuseTheme);
-  const {user} =  useSelector((state:RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.user);
 
 
-  const {updateUserLocation} = useFirebase();
+  const { updateUserLocation, updateUserDeviceId } = useFirebase();
 
-   const [products, setProducts] = useState<any[]>([]);
-   const [loading , setLoading] =  useState<boolean>(false);
-   const {getAllProducts} = useFirebase();
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { getAllProducts } = useFirebase();
 
 
 
-   const getCurrentPosition = () => {
+  const getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
-        (pos) => {
+      (pos) => {
 
-            const {latitude , longitude } = pos.coords;
-            setPosition({ latitude, longitude });
-        },
-        (error) => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
-        { enableHighAccuracy: true, }
+        const { latitude, longitude } = pos.coords;
+        setPosition({ latitude, longitude });
+      },
+      (error) => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
+      { enableHighAccuracy: true, }
     );
-};
+  };
 
-useEffect(() => {
-  setLoading(true);
-   getAllProducts().then((products)=>{
-     setProducts(products);
-   })
-   setLoading(false);
-  getCurrentPosition();
-  if(position){
-    updateUserLocation(user?.UID, position.latitude, position.longitude);
-  }
+  //device id
+  const getDeviceId = async () => {
+    try {
+      const deviceId = await getUniqueId();
+      // console.log('Device ID:', deviceId);
+      return deviceId;
+    } catch (error) {
+      // console.error('Error getting device ID:', error);
+      return null;
+    }
+  };
+  //device id
+
+  useEffect(async () => {
+    setLoading(true);
+    getAllProducts().then((products) => {
+      setProducts(products);
+    })
+    setLoading(false);
+    getCurrentPosition();
+    if (position) {
+      updateUserLocation(user?.UID, position.latitude, position.longitude);
+    }
+    let deviceId = await getDeviceId()
+    if (deviceId != null) {
+      updateUserDeviceId(user?.UID, deviceId)
+    }
 
 
-}, []);
 
-const [position, setPosition] = useState<any>(null);
+  }, []);
+
+  const [position, setPosition] = useState<any>(null);
 
 
 
@@ -69,39 +87,39 @@ const [position, setPosition] = useState<any>(null);
     <SafeAreaView style={generalstyles.container}>
 
       <ScrollView showsVerticalScrollIndicator={false} style={{ paddingBottom: 100 }}>
-              {/* search component */}
-      <View style={[generalstyles.centerContent]}>
-        <SearchComponent
-          placeholder="search for properties"
-          value={searchQuery}
-          searchStyles={{
-            elevation: 4,
-            borderRadius: 25,
-            marginTop: 15,
-            marginBottom: 5,
-            height: 55,
-            backgroundColor: reuseTheme.colors.preference.primaryBackground,
-            color: `${reuseTheme.colors.preference.primaryText}}`,
-            width: '90%',
-          }}
-          onSearchChange={(query: any) => {
+        {/* search component */}
+        <View style={[generalstyles.centerContent]}>
+          <SearchComponent
+            placeholder="search for properties"
+            value={searchQuery}
+            searchStyles={{
+              elevation: 4,
+              borderRadius: 25,
+              marginTop: 15,
+              marginBottom: 5,
+              height: 55,
+              backgroundColor: reuseTheme.colors.preference.primaryBackground,
+              color: `${reuseTheme.colors.preference.primaryText}}`,
+              width: '90%',
+            }}
+            onSearchChange={(query: any) => {
 
-            setSearchQuery(query);
-          }}
-        />
-      </View>
-      {/* search component */}
+              setSearchQuery(query);
+            }}
+          />
+        </View>
+        {/* search component */}
         {/* categories */}
         <TextTypes text="Your Favourites" />
         <Categories />
         {/* categories */}
 
         {/* most receommended */}
-        <TextTypes text="Our Recommendations"  />
+        <TextTypes text="Our Recommendations" />
         {
 
-          products.length? <ScrollCard cardProducts={products} />:
-          <ActivityIndicator/>
+          products.length ? <ScrollCard cardProducts={products} /> :
+            <ActivityIndicator />
         }
 
         {/* most recommended */}
@@ -110,27 +128,30 @@ const [position, setPosition] = useState<any>(null);
         <TextTypes text="Most Popular" />
         {
 
-products.length? <ScrollCard cardProducts={products} />:
-<ActivityIndicator/>
-}
+          products.length ? <ScrollCard cardProducts={products} /> :
+            <ActivityIndicator />
+        }
         {/* popular */}
 
         {/* nearby */}
         <TextTypes text="Near by You" />
         {
-          products.length>0 && <ScrollCard cardProducts={products} />
+
+          products.length ? <ScrollCard cardProducts={products} /> :
+            <ActivityIndicator />
         }
         {/* nearby */}
 
         {/* nearby */}
-        <TextTypes text="Most Searched" />
         {
-          products.length>0 && <ScrollCard cardProducts={products} />
+
+          products.length ? <ScrollCard cardProducts={products} /> :
+            <ActivityIndicator />
         }
         {/* nearby */}
 
         {/* top donaters */}
-        <TextTypes text="Top Donaters"  screen="AllDonaters"/>
+        <TextTypes text="Top Donaters" screen="AllDonaters" />
         <Donaters />
         {/* top donaters */}
 
