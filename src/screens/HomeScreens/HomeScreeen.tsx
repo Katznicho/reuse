@@ -12,7 +12,7 @@ import { useFirebase } from '../../hooks/useFirebase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store/dev';
 import { ActivityIndicator } from '../../components/ActivityIndicator';
-import { getUniqueId, getManufacturer } from 'react-native-device-info';
+import messaging from '@react-native-firebase/messaging';
 
 
 
@@ -43,20 +43,28 @@ const HomeScreeen = () => {
     );
   };
 
-  //device id
-  const getDeviceId = async () => {
-    try {
-      const deviceId = await getUniqueId();
-      // console.log('Device ID:', deviceId);
-      return deviceId;
-    } catch (error) {
-      // console.error('Error getting device ID:', error);
-      return null;
-    }
-  };
-  //device id
 
-  useEffect(async () => {
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+
+      const fcmToken = await messaging().getToken();
+
+      updateUserDeviceId(user?.UID, fcmToken)
+
+    }
+    else {
+
+    }
+  }
+
+
+  useEffect(() => {
     setLoading(true);
     getAllProducts().then((products) => {
       setProducts(products);
@@ -66,10 +74,9 @@ const HomeScreeen = () => {
     if (position) {
       updateUserLocation(user?.UID, position.latitude, position.longitude);
     }
-    let deviceId = await getDeviceId()
-    if (deviceId != null) {
-      updateUserDeviceId(user?.UID, deviceId)
-    }
+
+    requestUserPermission();
+
 
 
 

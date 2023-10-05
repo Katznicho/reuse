@@ -182,9 +182,7 @@ export const useFirebase = () => {
       await firestore().collection(USER_COLLECTION).doc(userId).update({
         deviceId: deviceId,
       });
-      console.log('User device ID updated successfully.');
     } catch (error) {
-      console.error('Error updating user device ID:', error);
       throw error;
     }
   };
@@ -305,11 +303,11 @@ export const useFirebase = () => {
     }
   };
 
-  const getAllDonors = async () => {
+  const getAllDonors = async (userType = APP_USERS.DONOR) => {
     try {
       const querySnapshot = await firestore()
         .collection(USER_COLLECTION)
-        .where('userType', '==', APP_USERS.DONOR) // Replace 'userType' with the actual field name for user type
+        .where('userType', '==', userType) // Replace 'userType' with the actual field name for user type
         .get();
 
       const donors: any = [];

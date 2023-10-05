@@ -15,6 +15,9 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { DEFAULT_USER_PROFILE } from '../../../utils/constants/constants';
 import NotificationStack from '../../../screens/NotificationScreens/NotificationStack';
+import All from '../../../screens/NotificationScreens/All';
+import Testing from '../../../screens/NotificationScreens/Testing';
+import MyNotificationStack from '../../../screens/Notifcations/MyNotificationStack';
 
 
 
@@ -122,7 +125,7 @@ export default function BottomTabs() {
       />
       {/* mine */}
       <Tab.Screen name="Reuse"
-        component={Empty}
+        component={MyNotificationStack}
         options={{
           tabBarLabel: 'Reuse',
           tabBarAccessibilityLabel: 'Reuse',
@@ -162,8 +165,8 @@ export default function BottomTabs() {
 
 
 
-      <Tab.Screen name="Notifications"
-        component={NotificationStack}
+      {/* <Tab.Screen name="Notifications"
+        component={Testing}
         options={{
           tabBarLabel: 'Notifications',
           tabBarIcon: ({ color }) => (
@@ -174,7 +177,7 @@ export default function BottomTabs() {
             />
           ),
         }}
-      />
+      /> */}
 
 
 

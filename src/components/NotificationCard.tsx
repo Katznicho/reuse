@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { NotificationInterface } from '../types';
-import { generalstyles } from '../generalstyles/generalstyles';
-import { theme } from '../theme/theme';
+import { NotificationInterface, ReuseTheme } from '../types/types';
+import { useUserPreferredTheme } from '../hooks/useUserPreferredTheme';
+import { dynamicGeneralStyles } from '../utils/generalstyles/dynamicGeneralStyles';
+
+
+
 
 const NotificationCard = ({
   // id,
@@ -10,6 +13,12 @@ const NotificationCard = ({
   time,
   description,
 }: NotificationInterface) => {
+
+  const { reuseTheme } = useUserPreferredTheme();
+  const generalstyles = dynamicGeneralStyles(reuseTheme);
+
+  const styles = notificationStyles(reuseTheme);
+
   return (
     <View style={[generalstyles.flexStyles, styles.containerStyles]}>
       <View>
@@ -29,18 +38,18 @@ const NotificationCard = ({
 
 export default NotificationCard;
 
-const styles = StyleSheet.create({
+const notificationStyles = (theme: ReuseTheme) => StyleSheet.create({
   containerStyles: {
     justifyContent: 'space-between',
     // alignItems:"center" ,
     marginHorizontal: 10,
-    borderBottomColor: theme.colors.placeholder,
+    borderBottomColor: theme.colors.preference.grey3,
     borderWidth: 1,
-    borderTopColor: theme.colors.placeholder,
+    borderTopColor: theme.colors.preference.grey3,
     paddingVertical: 10,
   },
   textColor: {
-    color: theme.colors.white,
+    color: theme.colors.preference.primaryText,
   },
   textStyles: {
     width: '80%',
