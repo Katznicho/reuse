@@ -47,6 +47,40 @@ const MyNotificationStack = (): JSX.Element => {
         }}
 
       />
+
+      <Stack.Screen
+        name="Events"
+        component={Recent}
+        options={{
+          title: 'Notifications',
+          headerStyle: {
+            backgroundColor: reuseTheme.colors.preference.primaryBackground,
+          },
+          headerTitleStyle: {
+            fontSize: 25,
+          },
+          headerTitleAlign: 'center',
+          headerTintColor: reuseTheme.colors.preference.primaryText,
+        }}
+
+      />
+
+      <Stack.Screen
+        name="All"
+        component={Recent}
+        options={{
+          title: 'Notifications',
+          headerStyle: {
+            backgroundColor: reuseTheme.colors.preference.primaryBackground,
+          },
+          headerTitleStyle: {
+            fontSize: 25,
+          },
+          headerTitleAlign: 'center',
+          headerTintColor: reuseTheme.colors.preference.primaryText,
+        }}
+
+      />
     </Stack.Navigator>
   );
 };

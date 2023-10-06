@@ -8,30 +8,19 @@ import { ReuseTheme } from '../types/types';
 
 const ReviewTypes = ({ data, name }: any) => {
   const navigation = useNavigation<any>();
-  const {reuseTheme} =  useUserPreferredTheme();
+  const { reuseTheme } = useUserPreferredTheme();
   const generalstyles = dynamicGeneralStyles(reuseTheme);
-    const styles = reviewStyles(reuseTheme);
+  const styles = reviewStyles(reuseTheme);
 
   return (
     <View style={[styles.containerStyle, generalstyles.flexStyles]}>
       {data.map(
         (
           detail: {
-            name:
-              | string
-              | number
-              | boolean
-              | React.ReactElement<
-                  any,
-                  string | React.JSXElementConstructor<any>
-                >
-              | React.ReactFragment
-              | React.ReactPortal
-              | null
-              | undefined;
+            name: string,
             screen: any;
           },
-          index: React.Key | null | undefined,
+          index: number,
           array: string | any[],
         ) => (
           <TouchableOpacity
@@ -73,7 +62,7 @@ const ReviewTypes = ({ data, name }: any) => {
 
 export default ReviewTypes;
 
-const reviewStyles = (theme:ReuseTheme)=>StyleSheet.create({
+const reviewStyles = (theme: ReuseTheme) => StyleSheet.create({
   containerStyle: {
     backgroundColor: theme.colors.preference.primaryBackground,
     height: 40,

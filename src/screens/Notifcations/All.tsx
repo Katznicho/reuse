@@ -10,12 +10,7 @@ import NotificationCard from '../../components/NotificationCard';
  *
  * @return {JSX.Element} The rendered Recent component.
  */
-/**
- * Renders the Recent component.
- *
- * @return {JSX.Element} The rendered Recent component.
- */
-const Recent = () => {
+const All = (): JSX.Element => {
 
     const { reuseTheme } = useUserPreferredTheme();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,9 +30,9 @@ const Recent = () => {
     ]);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [notifications] = useState<NotificationInterface[]>([
+    const [notifications,] = useState<NotificationInterface[]>([
         {
-            type: 'Congratulations Recent',
+            type: 'Congratulations All',
             description:
                 'Your payment was successful please check your email for more details',
             time: '9:45 AM',
@@ -62,7 +57,7 @@ const Recent = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* notification type */}
-                <ReviewTypes name="Recent" data={details} />
+                <ReviewTypes name="All" data={details} />
                 {/* notification type */}
                 {/* notification details */}
                 {notifications.map((item, index) => {
@@ -82,4 +77,4 @@ const Recent = () => {
     )
 }
 
-export default Recent
+export default All

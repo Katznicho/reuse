@@ -14,9 +14,6 @@ import { RootState } from '../../../redux/store/dev';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { DEFAULT_USER_PROFILE } from '../../../utils/constants/constants';
-import NotificationStack from '../../../screens/NotificationScreens/NotificationStack';
-import All from '../../../screens/NotificationScreens/All';
-import Testing from '../../../screens/NotificationScreens/Testing';
 import MyNotificationStack from '../../../screens/Notifcations/MyNotificationStack';
 
 
@@ -165,8 +162,8 @@ export default function BottomTabs() {
 
 
 
-      {/* <Tab.Screen name="Notifications"
-        component={Testing}
+      <Tab.Screen name="Notifications"
+        component={MyNotificationStack}
         options={{
           tabBarLabel: 'Notifications',
           tabBarIcon: ({ color }) => (
@@ -177,7 +174,7 @@ export default function BottomTabs() {
             />
           ),
         }}
-      /> */}
+      />
 
 
 
@@ -190,7 +187,7 @@ export default function BottomTabs() {
             <Avatar.Image
               size={30}
               source={{
-                uri: photoURL ? photoURL : DEFAULT_USER_PROFILE
+                uri: photoURL || DEFAULT_USER_PROFILE
               }}
             />
           ),
