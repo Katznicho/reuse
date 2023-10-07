@@ -5,35 +5,58 @@ import {
     ScrollView,
     ImageBackground,
     StyleSheet,
+    Image,
+    TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { IconButton, Button, Avatar } from 'react-native-paper';
-
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
 import SimiliarProducts from '../../components/SimiliarProducts';
 import { ReuseTheme } from '../../types/types';
+import { useFirebase } from '../../hooks/useFirebase';
+import { DEFAULT_USER_PROFILE } from '../../utils/constants/constants';
+import { Switch } from 'react-native-ui-lib';
+
 
 
 const ProductDetails = () => {
 
-    const {reuseTheme} =  useUserPreferredTheme();
+    const { reuseTheme } = useUserPreferredTheme();
     const generalstyles = dynamicGeneralStyles(reuseTheme);
     const styles = productStyles(reuseTheme);
+    const { getUserByUid } = useFirebase();
+    const [ownerDetails, setOwnerDetails] = useState<any>();
+
 
     const navigation = useNavigation<any>();
     const { params } = useRoute<any>();
+
+
+    useEffect(() => {
+        console.log(params.item?.estimatedPickUp?.details);
+        if (params.item) {
+            getUserByUid(params.item.userId).then((res) => {
+                setOwnerDetails(res);
+
+            })
+        }
+
+    }, [])
+
+
+
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor:reuseTheme.colors.preference.primaryBackground }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }}>
             <ScrollView
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
             >
                 {/* header section */}
                 <ImageBackground
-                    source={{ uri: params.item.packageImageUri }}
+                    source={{ uri: params.item?.coverImage }}
                     style={{ width: '100%', height: 300 }}
                     resizeMode="cover"
                 >
@@ -48,23 +71,18 @@ const ProductDetails = () => {
                     </View>
                 </ImageBackground>
 
-                <View style={ [generalstyles.flexStyles, { marginHorizontal: 10, marginVertical:10, justifyContent:"space-between", alignItems:"center" }]}>
+                <View style={[generalstyles.flexStyles, { marginHorizontal: 10, marginVertical: 10, justifyContent: "space-between", alignItems: "center" }]}>
                     <View>
                         <View>
                             <Text
-                                style={{
-                                    fontSize: 20,
-                                    fontWeight: 'bold',
-                                    marginHorizontal: 10,
-                                    color:reuseTheme.colors.preference.primaryText,
-                                }}
+                                style={styles.title}
                             >
-                                {params.item.name}
+                                {params.item.title}
                             </Text>
                         </View>
                         <View style={[generalstyles.flexStyles, { marginHorizontal: 10 }]}>
                             {
-                                Array(params.item.rating).fill(params.item.rating).map((_, index) => (
+                                Array(params.item.rating).fill(params.item.rating).map((item, index) => (
                                     <AntDesign
                                         name="star"
                                         color={reuseTheme.colors.preference.primaryForeground}
@@ -78,28 +96,30 @@ const ProductDetails = () => {
                     </View>
 
                     {/* owner details */}
-                    <View>
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.navigate('DonaterDetails', { item: ownerDetails })
+                        }
+                    >
                         <View style={[{ marginHorizontal: 20 }]}>
                             <Avatar.Image
                                 size={40}
                                 source={{
-                                    uri: 'https://plus.unsplash.com/premium_photo-1665673312765-8e7ae54a5ebd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fGZpdG5lc3N8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60',
+                                    uri: ownerDetails?.photoURL || DEFAULT_USER_PROFILE,
                                 }}
                             />
                         </View>
                         <View >
-                            <Text style={styles.nameStyle}>Owner</Text>
+                            <Text style={styles.nameStyle}>{`${"Owner"}`}</Text>
                         </View>
 
-                    </View>
+                    </TouchableOpacity>
                     {/* owner details */}
 
 
                 </View>
                 {/* header section */}
 
-                {/* more pictures */}
-                {/* more pictures */}
 
                 {/* description card */}
                 <View
@@ -109,14 +129,9 @@ const ProductDetails = () => {
                     ]}
                 >
                     <View
-                        style={{
-                            backgroundColor:reuseTheme.colors.preference.primaryBackground,
-                            elevation: 10,
-                            padding: 5,
-                            borderRadius: 10,
-                        }}
+                        style={styles.description}
                     >
-                        <Text style={{ color:reuseTheme.colors.preference.primaryText, padding: 5 }}>
+                        <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 5 }}>
                             {params.item.description}
 
                         </Text>
@@ -124,29 +139,204 @@ const ProductDetails = () => {
                 </View>
                 {/* description card */}
 
+                {/* more pictures */}
+                <View>
+                    <Text style={styles.title}>More Images</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        {
+                            params.item.images?.map((item: any) => {
+
+                                return (
+                                    <TouchableOpacity
+                                        key={item}
+                                        style={styles.imageContainer}
+                                    >
+                                        <Image
+                                            source={{ uri: item }}
+                                            style={styles.image}
+                                        />
+                                    </TouchableOpacity>
+                                )
+                            })
+                        }
+                    </ScrollView>
+                </View>
+                {/* more pictures */}
+
+
+                {/* more product details */}
+                <View
+                    style={[
+                        // generalstyles.centerContent,
+
+                        styles.description,
+                        { elevation: 20, marginHorizontal: 10, borderRadius: 20, marginVertical: 20, padding: 10, backgroundColor: reuseTheme.colors.preference.secondaryBackground },
+                    ]}
+                >
+                    <View style={styles.cardViewStyles}>
+                        <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 2, fontSize: reuseTheme.fontSizes.xxl }}>Price</Text>
+                        <Text style={{ color: reuseTheme.colors.preference.grey6, padding: 5 }}>
+                            shs   {params.item?.price?.formattedNumber}
+
+                        </Text>
+                        <View style={[styles.bottom]} />
+                    </View>
+
+                    <View style={styles.cardViewStyles}>
+                        <View style={[generalstyles.flexStyles, { justifyContent: "space-between", alignItems: "center" }]}>
+                            <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 2 }}>Location</Text>
+                            <Text style={{ color: reuseTheme.colors.preference.grey6, padding: 5 }}>
+                                {params.item?.estimatedPickUp?.details?.formatted_address}
+
+                            </Text>
+
+                        </View>
+
+                        <View style={[styles.bottom]} />
+                    </View>
+
+                    {/* estimated weight */}
+                    <View style={styles.cardViewStyles}>
+                        <View style={[generalstyles.flexStyles, { justifyContent: "space-between", alignItems: "center" }]}>
+                            <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 2 }}>Estimated Weight(Kgs)</Text>
+                            <Text style={{ color: reuseTheme.colors.preference.grey6, padding: 5 }}>
+                                {params.item?.estimatedWeight}
+
+                            </Text>
+
+                        </View>
+
+                        <View style={[styles.bottom]} />
+                    </View>
+                    {/* estimated weight */}
+
+                    <View style={styles.cardViewStyles}>
+                        <View style={[generalstyles.flexStyles, { justifyContent: "space-between", alignItems: "center" }]}>
+                            <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 2 }}>Available For Free</Text>
+                            <Switch
+                                width={80}
+                                height={38}
+                                thumbSize={34}
+                                thumbColor={reuseTheme.colors.preference.primaryBackground}
+                                value={params.item.isFree}
+                                onColor={reuseTheme.colors.preference.primaryForeground}
+                            />
+
+                        </View>
+
+                        <View style={[styles.bottom]} />
+                    </View>
+
+                    <View style={styles.cardViewStyles}>
+                        <View style={[generalstyles.flexStyles, { justifyContent: "space-between", alignItems: "center" }]}>
+                            <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 2 }}>Delivery Fee Included</Text>
+                            <Switch
+                                width={80}
+                                height={38}
+                                thumbSize={34}
+                                thumbColor={reuseTheme.colors.preference.primaryBackground}
+                                value={params.item.isDeliveryFeeCovered}
+                                onColor={reuseTheme.colors.preference.primaryForeground}
+                            />
+
+                        </View>
+
+                        <View style={[styles.bottom]} />
+                    </View>
+
+                    <View style={styles.cardViewStyles}>
+                        <View style={[generalstyles.flexStyles, { justifyContent: "space-between", alignItems: "center" }]}>
+                            <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 2 }}>Product Is New</Text>
+                            <Switch
+                                width={80}
+                                height={38}
+                                thumbSize={34}
+                                thumbColor={reuseTheme.colors.preference.primaryBackground}
+                                value={params.item.isProductNew}
+                                onColor={reuseTheme.colors.preference.primaryForeground}
+                            />
+
+                        </View>
+
+                        <View style={[styles.bottom]} />
+                    </View>
+
+                    <View style={styles.cardViewStyles}>
+                        <View style={[generalstyles.flexStyles, { justifyContent: "space-between", alignItems: "center" }]}>
+                            <Text style={{ color: reuseTheme.colors.preference.primaryText, padding: 2 }}>Product Has Damages</Text>
+                            <Switch
+                                width={80}
+                                height={38}
+                                thumbSize={34}
+                                thumbColor={reuseTheme.colors.preference.primaryBackground}
+                                value={params.item.isProductDamaged}
+                                onColor={reuseTheme.colors.preference.primaryForeground}
+                            />
+
+                        </View>
+
+                        <View style={[styles.bottom]} />
+                    </View>
+
+
+                </View>
+                {/* more product details */}
+
+
                 {/* hotel access card */}
                 <SimiliarProducts />
                 {/*  hotel access card*/}
 
-                {/* start out work  out */}
 
-                <Button
-                    mode="contained"
-                    contentStyle={{
-                        flexDirection: 'row-reverse',
-                    }}
-                    style={{
-                        marginHorizontal: 40,
-                        marginVertical: 20,
-                    }}
-                    //  loading={true}
-                    buttonColor={reuseTheme.colors.preference.primaryForeground}
-                    textColor={reuseTheme.colors.preference.primaryBackground}
-                    onPress={() => navigation.navigate('Appointment')}
-                >
-                    Buy
-                </Button>
-                {/* start work out */}
+                {
+                    params.item.isFree ? (
+                        <View style={[generalstyles.absoluteStyles, { bottom: 10, right: 10 }]}>
+                            <Button
+                                mode="contained"
+                                contentStyle={{
+                                    flexDirection: 'row-reverse',
+                                }}
+                                style={{
+                                    marginHorizontal: 40,
+                                    marginVertical: 20,
+                                }}
+                                //  loading={true}
+                                buttonColor={reuseTheme.colors.preference.primaryForeground}
+                                textColor={reuseTheme.colors.preference.primaryBackground}
+                                onPress={() => navigation.navigate('Appointment')}
+                            >
+                                Claim
+                            </Button>
+                        </View>
+
+
+                    ) : (
+                        <View style={[generalstyles.absoluteStyles, { bottom: 10, right: 10 }]}>
+                            <Button
+                                mode="contained"
+                                contentStyle={{
+                                    flexDirection: 'row-reverse',
+                                }}
+                                style={{
+                                    marginHorizontal: 40,
+                                    marginVertical: 20,
+                                }}
+                                //  loading={true}
+                                buttonColor={reuseTheme.colors.preference.primaryForeground}
+                                textColor={reuseTheme.colors.preference.primaryBackground}
+                                onPress={() => navigation.navigate('Appointment')}
+                            >
+                                Buy
+                            </Button>
+                        </View>
+
+
+
+                    )
+                }
+
+
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -154,11 +344,45 @@ const ProductDetails = () => {
 
 export default ProductDetails;
 
-const productStyles = (theme:ReuseTheme)=>StyleSheet.create({
+const productStyles = (theme: ReuseTheme) => StyleSheet.create({
     nameStyle: {
         fontSize: 15,
         fontWeight: 'bold',
-        color:theme.colors.preference.primaryText,
-        marginLeft:20
+        color: theme.colors.preference.primaryText,
+        marginLeft: 20
     },
+    imageContainer: {
+        marginHorizontal: 5,
+        marginVertical: 5,
+        width: theme.dimensions.width * 0.6,
+        height: theme.dimensions.width * 0.6,
+    },
+    image: {
+        width: theme.dimensions.width * 0.6,
+        height: theme.dimensions.width * 0.6,
+        borderRadius: 10,
+        resizeMode: 'cover',
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginHorizontal: 10,
+        color: theme.colors.preference.primaryText,
+    },
+    description: {
+        backgroundColor: theme.colors.preference.primaryBackground,
+        elevation: 10,
+        padding: 5,
+        borderRadius: 10,
+    },
+    bottom: {
+        borderBottomColor: theme.colors.preference.primaryText,
+        borderBottomWidth: 0.5,
+        marginVertical: 5
+    },
+    cardViewStyles:
+    {
+        marginVertical: 10, padding: 5
+    }
+
 });

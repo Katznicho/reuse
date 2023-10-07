@@ -1,30 +1,29 @@
 export const APP_GENDER = {
-    MALE:'Male',
-    FEMALE:"Female"
+    MALE: 'Male',
+    FEMALE: "Female"
 }
 
 export const APP_USERS = {
-
-     REUSER:"REUSER",
-     DONOR:"DONOR",
-     RESELLER:"RESSELLER",
-     RECEIVER:"RECIEVER",
-     BUYER:"BUYER",
-     ALL:"All"
+    REUSER: "REUSER",
+    DONOR: "DONOR",
+    RESELLER: "RESSELLER",
+    RECEIVER: "RECIEVER",
+    BUYER: "BUYER",
+    ALL: "All"
 
 }
 
 export const APP_NAME = "Reuse";
 
 //firebase collections
-export const USER_COLLECTION:string = "users";
+export const USER_COLLECTION: string = "users";
 
 //firebase storage
-export const PROFILE_STORAGE:string  = "profile/images"
-export const PRODUCT_STORAGE:string  = "product/images";
-export const DOCUMENT_STORAGE:string  = "document/images";
+export const PROFILE_STORAGE: string = "profile/images"
+export const PRODUCT_STORAGE: string = "product/images";
+export const DOCUMENT_STORAGE: string = "document/images";
 export const PRODUCT_COLLECTION = "products";
-export const DEFAULT_USER_PROFILE =  "https://media.istockphoto.com/id/519078727/photo/male-silhouette-as-avatar-profile-picture.jpg?b=1&s=170667a&w=0&k=20&c=JzPsyMEFcdQp2UlFqLVeuOaj2bOpteXUWFR9FJzTnBM=";
+export const DEFAULT_USER_PROFILE = "https://media.istockphoto.com/id/519078727/photo/male-silhouette-as-avatar-profile-picture.jpg?b=1&s=170667a&w=0&k=20&c=JzPsyMEFcdQp2UlFqLVeuOaj2bOpteXUWFR9FJzTnBM=";
 
 
 
@@ -115,4 +114,41 @@ Join us at Reuse Connect and be a part of a community that believes in the trans
 
 Get started today and make a meaningful connection!
 `;
+
+
+export const SUPPORT_US = `
+Welcome to Reuse Connect Support!
+
+If you have any questions, concerns, or require assistance, our team is here to help. At Reuse Connect, we are committed to providing excellent support to our community members.
+
+### Contact Information:
+- **Email:** [reuse@gmail.com](mailto:reuse@gmail.com)
+- **Toll free number:** +256 (075) 998-3853
+
+### How to Reach Us:
+You can get in touch with our support team through email or by calling our phone number. Whether you're a donor, community member, or just curious about our platform, we're here to assist you.
+
+### Frequently Asked Questions (FAQs):
+Before reaching out to our support team, you might find answers to your questions in our [FAQ section](/faq). We've compiled a list of common inquiries to provide quick solutions to common issues.
+
+### Technical Support:
+If you encounter any technical issues while using our platform, please don't hesitate to contact our technical support team. They are available to help you with any technical challenges you may face.
+
+### General Inquiries:
+For general inquiries about our mission, services, or how to get involved, feel free to send us an email or give us a call. We value your input and are happy to provide information about Reuse Connect.
+
+### Feedback and Suggestions:
+Your feedback is invaluable to us. If you have suggestions for improving our platform or have ideas on how we can better serve our community, please let us know. We are always eager to hear from you.
+
+Thank you for being a part of the Reuse Connect community. We appreciate your support and look forward to assisting you with any inquiries or support needs you may have.
+
+Join us in making a positive impact on communities around the world!
+
+Get in touch with Reuse Connect Support today!
+
+`;
+
+
+
+
 

@@ -16,6 +16,7 @@ import DonaterDetails from '../../../screens/HomeScreens/DonaterDetails';
 import ReviewStack from '../../../screens/HomeScreens/ReviewStack/ReviewStack';
 import WriteReview from '../../../screens/HomeScreens/ReviewStack/WriteReview';
 import ProductDetails from '../../../screens/HomeScreens/ProductDetails';
+import AllProducts from '../../../screens/HomeScreens/AllProducts';
 
 
 
@@ -24,7 +25,7 @@ const Stack = createNativeStackNavigator();
 
 function HomeStack() {
 
-  const {reuseTheme} =  useUserPreferredTheme();
+  const { reuseTheme } = useUserPreferredTheme();
   const generalstyles = dynamicGeneralStyles(reuseTheme);
 
   const navigation = useNavigation<any>();
@@ -52,7 +53,7 @@ function HomeStack() {
           />
         ),
       }}
-      
+
     >
 
       <Stack.Screen
@@ -93,7 +94,7 @@ function HomeStack() {
                 marginBottom: 10,
                 marginLeft: -8,
                 marginRight: 25,
-                backgroundColor: reuseTheme.colors.preference.primaryForeground,
+                backgroundColor: reuseTheme.colors.preference.secondaryBackground,
                 height: 50,
                 color: `${reuseTheme.colors.preference.primaryText}`,
                 width: "90%",
@@ -102,6 +103,35 @@ function HomeStack() {
           ),
         })}
       />
+
+      {/* all products */}
+      <Stack.Screen
+        name="AllProducts"
+        component={AllProducts}
+        options={({ route }) => ({
+          header: props => (
+            <SearchAppBar
+              {...props}
+              placeholder={'search for products'}
+
+              previous={true}
+              searchStyles={{
+                elevation: 4,
+                borderRadius: 25,
+                marginTop: 5,
+                marginBottom: 10,
+                marginLeft: -8,
+                marginRight: 25,
+                backgroundColor: reuseTheme.colors.preference.secondaryBackground,
+                height: 50,
+                color: `${reuseTheme.colors.preference.primaryText}`,
+                width: "90%",
+              }}
+            />
+          ),
+        })}
+      />
+      {/* all products */}
 
       <Stack.Screen
         name="DonaterDetails"

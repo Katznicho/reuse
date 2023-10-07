@@ -12,7 +12,7 @@ const SearchComponent = ({
   onSearchChange,
 }: any) => {
 
-    const {reuseTheme} =  useUserPreferredTheme();
+  const { reuseTheme } = useUserPreferredTheme();
 
   return (
     <View>
@@ -28,8 +28,8 @@ const SearchComponent = ({
         autoCapitalize="none"
         theme={{ colors: { primary: reuseTheme.colors.preference.primaryBackground } }}
         value={value}
-        placeholderTextColor={reuseTheme.colors.preference.grey3}
-      
+        placeholderTextColor={reuseTheme.colors.preference.primaryText}
+
       />
     </View>
   );

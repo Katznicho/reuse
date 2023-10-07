@@ -16,6 +16,8 @@ import { ReuseTheme } from '../types/types';
 import { useFirebase } from '../hooks/useFirebase';
 import NotAvailable from './NotAvailable';
 
+import { DEFAULT_USER_PROFILE } from '../utils/constants/constants';
+
 
 // Define the Donator interface
 interface Donator {
@@ -36,18 +38,18 @@ const Donaters = () => {
 
     const [donaters, setDonaters] = useState<any[]>([]);
 
-    const {getAllDonors} = useFirebase();
+    const { getAllDonors } = useFirebase();
     useEffect(() => {
 
         getAllDonors()
-          .then((usersData) => {
-            // Update the state with the retrieved users data
-            setDonaters(usersData);
-          })
-          .catch((error) => {
-            console.error('Error retrieving users:', error);
-          });
-      }, []);
+            .then((usersData) => {
+                // Update the state with the retrieved users data
+                setDonaters(usersData);
+            })
+            .catch((error) => {
+                console.error('Error retrieving users:', error);
+            });
+    }, []);
 
 
     const navigation = useNavigation<any>();
@@ -57,7 +59,7 @@ const Donaters = () => {
         <View >
 
             <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
-                {donaters.length? donaters.map(donator => (
+                {donaters.length ? donaters.map(donator => (
                     <TouchableOpacity
                         style={[generalstyles.centerContent, styles.containerStyle]}
                         key={donator.id}
@@ -96,8 +98,8 @@ const Donaters = () => {
                             </View>
                         </View>
                     </TouchableOpacity>
-                )):
-                 <NotAvailable text={"No Donaters Currently Available"}/>
+                )) :
+                    <NotAvailable text={"No Donaters Currently Available"} />
                 }
             </ScrollView>
         </View>

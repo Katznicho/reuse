@@ -1,10 +1,13 @@
-import React,{useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Appbar, Badge } from 'react-native-paper';
 import { Pressable, View } from 'react-native';
 
-import  MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
+import { useFirebase } from '../../hooks/useFirebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/dev';
 
 
 const AppBar = ({
@@ -18,6 +21,19 @@ const AppBar = ({
 
   const { reuseTheme } = useUserPreferredTheme();
   const generalstyles = dynamicGeneralStyles(reuseTheme);
+
+  const { user } = useSelector((state: RootState) => state.user);
+
+
+  const { getAllUnreadNotifications } = useFirebase();
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  useEffect(() => {
+    getAllUnreadNotifications(user?.UID).then((res) => {
+      setUnreadNotifications(res.length);
+    }).catch((err) => {
+    })
+  }, [])
 
   return (
     <Appbar.Header dark={true} style={[barStyle, {
@@ -77,7 +93,7 @@ const AppBar = ({
 
                 },
               ]}>
-              0
+              {unreadNotifications}
             </Badge>
             <MaterialCommunityIcons name="bell" size={30}
               color={reuseTheme.colors.preference.primaryText} />

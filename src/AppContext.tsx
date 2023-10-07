@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { StatusBar } from 'react-native'
-
 import { NavigationContainer } from '@react-navigation/native';
 import BaseNavigation from './navigators/BaseNavigation/BaseNavigation';
 import AuthStackNavigator from './navigators/AuthStack';
@@ -18,7 +17,7 @@ const AppContent = () => {
         const fetchCurrentUser = async () => {
             try {
                 await getCurrentUser();
-                
+
             } catch (error) {
                 // Handle any errors that might occur during the process
             }
@@ -28,7 +27,6 @@ const AppContent = () => {
     }, []);
 
     useEffect(() => {
-        console.log('isLoggedIn', isLoggedIn)
     }, [isLoggedIn])
 
 
@@ -40,11 +38,9 @@ const AppContent = () => {
                     isLoggedIn ? <BaseNavigation /> : <AuthStackNavigator />
                 }
 
-
             </NavigationContainer>
 
         </>
-
 
 
     )

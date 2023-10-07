@@ -39,54 +39,45 @@ const CreateDonationProduct = () => {
     const [imagePath, setImagePath] = useState<any>(null);
     const { user } = useSelector((state: RootState) => state.user);
     const [uploadingImages, setUploadingImages] = useState<boolean>(false);
+    const [categories, setCategories] = useState<any[]>([]);
+    const [communities, setCommunities] = useState<any[]>([]);
 
     const [loading, setLoading] = useState<boolean>(false);
-    const { createDonationProduct } = useFirebase();
+    const { createDonationProduct, getAllCategories, getAllCommunities } = useFirebase();
+
 
     const navigation = useNavigation<any>();
 
+    useEffect(() => {
+        getAllCategories().then((res) => {
+            //create new array for the categories
+            let categories: any = [];
+            res.forEach((item: any) => {
+                categories.push({
+                    label: item.name,
+                    value: item.id
+                })
+            })
+            setCategories(categories);
+        }).catch((err) => {
+        })
+    }, [])
 
+    useEffect(() => {
+        getAllCommunities()
+            .then((res) => {
+                let communities: any = [];
+                res.forEach((item: any) => {
+                    communities.push({
+                        label: item.communityName,
+                        value: item.id
+                    })
+                })
+                setCommunities(communities);
+            }).catch((err) => {
 
-
-
-    const [category] = useState<any[]>([
-        {
-            label: "Clothes",
-            value: "clothes"
-        },
-        {
-            label: "Electronics",
-
-            value: "electronics"
-        },
-        {
-            label: "Furniture",
-            value: "furniture"
-        },
-        {
-            label: "Food",
-            value: "food"
-        },
-        {
-            label: "Books",
-            value: "books"
-        },
-        {
-            label: "Others",
-            value: "others"
-        },
-    ])
-
-    const [communites, setCommunities] = useState<any[]>([
-        {
-            label: "Community One",
-            value: "Community One"
-        },
-        {
-            label: "Community Two",
-            value: "Community Two"
-        },
-    ])
+            })
+    })
 
 
     const [productDetials, setProductDetails] = useState<any>({
@@ -147,6 +138,24 @@ const CreateDonationProduct = () => {
     const uploadImagesAutomatically = useCallback(async () => {
         try {
             setUploadingImages(true);
+            //first upload the cover image
+            if (imagePath) {
+                const { image, error } = await UploadImage(
+                    user?.UID,
+                    imagePath.imagePath,
+                    PRODUCT_STORAGE
+                );
+                if (error) {
+                    Alert.alert(`Error uploading image for cover image. Please try again.`);
+                }
+                if (image) {
+                    // Update imagePath for the uploaded item
+                    setProductDetails((prev: { coverImage: any; }) => {
+                        return { ...prev, coverImage: image };
+                    });
+                }
+            }
+            //firs upload cover image
             const updatedCount = [...count];
             for (let index = 0; index < updatedCount.length; index++) {
                 const item = updatedCount[index];
@@ -160,11 +169,7 @@ const CreateDonationProduct = () => {
                         Alert.alert(`Error uploading image for item ${item.id}. Please try again.`);
                     }
                     if (image) {
-                        // Update imagePath for the uploaded item
-                        // updatedCount[index] = {
-                        //     ...updatedCount[index],
-                        //     imagePath: image,
-                        // };
+
                         setProductDetails((prev: { images: any; }) => {
                             const updatedImages = [...prev.images];
                             updatedImages[index] = image; // Update image at the specific index
@@ -349,7 +354,7 @@ const CreateDonationProduct = () => {
                             count.map((item: any, index: number) => (
                                 <View key={item.id}>
                                     <TouchableOpacity
-                                        key={index}
+                                        key={item.id}
                                         style={[styles.imageStyles, generalstyles.centerContent]}
                                         onPress={() => {
                                             // Create a copy of the count array to modify the specific item
@@ -445,7 +450,7 @@ const CreateDonationProduct = () => {
                             buttonColor={reuseTheme.colors.preference.primaryForeground}
                             textColor={reuseTheme.colors.preference.primaryText}
                             onPress={goToNextStep}
-                            disabled={count.some((item: any) => item.imagePath === null) || uploadingImages}
+                        //disabled={count.some((item: any) => item.imagePath === null) || uploadingImages}
                         >
 
                             Next
@@ -524,7 +529,7 @@ const CreateDonationProduct = () => {
                             searchStyle={{ color: reuseTheme.colors.preference.primaryForeground, placeholderTextColor: reuseTheme.colors.preference.grey3 }}
                         // onSearchChange={value => console.warn('value', value)}
                         >
-                            {category.map((item, index) => (
+                            {categories.map((item, index) => (
                                 <Picker.Item key={item.value}
                                     value={item.value}
                                     label={item.label}
@@ -731,7 +736,7 @@ const CreateDonationProduct = () => {
                                 searchStyle={{ color: reuseTheme.colors.preference.primaryForeground, placeholderTextColor: reuseTheme.colors.preference.grey3 }}
 
                             >
-                                {communites.map((item, index) => (
+                                {communities.map((item, index) => (
                                     <Picker.Item key={item.value}
                                         value={item.value}
                                         label={item.label}

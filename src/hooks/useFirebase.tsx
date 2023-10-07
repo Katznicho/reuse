@@ -6,6 +6,13 @@ import { APP_USERS, PRODUCT_COLLECTION } from '../utils/constants/constants';
 
 const USER_COLLECTION = "users";
 const CATEGORY_COLLECTION = "categories";
+//notification
+const NOTIFICATION_COLLECTION = "notifications";
+
+const notificationStatus = {
+  UNREAD: 'unread',
+  READ: 'read',
+}
 
 export const useFirebase = () => {
   const dispatch = useDispatch<any>();
@@ -303,11 +310,11 @@ export const useFirebase = () => {
     }
   };
 
-  const getAllDonors = async (userType = APP_USERS.DONOR) => {
+  const getAllDonors = async () => {
     try {
       const querySnapshot = await firestore()
         .collection(USER_COLLECTION)
-        .where('userType', '==', userType) // Replace 'userType' with the actual field name for user type
+        .where('userType', '==', APP_USERS.DONOR)
         .get();
 
       const donors: any = [];
@@ -321,10 +328,48 @@ export const useFirebase = () => {
 
       return donors;
     } catch (error) {
-      console.error('Error getting donors:', error);
+
       throw error;
     }
   };
+
+
+
+  /**
+   * Retrieves all communities from the firestore database.
+   *
+   * @return {Array} An array of community objects.
+   */
+  /**
+   * Retrieves all communities from the firestore database.
+   *
+   * @return {Array} An array of community objects.
+   */
+  const getAllCommunities = async (): Promise<any[]> => {
+    try {
+      const querySnapshot = await firestore()
+        .collection(USER_COLLECTION)
+        .where('userType', '==', APP_USERS.RECEIVER)
+        .get();
+
+      const communities: any[] | PromiseLike<any[]> = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        // Get the data of each community document
+        const communityData = documentSnapshot.data();
+        // Include the document ID as part of the community data
+        communities.push({ id: documentSnapshot.id, ...communityData });
+      });
+
+      return communities;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+
+
+
 
   const getUserByUid = async (uid: any): Promise<any> => {
     try {
@@ -370,6 +415,85 @@ export const useFirebase = () => {
     }
   };
 
+  //create a notification
+  const createNotification = async (userId: string, notification: any) => {
+    try {
+      await firestore().collection(NOTIFICATION_COLLECTION).add({
+        ...notification,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userId: userId,
+        isRead: false,
+        status: notificationStatus.UNREAD,
+        isAdminRead: false
+      });
+    } catch (error) {
+      console.log("Error creating notification:", error);
+    }
+  }
+
+  //get all notifications for a user
+  const getAllNotifications = async (userId: string) => {
+
+    try {
+      const querySnapshot = await firestore()
+        .collection(NOTIFICATION_COLLECTION)
+        .where('userId', '==', userId)
+        .get();
+
+      const notifications: any = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        // Get the data of each notification document
+        const notificationData = documentSnapshot.data();
+        // Include the document ID as part of the notification data
+        notifications.push({ id: documentSnapshot.id, ...notificationData });
+      });
+
+      return notifications;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //get all unread notifications
+  const getAllUnreadNotifications = async (userId: string) => {
+
+    try {
+      const querySnapshot = await firestore()
+        .collection(NOTIFICATION_COLLECTION)
+        .where('userId', '==', userId)
+        .where('status', '==', notificationStatus.UNREAD)
+        .get();
+
+      const notifications: any = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        // Get the data of each notification document
+        const notificationData = documentSnapshot.data();
+        // Include the document ID as part of the notification data
+        notifications.push({ id: documentSnapshot.id, ...notificationData });
+      });
+
+      return notifications;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //update notification
+  const updateNotification = async (notificationId: string, status: string) => {
+
+    try {
+      await firestore().collection(NOTIFICATION_COLLECTION).doc(notificationId).update({
+        status: notificationStatus.READ,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        isRead: true
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 
 
   return {
@@ -389,7 +513,14 @@ export const useFirebase = () => {
     getAllDonors,
     getAllCategories,
     getUserDeviceId,
-    updateUserDeviceId
+    updateUserDeviceId,
+    getAllCommunities,
+    //notifications
+    createNotification,
+    updateNotification,
+    getAllNotifications,
+    getAllUnreadNotifications
+    //notifications
 
     // Export other auth functions here if needed
   };

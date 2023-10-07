@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Appearance, Platform } from 'react-native';
+import { Appearance, Dimensions, Platform } from 'react-native';
 import { DARK_THEME } from '../utils/constants/app_theme';
 import { ReuseTheme } from '../types/types';
 
@@ -7,6 +7,8 @@ import { ReuseTheme } from '../types/types';
 
 const HORIZONTAL_SPACING_BASE = Platform.OS === 'web' ? 4 : 2
 const VERTICAL_SPACING_BASE = 4
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 
 
@@ -63,7 +65,7 @@ const darkColors = {
 }
 
 
-const reuseTheme:ReuseTheme = {
+const reuseTheme: ReuseTheme = {
   colors: {
     light: lightColors,
     'no-preference': lightColors,
@@ -104,6 +106,10 @@ const reuseTheme:ReuseTheme = {
     borderRadius: 8,
   },
   roundness: 27,
+  dimensions: {
+    width: windowWidth,
+    height: windowHeight
+  }
 }
 
 
@@ -131,18 +137,18 @@ export const useUserPreferredTheme = () => {
     };
   }, []);
 
-  return  {
+  return {
     userPreferredTheme,
-    reuseTheme:{
-     ...reuseTheme,
-     colors:{
-      light: lightColors,
-      'no-preference': lightColors,
-      dark: darkColors,
-      preference:userPreferredTheme==DARK_THEME?darkColors:lightColors,
-     }
+    reuseTheme: {
+      ...reuseTheme,
+      colors: {
+        light: lightColors,
+        'no-preference': lightColors,
+        dark: darkColors,
+        preference: userPreferredTheme == DARK_THEME ? darkColors : lightColors,
+      }
     }
-  } ;
+  };
 };
 
 

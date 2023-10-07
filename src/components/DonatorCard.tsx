@@ -6,6 +6,7 @@ import Box from './Box';
 import { useUserPreferredTheme } from '../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../utils/generalstyles/dynamicGeneralStyles';
 import { ReuseTheme } from '../types/types';
+import { DEFAULT_USER_PROFILE } from '../utils/constants/constants';
 
 const DonaterCard = ({ item, showAvailable }: any) => {
 
@@ -18,16 +19,14 @@ const DonaterCard = ({ item, showAvailable }: any) => {
         <TouchableOpacity
             style={[generalstyles.flexStyles, styles.containerStyles]}
             onPress={() =>
-                showAvailable
-                    ? navigation.navigate('SendRequest', { item })
-                    : navigation.navigate('TrainerProfile', { item })
+                navigation.navigate('DonaterDetails', { item })
             }
         >
             <View>
                 <Avatar.Image
                     size={60}
                     source={{
-                        uri: item.image,
+                        uri: item?.photoURL || DEFAULT_USER_PROFILE,
                     }}
                     style={styles.avatarStyles}
                 />
@@ -41,14 +40,14 @@ const DonaterCard = ({ item, showAvailable }: any) => {
                     ]}
                 >
                     <Text style={{ color: reuseTheme.colors.preference.primaryText, fontSize: 15 }}>
-                        {item.name}
+                        {`${item.firstName} ${item.lastName}`}
                     </Text>
                     <Box rating={4.5} />
                 </View>
                 <View>
                     <Text
                         style={{
-                            color:reuseTheme.colors.preference.primaryText,
+                            color: reuseTheme.colors.preference.primaryText,
                             fontSize: 12,
                             fontWeight: 'bold',
                         }}

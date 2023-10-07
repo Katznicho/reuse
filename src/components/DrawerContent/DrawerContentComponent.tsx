@@ -1,15 +1,11 @@
-import { Alert,  View } from 'react-native'
-import React, { useState } from 'react'
-
+import { Alert, View } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Avatar, Caption, Drawer } from 'react-native-paper';
+import { Caption, Drawer } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-
 import { useSelector } from 'react-redux';
-
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import { drawerContentStyles } from './drawercontentstyles';
 import { RootState } from '../../redux/store/dev';
@@ -17,14 +13,41 @@ import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralSt
 import Verification from '../Verification';
 import { useFirebase } from '../../hooks/useFirebase';
 import HeadProfileCard from '../HeadProfileCard';
+import Share from 'react-native-share';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import { useNavigation } from '@react-navigation/native';
 
+/**
+ * Renders the content component for the drawer.
+ *
+ * @param {any} props - The props object.
+ * @return {void}
+ */
 const DrawerContentComponent = ({ props }: any) => {
 
 
-   const {logout} = useFirebase();
+  const { logout, getAllCommunities } = useFirebase();
+  const navigation = useNavigation<any>();
 
   const { user } = useSelector((state: RootState) => state.user);
-  
+  const [communities, setCommunities] = useState<any[]>([]);
+
+  useEffect(() => {
+    getAllCommunities()
+      .then((res) => {
+        let communities: any = [];
+        res.forEach((item: any) => {
+          communities.push({
+            label: item.communityName,
+            value: item.id
+          })
+        })
+        setCommunities(communities);
+      }).catch((err) => {
+
+      })
+  })
+
 
 
 
@@ -36,11 +59,25 @@ const DrawerContentComponent = ({ props }: any) => {
     try {
 
       // Handle any additional actions after the user is signed out
-       await logout();
+      await logout();
 
     } catch (error) {
     }
   };
+
+  const handleShareApp = async () => {
+
+    try {
+      const result = await Share.open({
+        title: 'Install Reuse App',
+        message: 'Check out Reuse App and install it',
+        url: 'https://play.google.com/apps/internaltest/4699919634175995763',
+      });
+      console.log(result);
+    } catch (error) {
+
+    }
+  }
 
 
 
@@ -81,14 +118,14 @@ const DrawerContentComponent = ({ props }: any) => {
     >
       <View style={[styles.userInfoSection, generalstyles.centerContent]}>
         <View style={[generalstyles.centerContent]}>
-        <HeadProfileCard />
-          <View style={[generalstyles.flexStyles ]}>
+          <HeadProfileCard />
+          <View style={[generalstyles.flexStyles]}>
 
 
             <Verification
               isVerified={true}
               style={{
-                 marginRight: 20,
+                marginRight: 20,
               }}
               size={18}
             />
@@ -114,7 +151,10 @@ const DrawerContentComponent = ({ props }: any) => {
             />
           )}
           active={selectedItem === 'Home'}
-          onPress={() => setSelectedItem('Home')}
+          onPress={() => {
+            setSelectedItem('Home')
+            navigation.navigate('Home')
+          }}
 
 
 
@@ -125,7 +165,10 @@ const DrawerContentComponent = ({ props }: any) => {
         <Drawer.Item
           label="Chats"
           active={selectedItem === 'Chats'}
-          onPress={() => setSelectedItem('Chats')}
+          onPress={() => {
+            setSelectedItem('Chats')
+            navigation.navigate('Home')
+          }}
           icon={({ color, size }: any) => (
             <Ionicons
               name="chatbox-ellipses-outline"
@@ -141,7 +184,10 @@ const DrawerContentComponent = ({ props }: any) => {
         <Drawer.Item
           label="Market Place"
           active={selectedItem === 'Market Place'}
-          onPress={() => setSelectedItem('Market Place')}
+          onPress={() => {
+            setSelectedItem('Market Place')
+            navigation.navigate('Home')
+          }}
           icon={({ color, size }: any) => (
             <AntDesign
               name="shoppingcart"
@@ -157,7 +203,10 @@ const DrawerContentComponent = ({ props }: any) => {
         <Drawer.Item
           label="Support"
           active={selectedItem === 'Support'}
-          onPress={() => setSelectedItem('Support')}
+          onPress={() => {
+            setSelectedItem('Support')
+            navigation.navigate('Support')
+          }}
           icon={({ color, size }: any) => (
             <AntDesign
               name="customerservice"
@@ -171,7 +220,11 @@ const DrawerContentComponent = ({ props }: any) => {
           label="Invite People"
 
           active={selectedItem === 'Invite People'}
-          onPress={() => setSelectedItem('Invite People')}
+          onPress={() => {
+            setSelectedItem('Invite People')
+            handleShareApp()
+          }}
+
           icon={({ color, size }: any) => (
             <AntDesign name="sharealt" size={size} color={color} />
           )}
@@ -180,27 +233,28 @@ const DrawerContentComponent = ({ props }: any) => {
       </Drawer.Section>
 
       {/* add drawer section with title communities */}
-      <Drawer.Section style={[styles.drawerSection]} title="Communities">
-        <Drawer.Item
-          label="Community 1"
-          icon={({ color, size }: any) => (
-            <AntDesign
-              name="customerservice"
-              size={size}
-              color={color}
+      <Drawer.Section
+        style={[styles.drawerSection]}
+        title="Communities"
+
+      >
+
+        {
+          communities?.slice(0, 5).map((item) => (
+            <Drawer.Item
+              key={item.value}
+              label={item.label}
+              icon={({ color, size }: any) => (
+                <FontAwesome6
+                  name="people-group"
+                  size={size}
+                  color={color}
+                />
+              )}
             />
-          )}
-        />
-        <Drawer.Item
-          label="Community 1"
-          icon={({ color, size }: any) => (
-            <AntDesign
-              name="customerservice"
-              size={size}
-              color={color}
-            />
-          )}
-        />
+          ))
+        }
+
       </Drawer.Section>
 
       <Drawer.Section >

@@ -1,4 +1,4 @@
-import {} from 'react-native';
+import { } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Profile from './Profile';
@@ -13,8 +13,8 @@ const Stack = createNativeStackNavigator();
 
 const ProfileStack = () => {
   const navigation = useNavigation<any>();
-  const {reuseTheme} =  useUserPreferredTheme();
-  
+  const { reuseTheme } = useUserPreferredTheme();
+
   return (
     <Stack.Navigator initialRouteName="ProfileScreen">
       <Stack.Screen
@@ -30,20 +30,21 @@ const ProfileStack = () => {
         options={{
           title: 'Private Policy',
           headerStyle: {
-            backgroundColor:  reuseTheme.colors.preference.primaryBackground,
+            backgroundColor: reuseTheme.colors.preference.primaryBackground,
           },
           headerTitleStyle: {
             fontSize: 25,
           },
-          headerTintColor:  reuseTheme.colors.preference.primaryText,
+          headerTintColor: reuseTheme.colors.preference.primaryText,
           headerTitleAlign: 'center',
           headerLeft: () => (
             <IconButton
               icon="chevron-left"
-              iconColor={ reuseTheme.colors.preference.primaryText}
+              iconColor={reuseTheme.colors.preference.primaryText}
               size={28}
-              onPress={() => navigation.goBack()}
-              containerColor={ reuseTheme.colors.preference.primaryForeground}
+              // onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate('ProfileScreen')}
+              containerColor={reuseTheme.colors.preference.primaryForeground}
             />
           ),
         }}
@@ -54,20 +55,20 @@ const ProfileStack = () => {
         options={{
           title: 'About Us',
           headerStyle: {
-            backgroundColor:  reuseTheme.colors.preference.primaryBackground,
+            backgroundColor: reuseTheme.colors.preference.primaryBackground,
           },
           headerTitleStyle: {
             fontSize: 25,
           },
-          headerTintColor:  reuseTheme.colors.preference.primaryText,
+          headerTintColor: reuseTheme.colors.preference.primaryText,
           headerTitleAlign: 'center',
           headerLeft: () => (
             <IconButton
               icon="chevron-left"
-              iconColor={ reuseTheme.colors.preference.primaryText}
+              iconColor={reuseTheme.colors.preference.primaryText}
               size={28}
-              onPress={() => navigation.goBack()}
-              containerColor={ reuseTheme.colors.preference.primaryForeground}
+              onPress={() => navigation.navigate('ProfileScreen')}
+              containerColor={reuseTheme.colors.preference.primaryForeground}
             />
           ),
         }}

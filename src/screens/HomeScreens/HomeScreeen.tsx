@@ -117,12 +117,12 @@ const HomeScreeen = () => {
         </View>
         {/* search component */}
         {/* categories */}
-        <TextTypes text="Your Favourites" />
+        <TextTypes text="Your Favourites" screen="AllProducts" />
         <Categories />
         {/* categories */}
 
         {/* most receommended */}
-        <TextTypes text="Our Recommendations" />
+        <TextTypes text="Our Recommendations" screen="AllProducts" />
         {
 
           products.length ? <ScrollCard cardProducts={products} /> :
@@ -132,7 +132,7 @@ const HomeScreeen = () => {
         {/* most recommended */}
 
         {/* popular */}
-        <TextTypes text="Most Popular" />
+        <TextTypes text="Most Popular" screen="AllProducts" />
         {
 
           products.length ? <ScrollCard cardProducts={products} /> :
@@ -141,7 +141,7 @@ const HomeScreeen = () => {
         {/* popular */}
 
         {/* nearby */}
-        <TextTypes text="Near by You" />
+        <TextTypes text="Near by You" screen="AllProducts" />
         {
 
           products.length ? <ScrollCard cardProducts={products} /> :
