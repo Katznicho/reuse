@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Appbar, Badge } from 'react-native-paper';
 import { Pressable, View } from 'react-native';
-
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../../utils/generalstyles/dynamicGeneralStyles';
@@ -75,7 +74,6 @@ const AppBar = ({
             onPress={() =>
               navigation.navigate("Notifications")
             }
-
           >
             <Badge
               size={17}

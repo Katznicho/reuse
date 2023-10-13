@@ -42,7 +42,6 @@ const ProfileStack = () => {
               icon="chevron-left"
               iconColor={reuseTheme.colors.preference.primaryText}
               size={28}
-              // onPress={() => navigation.goBack()}
               onPress={() => navigation.navigate('ProfileScreen')}
               containerColor={reuseTheme.colors.preference.primaryForeground}
             />

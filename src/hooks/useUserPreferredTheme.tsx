@@ -109,7 +109,8 @@ const reuseTheme: ReuseTheme = {
   dimensions: {
     width: windowWidth,
     height: windowHeight
-  }
+  },
+  
 }
 
 

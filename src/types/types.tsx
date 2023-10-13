@@ -80,7 +80,11 @@ export interface ReuseTheme {
   button: {
     borderRadius: number;
   };
-  roundness: number;
+  roundness: number;,
+  dimensions: {
+    width: number;
+    height: number;
+  }
 }
 
 export interface commentInterface {

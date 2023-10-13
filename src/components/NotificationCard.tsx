@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { NotificationInterface, ReuseTheme } from '../types/types';
 import { useUserPreferredTheme } from '../hooks/useUserPreferredTheme';
 import { dynamicGeneralStyles } from '../utils/generalstyles/dynamicGeneralStyles';
+import { ReuseTheme } from '../types/types';
 
 
 
@@ -12,7 +12,7 @@ const NotificationCard = ({
   type,
   time,
   description,
-}: NotificationInterface) => {
+}: any) => {
 
   const { reuseTheme } = useUserPreferredTheme();
   const generalstyles = dynamicGeneralStyles(reuseTheme);

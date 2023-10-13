@@ -52,7 +52,7 @@ const DonaterCard = ({ item, showAvailable }: any) => {
                             fontWeight: 'bold',
                         }}
                     >
-                        {item.weightType}
+                        {item?.userType}
                     </Text>
                 </View>
                 <View>
@@ -83,7 +83,7 @@ export default DonaterCard;
 const donatorStyles = (theme: ReuseTheme) => StyleSheet.create({
     containerStyles: {
         alignItems: 'center',
-        backgroundColor: theme.colors.preference.primaryBackground,
+        backgroundColor: theme.colors.preference.secondaryBackground,
         marginVertical: 10,
         marginHorizontal: 30,
         height: 100,

@@ -71,7 +71,7 @@ const Donaters = () => {
                             <Avatar.Image
                                 size={120}
                                 source={{
-                                    uri: donator?.photoURL,
+                                    uri: donator?.photoURL || DEFAULT_USER_PROFILE,
                                 }}
                             />
                             {/* details */}

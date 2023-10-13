@@ -14,13 +14,6 @@ const Stack = createNativeStackNavigator();
  * @return {JSX.Element} The JSX element representing the NotificationStack component.
  */
 
-// const Recent = () => {
-//   return (
-//     <View>
-//       <Text>Recent</Text>
-//     </View>
-//   )
-// }
 
 const MyNotificationStack = (): JSX.Element => {
   const { reuseTheme } = useUserPreferredTheme();

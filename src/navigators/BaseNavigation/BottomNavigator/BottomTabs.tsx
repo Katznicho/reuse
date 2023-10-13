@@ -8,26 +8,19 @@ import { Avatar } from 'react-native-paper';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import { View } from 'react-native';
 import ProfileStack from '../../../screens/ProfileScreens/ProfileStack';
-import ProductTabs from '../../../screens/CreateScreens/ProductTabs';
 import { useFirebase } from '../../../hooks/useFirebase';
 import { RootState } from '../../../redux/store/dev';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { DEFAULT_USER_PROFILE } from '../../../utils/constants/constants';
 import MyNotificationStack from '../../../screens/Notifcations/MyNotificationStack';
-
-
+import CreateDonationProduct from '../../../screens/CreateScreens/CreateDonationProduct';
+import ReuseTabs from '../../../screens/Reuse/ReuseTabs';
 
 
 
 
 const Tab = createBottomTabNavigator();
-
-
-//create an empty screen for create tab
-const Empty = () => {
-  return null;
-}
 
 
 export default function BottomTabs() {
@@ -49,12 +42,9 @@ export default function BottomTabs() {
           if (userData?.photoURL) {
             setPhotoURL(userData?.photoURL);
 
-
           }
 
         }
-
-
 
       })
       .catch((error) => {
@@ -108,7 +98,7 @@ export default function BottomTabs() {
         }}
       />
       <Tab.Screen name="Create"
-        component={ProductTabs}
+        component={CreateDonationProduct}
         options={{
           tabBarLabel: 'Create',
           tabBarIcon: ({ color }) => (
@@ -122,7 +112,7 @@ export default function BottomTabs() {
       />
       {/* mine */}
       <Tab.Screen name="Reuse"
-        component={MyNotificationStack}
+        component={ReuseTabs}
         options={{
           tabBarLabel: 'Reuse',
           tabBarAccessibilityLabel: 'Reuse',
@@ -135,11 +125,7 @@ export default function BottomTabs() {
                 backgroundColor: reuseTheme.colors.preference.primaryBackground,
                 borderRadius: 50,
                 width: 80,
-                //move the tab bar to the top
                 position: 'absolute',
-                // top: -20,
-                //...styles.shadowStyles,
-
               }}
             >
               <Avatar.Image
@@ -160,8 +146,6 @@ export default function BottomTabs() {
         }}
       />
 
-
-
       <Tab.Screen name="Notifications"
         component={MyNotificationStack}
         options={{
@@ -175,7 +159,6 @@ export default function BottomTabs() {
           ),
         }}
       />
-
 
 
       <Tab.Screen name="Profile"

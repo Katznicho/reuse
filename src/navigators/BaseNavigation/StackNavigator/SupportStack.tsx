@@ -11,6 +11,11 @@ import SupportScreen from '../../../screens/SupportScreen/SupportScreen';
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * Render and return the SupportStack component.
+ *
+ * @return {ReactNode} The rendered SupportStack component.
+ */
 function SupportStack() {
 
     const { reuseTheme } = useUserPreferredTheme();
