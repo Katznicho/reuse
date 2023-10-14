@@ -28,7 +28,7 @@ const ReuseTabs = () => {
                     borderBottomWidth: 0, // Remove the bottom border
                     borderTopWidth: 0,
                     borderColor: reuseTheme.colors.preference.primaryBackground,
-                    paddingHorizontal: 20,
+                    // paddingHorizontal: 20,
                 },
                 tabBarAndroidRipple: { borderless: true },
                 tabBarActiveTintColor: reuseTheme.colors.preference.primaryText,
@@ -50,7 +50,7 @@ const ReuseTabs = () => {
                 name="MyProducts"
                 component={MyProducts}
                 options={{
-                    tabBarLabel: 'MY PRODUCTS',
+                    tabBarLabel: 'All',
                     tabBarAccessibilityLabel: 'MY PRODUCTS',
                     //add some styling here
                 }}

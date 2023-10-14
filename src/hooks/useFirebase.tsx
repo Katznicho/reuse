@@ -415,6 +415,31 @@ export const useFirebase = () => {
     }
   };
 
+  //get products by user id and status
+  const getProductsByUserIdAndStatus = async (userId: string, status: string) => {
+    try {
+      const querySnapshot = await firestore()
+        .collection(PRODUCT_COLLECTION)
+        .where('userId', '==', userId)
+        .where('status', '==', status)
+        .get();
+
+      const products: any = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        // Get the data of each product document
+        const productData = documentSnapshot.data();
+        // Include the document ID as part of the product data
+        products.push({ id: documentSnapshot.id, ...productData });
+      });
+
+      return products;
+    } catch (error) {
+      console.error('Error getting products by user ID and status:', error);
+      throw error;
+    }
+  };
+
   //create a notification
   const createNotification = async (userId: string, notification: any) => {
     try {
@@ -519,7 +544,8 @@ export const useFirebase = () => {
     createNotification,
     updateNotification,
     getAllNotifications,
-    getAllUnreadNotifications
+    getAllUnreadNotifications,
+    getProductsByUserIdAndStatus
     //notifications
 
     // Export other auth functions here if needed

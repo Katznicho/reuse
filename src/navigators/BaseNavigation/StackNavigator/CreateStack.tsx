@@ -5,7 +5,7 @@ import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useUserPreferredTheme } from '../../../hooks/useUserPreferredTheme';
 import CreateDonationProduct from '../../../screens/CreateScreens/CreateDonationProduct';
-import CreateReuseProduct from '../../../screens/CreateScreens/CreateReuseProduct';
+
 
 
 
@@ -49,30 +49,7 @@ function CreateStack() {
                 }}
             />
 
-            <Stack.Screen
-                name="CreateNewProduct"
-                component={CreateReuseProduct}
-                options={{
-                    title: 'New Product',
-                    headerStyle: {
-                        backgroundColor:reuseTheme.colors.preference.primaryBackground,
-                    },
-                    headerTitleStyle: {
-                        fontSize: 30,
-                    },
-                    headerTintColor: reuseTheme.colors.preference.primaryText,
-                    headerTitleAlign: 'center',
-                    headerLeft: () => (
-                        <IconButton
-                            icon="chevron-left"
-                            iconColor={reuseTheme.colors.preference.primaryText}
-                            size={28}
-                            onPress={() => navigation.goBack()}
-                            containerColor={reuseTheme.colors.preference.primaryForeground}
-                        />
-                    ),
-                }}
-            />
+            
 
 
 

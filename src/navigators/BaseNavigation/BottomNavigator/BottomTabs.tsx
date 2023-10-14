@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { DEFAULT_USER_PROFILE } from '../../../utils/constants/constants';
 import MyNotificationStack from '../../../screens/Notifcations/MyNotificationStack';
 import CreateDonationProduct from '../../../screens/CreateScreens/CreateDonationProduct';
-import ReuseTabs from '../../../screens/Reuse/ReuseTabs';
+import ReuseStack from '../../../screens/Reuse/ReuseStack';
 
 
 
@@ -112,7 +112,7 @@ export default function BottomTabs() {
       />
       {/* mine */}
       <Tab.Screen name="Reuse"
-        component={ReuseTabs}
+        component={ReuseStack}
         options={{
           tabBarLabel: 'Reuse',
           tabBarAccessibilityLabel: 'Reuse',

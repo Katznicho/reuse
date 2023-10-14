@@ -7,7 +7,6 @@ import DrawerContentComponent from '../../components/DrawerContent/DrawerContent
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import SwiperScreen from '../../screens/onboarding/SwiperScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreeen from '../../screens/HomeScreens/HomeScreeen';
 import SupportStack from './StackNavigator/SupportStack';
 
 
@@ -51,7 +50,7 @@ export default function BaseNavigation() {
     />
 
     <Drawer.Screen name="Home"
-      component={HomeScreeen}
+      component={BottomTabs}
     />
 
     <Drawer.Screen name="Support"

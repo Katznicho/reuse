@@ -150,11 +150,7 @@ const HomeScreeen = () => {
         {/* nearby */}
 
         {/* nearby */}
-        {
 
-          products.length ? <ScrollCard cardProducts={products} /> :
-            <ActivityIndicator />
-        }
         {/* nearby */}
 
         {/* top donaters */}

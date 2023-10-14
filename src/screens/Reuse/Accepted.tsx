@@ -18,13 +18,14 @@ import { ActivityIndicator } from '../../components/ActivityIndicator';
 import NotAvailable from '../../components/NotAvailable';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
+import { limitDescription } from '../../utils/helpers/helpers';
 
 //https://wix.github.io/react-native-ui-lib/docs/components/overlays/FeatureHighlight
 //tamagui
 
 const Accepted = () => {
     const { user } = useSelector((state: RootState) => state.user);
-    const { getProductsByUserId } = useFirebase();
+    const { getProductsByUserIdAndStatus } = useFirebase();
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -35,7 +36,7 @@ const Accepted = () => {
 
     useEffect(() => {
         setLoading(true);
-        getProductsByUserId(user.UID).then((userproducts) => {
+        getProductsByUserIdAndStatus(user.UID, "ACCEPTED").then((userproducts) => {
             setProducts(userproducts)
         }).catch((error) => {
         })
@@ -45,8 +46,6 @@ const Accepted = () => {
     const { reuseTheme } = useUserPreferredTheme();
     const styles = productStyles(reuseTheme);
 
-
-    // if(loading) return <ActivityIndicator/>
     if (loading) return <SafeAreaView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }}>
         <ActivityIndicator />
     </SafeAreaView>
@@ -67,7 +66,12 @@ const Accepted = () => {
                         showsVerticalScrollIndicator={false}
                         keyExtractor={item => String(item.id)}
                         renderItem={({ item, index }) => (
-                            <Pressable style={styles.container} key={index}>
+                            <Pressable
+                                style={styles.container} key={index}
+                                onPress={() => navigation.navigate('MyProductDetails', {
+                                    item
+                                })}
+                            >
                                 <View>
                                     {/* icon */}
                                     <Image
@@ -93,7 +97,7 @@ const Accepted = () => {
 
                                     <Text style={styles.date}>{item?.title}</Text>
                                     <Text style={styles.status}>{item?.estimatedPickUp}</Text>
-                                    <Text style={styles.date}>{item?.description}</Text>
+                                    <Text style={styles.date}>{limitDescription(item?.description, 15)}</Text>
 
 
                                 </View>
@@ -168,7 +172,7 @@ const productStyles = (theme: ReuseTheme) => StyleSheet.create({
     },
 
     date: {
-        fontSize: 16,
+        fontSize: 12,
         color: theme.colors.preference.primaryBackground,
         marginVertical: 2,
     },

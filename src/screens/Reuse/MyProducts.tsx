@@ -18,6 +18,7 @@ import { ActivityIndicator } from '../../components/ActivityIndicator';
 import NotAvailable from '../../components/NotAvailable';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
+import { limitDescription } from '../../utils/helpers/helpers';
 
 //https://wix.github.io/react-native-ui-lib/docs/components/overlays/FeatureHighlight
 //tamagui
@@ -40,7 +41,7 @@ const MyProducts = () => {
     }).catch((error) => {
     })
     setLoading(false);
-  }, [user?.UID]);
+  }, []);
 
   const { reuseTheme } = useUserPreferredTheme();
   const styles = productStyles(reuseTheme);
@@ -67,7 +68,11 @@ const MyProducts = () => {
             showsVerticalScrollIndicator={false}
             keyExtractor={item => String(item.id)}
             renderItem={({ item, index }) => (
-              <Pressable style={styles.container} key={index}>
+              <Pressable style={styles.container} key={index}
+                onPress={() => navigation.navigate('MyProductDetails', {
+                  item
+                })}
+              >
                 <View>
                   {/* icon */}
                   <Image
@@ -93,7 +98,7 @@ const MyProducts = () => {
 
                   <Text style={styles.date}>{item?.title}</Text>
                   <Text style={styles.status}>{item?.estimatedPickUp}</Text>
-                  <Text style={styles.date}>{item?.description}</Text>
+                  <Text style={styles.date}>{limitDescription(item?.description, 15)}</Text>
 
 
                 </View>
@@ -168,7 +173,7 @@ const productStyles = (theme: ReuseTheme) => StyleSheet.create({
   },
 
   date: {
-    fontSize: 16,
+    fontSize: 12,
     color: theme.colors.preference.primaryBackground,
     marginVertical: 2,
   },
