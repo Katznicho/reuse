@@ -2,6 +2,9 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import MyProducts from './MyProducts';
+import Accepted from './Accepted';
+import Pending from './Pending';
+import Rejected from './Reject';
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -25,7 +28,7 @@ const ReuseTabs = () => {
                     borderBottomWidth: 0, // Remove the bottom border
                     borderTopWidth: 0,
                     borderColor: reuseTheme.colors.preference.primaryBackground,
-                    paddingHorizontal: 40,
+                    paddingHorizontal: 20,
                 },
                 tabBarAndroidRipple: { borderless: true },
                 tabBarActiveTintColor: reuseTheme.colors.preference.primaryText,
@@ -34,7 +37,7 @@ const ReuseTabs = () => {
                 tabBarIndicatorStyle: {
                     backgroundColor: reuseTheme.colors.preference.primaryForeground,
                     height: 4,
-                    marginHorizontal: 35,
+                    marginHorizontal: 25,
                 },
                 tabBarPressColor: reuseTheme.colors.preference.primaryBackground,
                 tabBarScrollEnabled: true,
@@ -49,6 +52,34 @@ const ReuseTabs = () => {
                 options={{
                     tabBarLabel: 'MY PRODUCTS',
                     tabBarAccessibilityLabel: 'MY PRODUCTS',
+                    //add some styling here
+                }}
+            />
+
+            <Tab.Screen
+                name="Accepted"
+                component={Accepted}
+                options={{
+                    tabBarLabel: 'Accepted',
+                    tabBarAccessibilityLabel: 'Accepted',
+                    //add some styling here
+                }}
+            />
+            <Tab.Screen
+                name="Pending"
+                component={Pending}
+                options={{
+                    tabBarLabel: 'Pending',
+                    tabBarAccessibilityLabel: 'Pending',
+                    //add some styling here
+                }}
+            />
+            <Tab.Screen
+                name="Rejected"
+                component={Rejected}
+                options={{
+                    tabBarLabel: "Rejected",
+                    tabBarAccessibilityLabel: 'Rejected',
                     //add some styling here
                 }}
             />

@@ -1,9 +1,13 @@
 import { SafeAreaView, ScrollView } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReviewTypes from '../../components/ReviewTypes';
 import { NotificationInterface } from '../../types/types';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import NotificationCard from '../../components/NotificationCard';
+import { ActivityIndicator } from '../../components/ActivityIndicator';
+import { RootState } from '../../redux/store/dev';
+import { useSelector } from 'react-redux';
+import { useFirebase } from '../../hooks/useFirebase';
 
 /**
  * Renders the Recent component.
@@ -12,9 +16,15 @@ import NotificationCard from '../../components/NotificationCard';
  */
 const Events = (): JSX.Element => {
 
+    const { user } = useSelector((state: RootState) => state.user);
+
     const { reuseTheme } = useUserPreferredTheme();
+    const [loading, setLoading] = useState<boolean>(false);
+    const [notifications, setNotifications] = useState<any[]>([])
+
+    const { getAllNotifications } = useFirebase();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [details,] = useState([
+    const [details] = useState([
         {
             name: 'Recent',
             screen: 'Recent',
@@ -29,29 +39,20 @@ const Events = (): JSX.Element => {
         },
     ]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [notifications] = useState<NotificationInterface[]>([
-        {
-            type: 'Congratulations Events',
-            description:
-                'Your payment was successful please check your email for more details',
-            time: '9:45 AM',
-            id: 1,
-        },
-        {
-            type: 'Attention',
-            description:
-                'Your product   has been accepted please check your email for more details',
-            time: '8:00 PM',
-            id: 2,
-        },
-        {
-            type: 'New',
-            description: 'New notification',
-            time: '10:00 AM',
-            id: 3,
-        },
-    ]);
+    useEffect(() => {
+        setLoading(true);
+        getAllNotifications(user?.UID).then((res) => {
+            setNotifications(res);
+            setLoading(false);
+        }).catch((err) => {
+            console.log(err)
+            setLoading(false);
+        })
+    }, [])
+
+    if (loading) return <SafeAreaView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }}>
+        <ActivityIndicator />
+    </SafeAreaView>
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }}>

@@ -49,19 +49,17 @@ const Recent = () => {
     useEffect(() => {
         setLoading(true);
         getAllNotifications(user?.UID).then((res) => {
-
             setNotifications(res);
             setLoading(false);
-            console.log("done")
         }).catch((err) => {
             console.log(err)
             setLoading(false);
         })
-    })
+    }, [])
 
-    // if (loading) return <SafeAreaView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }}>
-    //     <ActivityIndicator />
-    // </SafeAreaView>
+    if (loading) return <SafeAreaView style={{ flex: 1, backgroundColor: reuseTheme.colors.preference.primaryBackground }}>
+        <ActivityIndicator />
+    </SafeAreaView>
 
 
     return (
@@ -74,7 +72,7 @@ const Recent = () => {
                     return (
                         <NotificationCard
                             key={item.id}
-                            type={item.type}
+                            type={item.title}
                             description={item.description}
                             time={item.time}
                             id={item.id}
