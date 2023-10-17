@@ -6,6 +6,7 @@ import { APP_USERS, PRODUCT_COLLECTION } from '../utils/constants/constants';
 
 const USER_COLLECTION = "users";
 const CATEGORY_COLLECTION = "categories";
+const PAYMENT_COLLECTION = "payments";
 //notification
 const NOTIFICATION_COLLECTION = "notifications";
 
@@ -440,6 +441,31 @@ export const useFirebase = () => {
     }
   };
 
+  //get payments by user id and status
+  const getPaymentsByUserIdAndStatus = async (userId: string, status: string) => {
+    try {
+      const querySnapshot = await firestore()
+        .collection(PAYMENT_COLLECTION)
+        .where('userId', '==', userId)
+        .where('status', '==', status)
+        .get();
+
+      const payments: any = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        // Get the data of each payment document
+        const paymentData = documentSnapshot.data();
+        // Include the document ID as part of the payment data
+        payments.push({ id: documentSnapshot.id, ...paymentData });
+      });
+
+      return payments;
+    } catch (error) {
+      console.error('Error getting payments by user ID and status:', error);
+      throw error;
+    }
+  };
+
   //create a notification
   const createNotification = async (userId: string, notification: any) => {
     try {
@@ -545,7 +571,8 @@ export const useFirebase = () => {
     updateNotification,
     getAllNotifications,
     getAllUnreadNotifications,
-    getProductsByUserIdAndStatus
+    getProductsByUserIdAndStatus,
+    getPaymentsByUserIdAndStatus
     //notifications
 
     // Export other auth functions here if needed

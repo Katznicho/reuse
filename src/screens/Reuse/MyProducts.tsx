@@ -19,6 +19,7 @@ import NotAvailable from '../../components/NotAvailable';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
 import { limitDescription } from '../../utils/helpers/helpers';
+import { PRODUCT_STATUS } from '../../utils/constants/constants';
 
 //https://wix.github.io/react-native-ui-lib/docs/components/overlays/FeatureHighlight
 //tamagui
@@ -109,7 +110,12 @@ const MyProducts = () => {
                 >
                   {/* amount details */}
                   <View>
-                    <Text style={styles.status}>{item?.status}</Text>
+                    <Text style={[
+                      item?.status === PRODUCT_STATUS.ACCEPTED ?
+                        item?.status === PRODUCT_STATUS.REJECTED ? styles.statusRejected : styles.statusRejected
+                        : styles.status
+
+                    ]}>{item?.status}</Text>
                   </View>
                   {/* amoun details */}
                 </View>
@@ -182,4 +188,14 @@ const productStyles = (theme: ReuseTheme) => StyleSheet.create({
     color: 'gray',
     marginVertical: 2,
   },
+  statusActive: {
+    fontSize: 12,
+    color: 'green',
+    marginVertical: 2,
+  },
+  statusRejected: {
+    fontSize: 12,
+    color: 'red',
+    marginVertical: 2,
+  }
 });

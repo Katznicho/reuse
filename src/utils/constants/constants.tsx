@@ -7,10 +7,22 @@ export const APP_USERS = {
     REUSER: "REUSER",
     DONOR: "DONOR",
     RESELLER: "RESSELLER",
-    RECEIVER: "RECIEVER",
+    RECEIVER: "RECEIVER",
     BUYER: "BUYER",
     ALL: "All"
 
+}
+
+export const PRODUCT_STATUS = {
+    ACCEPTED: "ACCEPTED",
+    PENDING: "PENDING",
+    REJECTED: "REJECTED",
+}
+
+export const PAYMENT_STATUS = {
+    PENDING: "PENDING",
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED",
 }
 
 export const APP_NAME = "Reuse";

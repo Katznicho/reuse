@@ -4,9 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
-import ReuseTabs from './ReuseTabs';
-import MyProductDetails from './MyProductDetails';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
+import PaymentTabs from './PaymentTabs';
+import PaymentDetails from './PaymentDetails';
+import PaymentSummary from './PaymentSummary';
 
 
 
@@ -18,7 +19,7 @@ const Stack = createNativeStackNavigator();
  *
  * @return {ReactNode} The rendered SupportStack component.
  */
-function ReuseStack() {
+function PaymentStack() {
 
     const { reuseTheme } = useUserPreferredTheme();
 
@@ -27,14 +28,14 @@ function ReuseStack() {
     return (
 
         <Stack.Navigator
-            initialRouteName='ReuseTabs'
+            initialRouteName='PaymentTabs'
         >
 
             <Stack.Screen
-                name="ReuseTabs"
-                component={ReuseTabs}
+                name="PaymentTabs"
+                component={PaymentTabs}
                 options={{
-                    title: 'My Products',
+                    title: 'My Payments',
                     headerStyle: {
                         backgroundColor: reuseTheme.colors.preference.primaryBackground,
                     },
@@ -56,10 +57,10 @@ function ReuseStack() {
             />
 
             <Stack.Screen
-                name="MyProductDetails"
-                component={MyProductDetails}
+                name="PaymentDetails"
+                component={PaymentDetails}
                 options={{
-                    title: 'Product Details',
+                    title: 'Payment Details',
                     headerStyle: {
                         backgroundColor: reuseTheme.colors.preference.primaryBackground,
                     },
@@ -82,7 +83,7 @@ function ReuseStack() {
 
             <Stack.Screen
                 name="PaymentSummary"
-                component={MyProductDetails}
+                component={PaymentSummary}
                 options={{
                     title: 'Payment Summary',
                     headerStyle: {
@@ -111,4 +112,4 @@ function ReuseStack() {
     );
 }
 
-export default ReuseStack
+export default PaymentStack

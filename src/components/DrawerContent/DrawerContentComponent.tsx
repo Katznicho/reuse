@@ -161,6 +161,25 @@ const DrawerContentComponent = ({ props }: any) => {
         />
         {/* home */}
 
+        {/* payments */}
+        <Drawer.Item
+          label="Payments"
+          active={selectedItem === 'Payments'}
+          onPress={() => {
+
+            setSelectedItem('Payments')
+            navigation.navigate('PaymentStack')
+          }}
+          icon={({ color, size }: any) => (
+            <AntDesign
+              name="creditcard"
+              size={size}
+              color={color}
+            />
+          )}
+        />
+        {/* payments */}
+
         {/* chats */}
         <Drawer.Item
           label="Chats"

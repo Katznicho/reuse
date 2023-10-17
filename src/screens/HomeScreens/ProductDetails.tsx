@@ -36,7 +36,7 @@ const ProductDetails = () => {
 
 
     useEffect(() => {
-        console.log(params.item?.estimatedPickUp?.details);
+        // console.log(params.item?.estimatedPickUp?.details);
         if (params.item) {
             getUserByUid(params.item.userId).then((res) => {
                 setOwnerDetails(res);

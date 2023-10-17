@@ -8,6 +8,7 @@ import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
 import SwiperScreen from '../../screens/onboarding/SwiperScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SupportStack from './StackNavigator/SupportStack';
+import PaymentStack from '../../screens/payments/PaymentStack';
 
 
 const Stack = createNativeStackNavigator();
@@ -55,6 +56,9 @@ export default function BaseNavigation() {
 
     <Drawer.Screen name="Support"
       component={SupportStack}
+    />
+    <Drawer.Screen name="PaymentStack"
+      component={PaymentStack}
     />
 
 
