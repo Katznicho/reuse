@@ -80,7 +80,7 @@ export interface ReuseTheme {
   button: {
     borderRadius: number;
   };
-  roundness: number;,
+  roundness: number;
   dimensions: {
     width: number;
     height: number;
@@ -108,4 +108,10 @@ export interface SignupField {
   placeholder: string;
   secureTextEntry?: boolean;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'; // Define other options as needed
+}
+
+export interface RedirectParams {
+  status: 'successful' | 'cancelled';
+  transaction_id?: string;
+  tx_ref: string;
 }

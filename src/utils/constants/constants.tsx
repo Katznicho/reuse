@@ -17,12 +17,14 @@ export const PRODUCT_STATUS = {
     ACCEPTED: "ACCEPTED",
     PENDING: "PENDING",
     REJECTED: "REJECTED",
+
 }
 
 export const PAYMENT_STATUS = {
-    PENDING: "PENDING",
-    COMPLETED: "COMPLETED",
-    FAILED: "FAILED",
+    PENDING: "pending",
+    COMPLETED: "successful",
+    CANCELLED: "Cancelled",
+    UNPAID:"UNPAID"
 }
 
 export const APP_NAME = "Reuse";

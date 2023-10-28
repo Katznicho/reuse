@@ -342,7 +342,10 @@ const MyProductDetails = () => {
                             //  loading={true}
                             buttonColor={reuseTheme.colors.preference.primaryForeground}
                             textColor={reuseTheme.colors.preference.primaryBackground}
-                            onPress={() => navigation.navigate('PaymentSummary', { item: params.item })}
+                            onPress={() => navigation.navigate('PaymentSummary', { 
+                                item: params.item ,
+                                ownerDetails: ownerDetails
+                            })}
                         >
                             Make Payment
                         </Button>

@@ -114,8 +114,13 @@ android {
 }
 
 dependencies {
+
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+
+    //support gif images
+    implementation 'com.facebook.fresco:animated-gif:2.0.0'
+    //support gif images
     
     //add firebase
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))

@@ -3,10 +3,10 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-
 import ReuseTabs from './ReuseTabs';
 import MyProductDetails from './MyProductDetails';
 import { useUserPreferredTheme } from '../../hooks/useUserPreferredTheme';
+import PaymentSummary from './PaymentSummary';
 
 
 
@@ -82,7 +82,7 @@ function ReuseStack() {
 
             <Stack.Screen
                 name="PaymentSummary"
-                component={MyProductDetails}
+                component={PaymentSummary}
                 options={{
                     title: 'Payment Summary',
                     headerStyle: {

@@ -2,7 +2,7 @@ import firestore, { firebase } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
 import { loginUser, logoutUser, registerUser, setAppIntro, updateAppIntro, updateIsLoggedIn, updateUserProfile } from '../redux/store/slices/UserSlice';
-import { APP_USERS, PRODUCT_COLLECTION } from '../utils/constants/constants';
+import { APP_USERS, PAYMENT_STATUS, PRODUCT_COLLECTION } from '../utils/constants/constants';
 
 const USER_COLLECTION = "users";
 const CATEGORY_COLLECTION = "categories";
@@ -244,7 +244,8 @@ export const useFirebase = () => {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         rating: 4,
-        userId: userId
+        userId: userId,
+        paymentStatus:PAYMENT_STATUS.UNPAID
       });
     } catch (error) {
       console.log("Error updating user credentials:", error);
@@ -267,6 +268,18 @@ export const useFirebase = () => {
 
       return products;
     } catch (error) {
+      throw error;
+    }
+  };
+
+  //update product payment status
+  const updateProductPaymentStatus = async (productId: string, status: string) => {
+    try {
+      await firestore().collection(PRODUCT_COLLECTION).doc(productId).update({
+        paymentStatus: status,
+      });
+    } catch (error) {
+      console.error('Error updating product payment status:', error);
       throw error;
     }
   };
@@ -466,6 +479,20 @@ export const useFirebase = () => {
     }
   };
 
+  //store the payment details
+  const storePaymentDetails = async (paymentDetails: any) => {
+    try {
+      await firestore().collection(PAYMENT_COLLECTION).add({
+        ...paymentDetails,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Error storing payment details:', error);
+      throw error;
+    }
+  };
+
   //create a notification
   const createNotification = async (userId: string, notification: any) => {
     try {
@@ -572,7 +599,9 @@ export const useFirebase = () => {
     getAllNotifications,
     getAllUnreadNotifications,
     getProductsByUserIdAndStatus,
-    getPaymentsByUserIdAndStatus
+    getPaymentsByUserIdAndStatus,
+    updateProductPaymentStatus,
+    storePaymentDetails
     //notifications
 
     // Export other auth functions here if needed
